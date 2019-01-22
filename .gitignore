@@ -1,0 +1,17 @@
+bin/DatasetRenderer.exe
+bin/DatasetRenderer.pdb
+bin/ImageFromModel.pdb
+bin/Object_Registration.pdb
+bin/PolyhedronTest.exe
+bin/output/
+gl_common_ext/.vscode/
+python_src/bunny_data.pickle
+python_src/.idea/
+python_src/venv/
+test_src/cmake_install.cmake
+*.vcxproj
+*.filters
+*.user
+test_src/CMakeFiles/
+test_src/PolyhedronTest.dir/
+bin/
