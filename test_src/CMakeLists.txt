@@ -9,7 +9,7 @@ set(AppName PolyhedronTest)
 
 message(STATUS "Preparing ${AppName}")
 
-set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/../cmake)
+set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
 set(OUTPUT_BINDIR ${CMAKE_SOURCE_DIR}/bin)
 make_directory(${OUTPUT_BINDIR})
 
@@ -30,7 +30,7 @@ SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE "${CMAKE_SOURCE_DIR}/bin")
 
 
 
-set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/../../cmake)
+set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
 
 # Find packages
 #FIND_PACKAGE(Cuda REQUIRED)
