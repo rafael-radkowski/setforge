@@ -38,6 +38,7 @@ All copyrights reserved
 #include "ModelRenderer.h"
 #include "SphereCoordRenderer.h"
 #include "PolyhedronViewRenderer.h"
+#include "BalancedPoseTree.h"
 #include "ArgParser.h"
 #include "types.h"
 
@@ -71,7 +72,7 @@ GLfloat clear_depth[] = {1.0f, 1.0f, 1.0f, 1.0f};
 
 SphereCoordRenderer*				sphere_renderer = NULL;
 PolyhedronViewRenderer*			poly_renderer = NULL;
-
+BalancedPoseTree*				tree_renderer = NULL;
 
 using namespace std;
 using namespace cs557;
@@ -114,6 +115,14 @@ void InitRenderer(Arguments& opt)
 		poly_renderer->create(opt.camera_distance, opt.subdivisions);
 		
 	}
+	else if (opt.cam == TREE)
+	{
+		tree_renderer = new BalancedPoseTree(opt.windows_width, opt.window_height, opt.image_width, opt.image_height);
+		tree_renderer->setVerbose(opt.verbose); // set first to get all the output info
+		tree_renderer->setModel(opt.model_path_and_file);
+		tree_renderer->setOutputPath(opt.output_path);
+		tree_renderer->create(opt.camera_distance, opt.bpt_levels);
+	}
 
 }
 
@@ -143,6 +152,9 @@ void DrawLoop(void)
 		if (poly_renderer != NULL)
 			ret = poly_renderer->draw_sequence();
 
+		if (tree_renderer != NULL)
+			ret = tree_renderer->draw_sequence();
+
 
         // Swap the buffers so that what we drew will appear on the screen.
         glfwSwapBuffers(window);
@@ -159,7 +171,7 @@ void DrawLoop(void)
 
 
 
-int main(int argc, char** argv)
+int main(int argc, char** argv) 
 {
 	cout << "ImageFromModel" << endl;
 	cout << "Create RGB color maps, depth images (float), and normal maps (float) from a 3D model \n" << endl;
@@ -184,7 +196,7 @@ int main(int argc, char** argv)
 	// The end
 	if(sphere_renderer != NULL) delete sphere_renderer;
 	if (poly_renderer != NULL) delete poly_renderer;
-
+	if (tree_renderer != NULL) delete tree_renderer;
 
 	return 1;
 }

@@ -117,7 +117,12 @@ set(MAIN_SRC
 	./src/PolyhedronGeometry.cpp
 	./src/PolyhedronViewRenderer.cpp
 	./src/PolyhedronViewRenderer.h
-
+	./src/BalancedPoseTree.h
+	./src/BalancedPoseTree.cpp
+	./src/BPTReaderWriter.h
+	./src/BPTReaderWriter.cpp
+	./src/BPTTypes.h
+	
 )
 
 
@@ -135,6 +140,8 @@ set(UTILS_SRC
 	./src/MatrixHelpers.h
 	./src/MatrixFileUtils.h
 	./src/MatrixFileUtils.cpp
+	./src/TimeUtils.h
+	./src/TimeUtils.cpp
 )
 
 

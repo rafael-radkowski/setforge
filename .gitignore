@@ -20,3 +20,5 @@ CMakeCache.txt
 .vs/
 *.sln
 CMakeFiles/
+DatasetRenderer.dir/
+x64/

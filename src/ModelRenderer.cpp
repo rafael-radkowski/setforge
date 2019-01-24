@@ -118,7 +118,7 @@ bool ModelRenderer::drawFBO(void)
 
 
 	// Set up our green background color
-	static GLfloat clear_color[] = { 1.0f, 1.0f, 1.0f, 1.0f };//{0.6f, 0.7f, 1.0f, 1.0f};
+	static GLfloat clear_color[] = { 0.0f, 0.0f, 0.0f, 0.0f };//{0.6f, 0.7f, 1.0f, 1.0f};
 	static GLfloat clear_depth[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 
 	// Clear the entire buffer with our green color.

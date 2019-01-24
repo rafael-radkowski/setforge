@@ -38,6 +38,9 @@ typedef struct _Arguments
 	// polyheder arguments
 	int		subdivisions;
 
+	// balance pose tree levels
+	int		bpt_levels;
+
 	// helpers
 	bool		verbose;
 	bool		valid;
@@ -61,6 +64,7 @@ typedef struct _Arguments
 		camera_distance = 1.3;
 
 		subdivisions = 0;
+		bpt_levels = 0;
 
 		verbose = false;
 		valid = false;

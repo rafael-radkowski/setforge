@@ -86,6 +86,10 @@ Arguments ArgParser::Parse(int& argc, char** argv)
 			if (argc >= pos) opt.intrincic_params_file = string(argv[pos + 1]).c_str();
 			else ParamError(c_arg);
 		}
+		else if(c_arg.compare("-level") == 0){ // balanced pose tree levels 
+			if (argc >= pos) opt.bpt_levels = atof(string(argv[pos + 1]).c_str());
+			else ParamError(c_arg);
+		}
 		else if(c_arg.compare("-help") == 0 || c_arg.compare("-h") == 0){ // help
 			Help();
 		}
@@ -120,11 +124,12 @@ void ArgParser::Help(void)
 	cout << "\t-img_h [param] \t- set the height of the output image in pixels (integer)." << endl;
 	cout << "\t-wnd_w [param] \t- set the widht of the application window in pixels (integer)." << endl;
 	cout << "\t-wnd_h [param] \t- set the height of the application window in pixels (integer)." << endl;
-	cout << "\t-m [param] \t- set the camera path models. Can be SPHERE, POLY." << endl;
+	cout << "\t-m [param] \t- set the camera path models. Can be SPHERE, POLY, TREE." << endl;
 	cout << "\t-seg [param] \t- for the camera path SPHERE model, set the number of segments (integer)." << endl;
 	cout << "\t-rows [param] \t-for the camera path SPHERE model, set the number of rows (integer)" << endl;
 	cout << "\t-dist [param] \t-for the camera path SPHERE model, set the sphere radius (float)" << endl;
 	cout << "\t-sub [param] \t-for the camera path POLY model, set the number of subdivisions for the polyheder (int)" << endl;
+	cout << "\t-level [param] \t-for the camera path TREE, the number of tree levels for the Balanced Pose Tree (int)" << endl;
 	cout << "\t-verbose [param] \t- displays additional information." << endl;
 	cout << "\t-help [param] \t- displays this help menu" << endl;
 
@@ -151,6 +156,10 @@ void ArgParser::Display(void)
 	}
 	if (opt.cam == POLY) {
 		std::cout << "Polyheder subdivisions: " << opt.subdivisions << endl;
+		std::cout << "Polyheder radius: " << opt.camera_distance << endl;
+	}
+	if (opt.cam == TREE) {
+		std::cout << "BPT level: " << opt.bpt_levels << endl;
 		std::cout << "Polyheder radius: " << opt.camera_distance << endl;
 	}
 	std::cout << "Image width:\t" << opt.image_width << endl;
