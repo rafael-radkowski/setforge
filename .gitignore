@@ -22,3 +22,6 @@ CMakeCache.txt
 CMakeFiles/
 DatasetRenderer.dir/
 x64/
+data/
+ImageGen.dir/
+TemplateMatching/TemplateMatchingTest.dir/
