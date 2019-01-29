@@ -122,6 +122,12 @@ public:
 	void setVerbose(bool verbose) { _verbose = verbose; };
 
 
+	/*
+	Return the number of generated images
+	*/
+	int size(void) { return _output_file_id; }
+
+
 protected:
 
 	/*

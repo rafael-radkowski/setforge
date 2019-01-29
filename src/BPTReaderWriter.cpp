@@ -123,7 +123,7 @@ Read and create the nodes for the Balanced Pose Tree
 @param root - the root node of the tree. 
 @param node_repository - reference to the node repository. 
 */
-bool  BPTReaderWriter::read(string path_and_file, BPTNode* root, vector<BPTNode*>* node_repository)
+bool  BPTReaderWriter::read(string path_and_file, BPTNode** root, vector<BPTNode*>* node_repository)
 {
 	if (!std::experimental::filesystem::exists(path_and_file)) {
 		cout << "[ERROR] - BPTReaderWriter: could not find file " << path_and_file << endl;
@@ -176,6 +176,12 @@ bool  BPTReaderWriter::read(string path_and_file, BPTNode* root, vector<BPTNode*
 	cout << "[INFO] - Found " << nodes.size() << " nodes and " << links.size() << " links." << endl;
 
 
+
+	createTreeFromFile(&nodes, &links, root, node_repository);
+
+
+	
+
 	return true;
 }
 
@@ -193,3 +199,33 @@ vector<string>  BPTReaderWriter::split(string str, char delimiter) {
 	return strvec;
 }
 
+/*
+Create a tree using the loaded data. 
+*/
+bool BPTReaderWriter::createTreeFromFile(vector<InNode>* n, vector<InLink>* l, BPTNode** root, vector<BPTNode*>* node_repository)
+{
+	node_repository->resize(n->size());
+
+	for (int i = 0; i < n->size(); i++) {
+		InNode tnode = (*n)[i];
+		BPTNode* node = new BPTNode(tnode.node_id, tnode.level, -1, glm::vec3(0, 0, 0), tnode.img_index);
+		node->image_index = tnode.img_index;
+		(*node_repository)[((*n)[i].node_id)] = node;
+
+		if (node->node_id == 0) {
+			(*root) = node;
+		}
+	}
+
+
+	for (int i = 0; i < l->size(); i++) {
+		InLink tlink = (*l)[i];
+
+		(*node_repository)[(int)tlink.parent_id]->childs.push_back((*node_repository)[(int)tlink.child_id]);
+
+	}
+
+
+	return true;
+
+}

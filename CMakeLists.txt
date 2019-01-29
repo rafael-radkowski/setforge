@@ -177,13 +177,24 @@ set(OPENGL_SRC
 	./gl_common_ext/CommonTypes.h
 )
 
+set(GENERATOR_SRC
+	./src/image_gen_main.cpp
+	./src/ImageLogReader.h
+	./src/ImageLogReader.cpp
+	./src/ReadImages.h
+	./src/ReadImages.cpp
+	./src/RandomImageGenerator.h
+	./src/RandomImageGenerator.cpp
+	./src/Parser.h
+	./src/Parser.cpp
+)
 
 source_group(MAIN FILES ${MAIN_SRC})
 source_group(OpenGL FILES ${OPENGL_SRC})
 source_group(Shaders FILES ${SHADER_SRC})
 source_group(Utils FILES ${UTILS_SRC})
 
-
+source_group(main FILES ${GENERATOR_SRC})
 
 
 add_compile_definitions(_WITH_CAMERA)
@@ -197,6 +208,10 @@ set(CMAKE_C_STANDARD_REQUIRED ON)
 # Create an executable
 add_executable(${PROJECT_NAME} 
 ${MAIN_SRC} ${OPENGL_SRC} ${UTILS_SRC} ${SHADER_SRC})
+
+
+add_executable(ImageGen 
+${GENERATOR_SRC} )
 
 
 # Add link directories
@@ -216,6 +231,8 @@ ENDIF(WIN32)
 # Add libraries
 target_link_libraries(${PROJECT_NAME}   ${GLEW_LIBRARIES} ${GLEW_LIBRARY} ${GLFW3_LIBRARY} ${OPENGL_LIBRARIES} ${OPENCV_LIBRARIES}  )
 
+# Add libraries
+target_link_libraries(ImageGen  ${OPENCV_LIBRARIES}  )
 
 
 add_subdirectory(test_src)

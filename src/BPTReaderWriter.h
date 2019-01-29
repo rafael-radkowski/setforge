@@ -77,7 +77,7 @@ public:
 	@param root - the root node of the tree. 
 	@param node_repository - reference to the node repository. 
 	*/
-	bool read(string path_and_file, BPTNode* root, vector<BPTNode*>* node_repository);
+	bool read(string path_and_file, BPTNode** root, vector<BPTNode*>* node_repository);
 
 private:
 
@@ -93,6 +93,10 @@ private:
 	*/
 	bool writeNode(string path_and_file, BPTNode* node, int& counter);
 
+	/*
+	Create a tree using the loaded data. 
+	*/
+	bool createTreeFromFile(vector<InNode>* n, vector<InLink>* l, BPTNode** root, vector<BPTNode*>* node_repository);
 
 	// members
 

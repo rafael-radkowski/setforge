@@ -13,6 +13,7 @@ All copyrights reserved
 
 #include <iostream>
 #include <string>
+#include <time.h>
 
 
 // GLEW include
@@ -137,6 +138,8 @@ void DrawLoop(void)
 	 // Init the view matrix. 
     cs557::InitControlsViewMatrix(viewMatrix);
 
+	clock_t begin = clock();
+
     while (!glfwWindowShouldClose(window))
     {
         // Clear the entire buffer with our green color (sets the background to be green).
@@ -164,6 +167,19 @@ void DrawLoop(void)
 			break;
 		}
     }
+
+	clock_t end = clock();
+	double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC; 
+
+	int num = 0;
+	if(sphere_renderer != NULL)
+		num = sphere_renderer->size();
+	if (poly_renderer != NULL)
+		num = poly_renderer->size();
+	if (tree_renderer != NULL)
+		num = tree_renderer->size();
+
+	cout << "[INFO] - Generated " << num << " images (time = " << elapsed_secs <<  "s)." << endl;
 }
 
 

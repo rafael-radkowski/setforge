@@ -20,6 +20,7 @@ last edited:
 #include <vector>
 #include <list>
 #include <numeric>
+#include <bitset> 
 
 // opencv
 #include <opencv2/opencv.hpp>
@@ -64,3 +65,12 @@ typedef struct _BPTNode
 
 
 typedef std::vector<glm::vec3> PolyhedronPoints;
+
+
+
+typedef struct _BPTDescriptor
+{
+	std::bitset<8>	orient;
+	float			weight;
+
+}BPTDescriptor;

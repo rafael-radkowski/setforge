@@ -137,7 +137,8 @@ bool BalancedPoseTree::draw_sequence(void)
 		glm::vec3 eye = n * glm::vec3(_camera_distance);
 
 		// store the image index
-		_tree_nodes[_N_current]->image_index = _N_current;
+		// _N_current - 1; -> the root node does not get an image. 
+		_tree_nodes[_N_current]->image_index = _N_current - 1;
 
 		// This prevents that the view matrix becomes NaN when eye and up vector align. 
 		float ang = glm::dot(glm::normalize(eye), _up);
@@ -154,7 +155,7 @@ bool BalancedPoseTree::draw_sequence(void)
 
 		enable_writer(true);
 		if(_verbose)
-			cout << "[INFO] - Render image " << _N_current << " for node " << _tree_nodes[_N_current]->node_id << " (level: " << _tree_nodes[_N_current]->level  << ") from pos: " << eye[0] << " : " << eye[1] << " : " << eye[2]<< endl;
+			cout << "[INFO] - Render image " << _N_current-1 << " for node " << _tree_nodes[_N_current]->node_id << " (level: " << _tree_nodes[_N_current]->level  << ") from pos: " << eye[0] << " : " << eye[1] << " : " << eye[2]<< endl;
 		draw_and_save();
 		_N_current++;
 		
