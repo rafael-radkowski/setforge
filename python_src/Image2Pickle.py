@@ -232,6 +232,7 @@ class Image2Pickle:
 
             # reshape them
             (h, w, c) = resized_rgb.shape
+            (oh, ow, oc) = rgb.shape
             resized_rgb = resized_rgb.reshape([1, h, w, c])
             #resized_normals = resized_normals.reshape([1, h, w, c])
             #resized_depth = resized_depth.reshape([1, h, w, 1])
@@ -240,8 +241,8 @@ class Image2Pickle:
             #cv2.imshow("out",rgb )
             #cv2.waitKey()
 
-            ratio_x = float(h) / float(self.dst_height)
-            ratio_y = float(w) / float(self.dst_width)
+            ratio_x = float(oh) / float(self.dst_height)
+            ratio_y = float(ow) / float(self.dst_width)
 
             # training result
             r0 = np.array([each["tx"], each["ty"], each["tz"], each["qx"], each["qy"], each["qz"], each["qw"]])
