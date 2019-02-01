@@ -95,7 +95,7 @@ class Image2Pickle:
                         #print(f'Column names are {", ".join(row)}')
                         line_count += 1
 
-                    #index, rgb_file, normals_file, depth_file, mat_file, tx, ty, tz, qx, qy, qz, qw, roi_x, dx, roi_y, dy
+                    #index, rgb_file, normals_file, depth_file, mat_file, tx, ty, tz, qx, qy, qz, qw, roi_x,  roi_y, dx, dy
                     #print(row['index'], ":", row['rgb_file'], ", ", row['normals_file'], ", ", row['depth_file'])
                     line_count += 1
 
@@ -113,8 +113,8 @@ class Image2Pickle:
                         "qz": float(row['qz']),
                         "qw": float(row['qw']),
                         "rx": float(row['roi_x']),
-                        "dx": float(row['dx']),
                         "ry": float(row['roi_y']),
+                        "dx": float(row['dx']),
                         "dy": float(row['dy'])
                     }
 
@@ -235,6 +235,10 @@ class Image2Pickle:
             resized_rgb = resized_rgb.reshape([1, h, w, c])
             #resized_normals = resized_normals.reshape([1, h, w, c])
             #resized_depth = resized_depth.reshape([1, h, w, 1])
+
+            #rgb = cv2.rectangle(rgb, (int(each["rx"]), int(each["ry"])), (int(each["rx"] + each["dx"]), int(each["ry"] + each["dy"])), (0, 255, 0), 2)
+            #cv2.imshow("out",rgb )
+            #cv2.waitKey()
 
             ratio_x = float(h) / float(self.dst_height)
             ratio_y = float(w) / float(self.dst_width)
