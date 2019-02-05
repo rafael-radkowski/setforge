@@ -113,6 +113,7 @@ int RandomImageGenerator::process(int num_images)
 
         string path0 = image_filenames[dice_image];
         string path1 = rendered_files[dice_rendering].rgb_file;
+		string path2 = rendered_files[dice_rendering].normal_file;
 
         cv::Mat img = cv::imread(path0);
         int r = img.rows;
@@ -128,14 +129,45 @@ int RandomImageGenerator::process(int num_images)
         cv::Mat rendered_image = adaptRendering(rendering, roi_x, roi_y, roi_width, roi_height);
         //cout << roi_x << " : " << roi_y << "\n";
        // cv::rectangle( rendered_image, cv::Point(roi_x, roi_y), cv::Point(roi_x + roi_width, roi_y + roi_height), cv::Scalar(255,0,0));
-        cv::Mat ready = combineImages(img_resized, rendered_image, 10);
-		cv::Mat output = ready.clone();
+        cv::Mat ready_rgb = combineImages(img_resized, rendered_image, 10);
+		cv::Mat output = ready_rgb.clone();
 		cv::rectangle( output, cv::Point(roi_x, roi_y), cv::Point(roi_x + roi_width, roi_y + roi_height), cv::Scalar(255,0,0));
 		
+
+		//-----------------------------------------------------------------------------
+		// normal processing
+
+		// calculate the normal map
+		cv::Mat img_normals;
+		NormalMapSobel::EstimateNormalMap(img_resized, img_normals, 3, 25);
+
+		// process normal image
+		cv::Mat rendering_normals = cv::imread(path2, cv::IMREAD_ANYDEPTH | cv::IMREAD_UNCHANGED); // 16UC1
+		cv::Mat rendering_normals_32F;
+		rendering_normals.convertTo(rendering_normals_32F, CV_32FC3, 1.0/65534.0);
+
+	//	cout << MatHelpers::Type2str(rendering_normals.type()) << endl;
+	//	cv::imshow("in_normals", rendering_normals );
+	//	cv::imshow("out_normals", rendering_normals_32F );
+    //    cv::waitKey();
+
+
+        int r_n = rendering_normals.rows;
+        int c_n = rendering_normals.cols;
+		cv::Mat rendered_normals2;
+		cv::resize(rendering_normals_32F, rendered_normals2, cv::Size(_rendering_height, _rendering_widht ));
+		cv::Mat ready_normals = combineNormals(img_normals, rendered_normals2, rendered_image,  10);
 		
-		writeData(i, ready, rendered_files[dice_rendering], cv::Rect(roi_x, roi_y, roi_width, roi_height));
+		//-----------------------------------------------------------------------------
+		// write data to file
+
+
+		writeData(i, ready_rgb, ready_normals, rendered_files[dice_rendering], cv::Rect(roi_x, roi_y, roi_width, roi_height));
 
         cv::imshow("out",output );
+		cv::Mat img_normals_out;
+		//cv::cvtColor(img_normals, img_normals_out, cv::COLOR_RGB2BGR);
+		cv::imshow("out_normals", ready_normals );
         cv::waitKey(1);
 		//Sleep(0.015);
         i++;
@@ -271,6 +303,25 @@ cv::Mat RandomImageGenerator::combineImages(cv::Mat image1, cv::Mat image2, int 
 }
 
 
+cv::Mat RandomImageGenerator::combineNormals(cv::Mat image1, cv::Mat image2, cv::Mat image_rgb, int threshold_value)
+{
+    cv::Mat img, mask, grayscaleMat;
+    img = image_rgb.clone();
+    cvtColor(img, grayscaleMat, CV_RGB2GRAY);
+    cv::threshold(grayscaleMat, mask, threshold_value, 255, CV_THRESH_BINARY);
+    cv::Mat result, mask_inv;
+    cv::bitwise_not(mask, mask_inv);
+    cv::bitwise_or(image1, image1, result, mask_inv );
+    cv::bitwise_or(result, image2, result, mask );
+	//cout << MatHelpers::Type2str(image2.type()) << endl;
+	//cout << MatHelpers::Type2str(image1.type()) << endl;
+    //cv::imshow("th",mask );
+    //cv::waitKey(1);
+
+    return result;
+}
+
+
 
 bool RandomImageGenerator::writeHeader(void)
 {
@@ -309,17 +360,19 @@ bool RandomImageGenerator::writeHeader(void)
 }
 
 
-bool RandomImageGenerator::writeData(int id, cv::Mat& image, ImageLogReader::ImageLog& data, cv::Rect& roi)
+bool RandomImageGenerator::writeData(int id,  cv::Mat& image_rgb, cv::Mat& image_normal, ImageLogReader::ImageLog& data, cv::Rect& roi)
 {
 
-	
+	//----------------------------------------------
+	// RGB image
 
 	string name = _output_path;
 	name.append("/");
 	name.append(to_string(id));
 	name.append("-");
 	name.append(data.rgb_file);
-				
+		
+	// removes the path name if the original file name comes with a path
 	int index = data.rgb_file.find_last_of("/");
 	if (index != -1) {
 		string sub = data.rgb_file.substr(index + 1, data.rgb_file.length() - index - 1);
@@ -332,8 +385,35 @@ bool RandomImageGenerator::writeData(int id, cv::Mat& image, ImageLogReader::Ima
 
 	}
 
-	cv::imwrite(name, image);
+	cv::imwrite(name, image_rgb);
 
+	//----------------------------------------------
+	// Normal image
+
+	string name_d = _output_path;
+	name_d.append("/");
+	name_d.append(to_string(id));
+	name_d.append("-");
+	name_d.append(data.normal_file);
+	// removes the path name if the original file name comes with a path
+	index = data.rgb_file.find_last_of("/");
+	if (index != -1) {
+		string sub = data.normal_file.substr(index + 1, data.normal_file.length() - index - 1);
+
+		name_d = _output_path;
+		name_d.append("/");
+		name_d.append(to_string(id));
+		name_d.append("-");
+		name_d.append(sub);
+
+	}
+
+	cv::Mat normals_16UC3;
+	image_normal.convertTo(normals_16UC3, CV_16UC3, 65535 );
+	cv::imwrite(name_d, normals_16UC3);
+
+	//----------------------------------------------
+	// Log file
 
 	string out = _output_path;
 	out.append("/");
@@ -341,7 +421,7 @@ bool RandomImageGenerator::writeData(int id, cv::Mat& image, ImageLogReader::Ima
 	std::ofstream of(out, std::ifstream::out | std::ifstream::app);
 
 	if (of.is_open()) {
-		of << id << "," << name << "," << data.normal_file << "," << data.depth_file << "," << data.matrix_file  << "," << data.p.x << "," << data.p.y << "," << data.p.z << "," << data.q.x << "," << data.q.y << "," << data.q.z << "," << data.q.w << "," << roi.x << ',' << roi.y << "," << roi.width << "," << roi.height << "\n";
+		of << id << "," << name << "," << name_d << "," << data.depth_file << "," << data.matrix_file  << "," << data.p.x << "," << data.p.y << "," << data.p.z << "," << data.q.x << "," << data.q.y << "," << data.q.z << "," << data.q.w << "," << roi.x << ',' << roi.y << "," << roi.width << "," << roi.height << "\n";
 	}
 	of.close();
 

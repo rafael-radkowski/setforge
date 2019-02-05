@@ -55,6 +55,9 @@ int main(int argc, char** argv)
 	double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC; 
 
 	cout << "[INFO] - Generated " << num << " images (time = " << elapsed_secs <<  "s)." << endl;
+	cout << "[INFO] - RGB format: CV_8UC3" << endl;
+	cout << "[INFO] - Normal format: CV_16UC3" << endl;
+	cout << "[DONE]" << endl;
 
 	delete generator;
 

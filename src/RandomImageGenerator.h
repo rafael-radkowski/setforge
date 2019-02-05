@@ -10,6 +10,12 @@ Iowa State University
 rafael@iastate.edu
 Jan 25, 2019
 MIT license
+
+-------------------------------------
+last edits:
+Feb 5th, 2019, RR
+- Added a normal map estimator to estimate normal maps from RGB images.
+- Wrote the normal map with a stacked rendering to a file and logged the output.
 */
 
 
@@ -27,6 +33,8 @@ MIT license
 // local
 #include "ReadImages.h" // read a set of random images from a file
 #include "ImageLogReader.h" // load the log file 
+#include "NormalMapSobel.h" // to generate normal maps
+#include "MatHelpers.h"
 
 using namespace std;
 
@@ -81,11 +89,12 @@ private:
     cv::Mat adaptRendering(cv::Mat& image, int& x, int& y, int& width, int& height);
 
     cv::Mat combineImages(cv::Mat image1, cv::Mat image2, int threshold);
+	cv::Mat combineNormals(cv::Mat image1, cv::Mat image2, cv::Mat image_rgb, int threshold);
 
 	bool writeHeader(void);
 
 
-	bool writeData(int id, cv::Mat& image, ImageLogReader::ImageLog& data, cv::Rect& roi);
+	bool writeData(int id, cv::Mat& image_rgb, cv::Mat& image_normal, ImageLogReader::ImageLog& data, cv::Rect& roi);
 
     //----------------------------------------
     // members
