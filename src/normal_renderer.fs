@@ -114,9 +114,6 @@ void main(void)
 		
 	}
 
-	color = pass_Color;      
-
-
-
-	                   
+	color = vec4(pass_Normal, 0.0f);//pass_Color;      
+                   
 }                                                      

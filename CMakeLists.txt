@@ -122,7 +122,6 @@ set(MAIN_SRC
 	./src/BPTReaderWriter.h
 	./src/BPTReaderWriter.cpp
 	./src/BPTTypes.h
-	
 )
 
 
@@ -131,6 +130,8 @@ set(SHADER_SRC
 	./src/display.vs
 	./src/image_renderer.fs
 	./src/image_renderer.vs
+	./src/normal_renderer.fs
+	./src/normal_renderer.vs
 )
 
 
@@ -187,6 +188,9 @@ set(GENERATOR_SRC
 	./src/RandomImageGenerator.cpp
 	./src/Parser.h
 	./src/Parser.cpp
+	./src/NormalMapSobel.h
+	./src/NormalMapSobel.cpp
+	./src/MatHelpers.h
 )
 
 source_group(MAIN FILES ${MAIN_SRC})

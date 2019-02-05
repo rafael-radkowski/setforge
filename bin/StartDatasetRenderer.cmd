@@ -1,1 +1,1 @@
-DatasetRenderer.exe ../data/stanford_bunny_02_rot.obj -o output  -img_w 1280 -img_h 1024 -m POLY -sub 2  -rad 1.3 -verbose
+DatasetRenderer.exe ../data/stanford_bunny_02_rot.obj -o output_4  -img_w 1280 -img_h 1024 -m POLY -sub 4  -rad 1.3 -verbose
