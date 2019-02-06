@@ -5,10 +5,12 @@ This file prepares a pickle dataset using the results the program ImageGen produ
 This file processes RGB data only.
 
 The pickle contains a dict with the following labels:
-    Xtr - the training data set, rgb images of shape (num_images, width, height, channels)
+    Xtr - the training data set, rgb images of shape (num_images, width, height, channels = 3), uint8 [0,255]
+    Xtr_norm - the training data set, normal maps images of shape (num_images, width, height, channels = 3). Values are stored of type uint16 [0,1]
     Ytr_pose - the training poses of each object stored as (num_images, x, y, z, qx, qy, qz, qw)
     Ytr_roi - the training region of interest for each object stored as (num_images, rx, ry, dx, dy)
-    Xte - the test data set, rgb images of shape (num_images, width, height, channels)
+    Xte - the test data set, rgb images of shape (num_images, width, height, channels = 3)
+    Xte_norm - the test data set, normal map images of shape (num_images, width, height, channels = 3). Values are stored of type uint16 [0,1]
     Yte_pose - the test poses of each object stored as (num_images, x, y, z, qx, qy, qz, qw)
     Yte_roi - the test region of interest for each object stored as (num_images, rx, ry, dx, dy)
 
@@ -147,9 +149,10 @@ class Image2Pickle:
 
 
         # prepare the training  data set
-        Xtr, Ytr_pose, Ytr_roi = self.__prepare_data(self.train_data, working_directory )
+        Xtr, Xtr_norm, Ytr_pose, Ytr_roi = self.__prepare_data(self.train_data, working_directory )
         all_data = dict()
         all_data["Xtr"] = Xtr
+        all_data["Xtr_norm"] = Xtr_norm
         all_data["Ytr_pose"] = Ytr_pose
         all_data["Ytr_roi"] = Ytr_roi
 
@@ -160,12 +163,13 @@ class Image2Pickle:
         all_data.clear()
 
         # prepare the test dataset
-        Xte, Yte_pose, Yte_roi = self.__prepare_data(self.test_data, working_directory)
+        Xte, Xte_norm, Yte_pose, Yte_roi = self.__prepare_data(self.test_data, working_directory)
 
 
         pickle_in = open(dst_file, "rb")
         mydata = pickle.load(pickle_in)
         mydata["Xte"] = Xte
+        mydata["Xte_norm"] = Xte_norm
         mydata["Yte_pose"] = Yte_pose
         mydata["Yte_roi"] = Yte_roi
 
@@ -217,24 +221,28 @@ class Image2Pickle:
 
         for each in data_tr:
             path_rgb = working_directory + self.__checkFilename(each['rgb_file'])
-           # path_norm = working_directory + self.__checkFilename(each['normals_file'])
+            path_norm = working_directory + self.__checkFilename(each['normals_file'])
            # path_depth = working_directory + self.__checkFilename(each['depth_file'])
 
             # read the images
             rgb = cv2.imread(path_rgb)
-            #normals = cv2.imread(path_norm, cv2.IMREAD_COLOR | cv2.IMREAD_ANYDEPTH)  # uint16
+            normals = cv2.imread(path_norm, cv2.IMREAD_COLOR | cv2.IMREAD_ANYDEPTH)  # uint16
             #depth = cv2.imread(path_depth, cv2.IMREAD_GRAYSCALE | cv2.IMREAD_ANYDEPTH)  # uint16
 
             # resize the images
             resized_rgb = cv2.resize(rgb, (self.dst_height, self.dst_width))
-           # resized_normals = cv2.resize(normals, (self.dst_height, self.dst_width))
+            resized_normals = cv2.resize(normals, (self.dst_height, self.dst_width))
             #resized_depth = cv2.resize(depth, (self.dst_height, self.dst_width))
+
+            # change normal vector datatype
+            # Do not do that. The file becomes too big
+            # resized_normals_f = resized_normals.astype('float') / 65534.0
 
             # reshape them
             (h, w, c) = resized_rgb.shape
             (oh, ow, oc) = rgb.shape
             resized_rgb = resized_rgb.reshape([1, h, w, c])
-            #resized_normals = resized_normals.reshape([1, h, w, c])
+            resized_normals = resized_normals.reshape([1, h, w, c])
             #resized_depth = resized_depth.reshape([1, h, w, 1])
 
             #rgb = cv2.rectangle(rgb, (int(each["rx"]), int(each["ry"])), (int(each["rx"] + each["dx"]), int(each["ry"] + each["dy"])), (0, 255, 0), 2)
@@ -252,13 +260,13 @@ class Image2Pickle:
 
             if len(rgb_volume) == 0:
                 rgb_volume = resized_rgb
-               # normal_volume = resized_normals
+                normal_volume = resized_normals
                # depth_volume = resized_depth
                 pose_results = r0
                 roi_results = r1
             else:
                 rgb_volume = np.concatenate((rgb_volume, resized_rgb), axis=0)
-               # normal_volume = np.concatenate((self.normal_volume, resized_normals), axis=0)
+                normal_volume = np.concatenate((normal_volume, resized_normals), axis=0)
                # depth_volume = np.concatenate((self.depth_volume, resized_depth), axis=0)
                 pose_results =  np.concatenate((pose_results, r0), axis=0)
                 roi_results = np.concatenate((roi_results, r1), axis=0)
@@ -272,6 +280,7 @@ class Image2Pickle:
 
                     temp = dict()
                     temp["X"] = rgb_volume
+                    temp["X_norm"] = normal_volume
                     temp["Y_pose"] = pose_results
                     temp["y_roi"] = roi_results
 
@@ -292,6 +301,7 @@ class Image2Pickle:
 
         # concatenate all temp pickle files
         rgb_volume = []
+        normal_volume = []
         pose_results = []
         roi_results = []
         for i in range(temp_count):
@@ -300,10 +310,12 @@ class Image2Pickle:
             data = pickle.load(pickle_in)
             if len(rgb_volume) == 0:
                 rgb_volume = data["X"]
+                normal_volume = data["X_norm"]
                 pose_results = data["Y_pose"]
                 roi_results = data["y_roi"]
             else:
                 rgb_volume = np.concatenate((rgb_volume, data["X"]), axis=0)
+                normal_volume = np.concatenate((normal_volume, data["X_norm"]), axis=0)
                 pose_results = np.concatenate((pose_results, data["Y_pose"]), axis=0)
                 roi_results = np.concatenate((roi_results, data["y_roi"]), axis=0)
             pickle_in.close()
@@ -317,10 +329,11 @@ class Image2Pickle:
         print("", end="\n")
         print("[INFO] - Done processing")
         print("[INFO] - RGB volume shape: ", rgb_volume.shape)
+        print("[INFO] - Normals volume shape: ", normal_volume.shape)
         print("[INFO] - Pose results shape: ", pose_results.shape)
         print("[INFO] - RoI results shape: ", roi_results.shape)
 
-        return rgb_volume, pose_results, roi_results
+        return rgb_volume, normal_volume, pose_results, roi_results
 
     def __checkFilename(self, path):
         """
