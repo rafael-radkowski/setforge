@@ -11,7 +11,7 @@ Allows one to render RGB images, normal maps, and depth images from 3D models.
 The 3D model is automatically rotated using a polyhedron to control the angle.
 A documentation can be found on Google Docs (ongoing work): [DatasetRenderer Introduction](https://docs.google.com/document/d/1aDyw3eXaGTcLeBlfpghiZg230qUybzcgZsdz7eNEcqg/edit?usp=sharing)
 
-![Figure 1: a) a RGB image (RGB 8bit), b) a normal map image (xyz short, 16 bit), c) and a depth map image (depth, short 16 bit).](https://github.com/rafael-radkowski/DNNHelpers/tree/master/doc/images/Dataset_renderer_result.png)
+![Figure 1: a) a RGB image (RGB 8bit), b) a normal map image (xyz short, 16 bit), c) and a depth map image (depth, short 16 bit).](https://github.com/rafael-radkowski/DNNHelpers/blob/master/doc/images/Dataset_renderer_result.png)
 Figure 1: a) a RGB image (RGB 8bit), b) a normal map image (xyz short, 16 bit), c) and a depth map image (depth, short 16 bit).
 
 ### Prerequisites
@@ -40,7 +40,7 @@ Documentation can be found on Google Docs (currently incomplete)
 
 
 
-![Figure 2: Left, a rendered Stanford bunny appears on top of a random background image. Right: The tool estimates normal vectors from the RGB image and renders the Stanford bunny normals on top of this normal map.](https://github.com/rafael-radkowski/DNNHelpers/tree/master/doc/images/ImageGen_result.png)  
+![Figure 2: Left, a rendered Stanford bunny appears on top of a random background image. Right: The tool estimates normal vectors from the RGB image and renders the Stanford bunny normals on top of this normal map.](https://github.com/rafael-radkowski/DNNHelpers/blob/master/doc/images/ImageGen_result.png)  
 ]Figure 2: Left, a rendered Stanford bunny appears on top of a random background image. Right: The tool estimates normal vectors from the RGB image and renders the Stanford bunny normals on top of this normal map.
 
 
