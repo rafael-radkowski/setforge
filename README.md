@@ -43,9 +43,10 @@ Figure 1: a) a RGB image (RGB 8bit), b) a normal map image (xyz short, 16 bit), 
 ```
 See help ``` DatasetRenderer.exe  -h  ``` or the manual for further instructions.
 
-Note that the software has two essential options, which one can control via the -m option: ```-m POLY``` and ```-m POSE```
-The first () one keeps the 3D model at its centroid. The camera position changes per (*POLY*) rendering and the number of images depends on the polyhedron level (```-sub``` ).
-The option *POSE* also generates a random position for the 3D model. The number of images to be generated can be set with ```-num```. The position limits can also be set, see the manual or use ```-h``` for instructions.
+Note that the software has two essential options, which one can control via the -m option: ```-m POLY``` and ```-m POSE```  
+The first option (```POLY```) keeps the 3D model at its centroid. Only the camera position changes per rendering. Thus, the 3D model is rendered from different orientations only. The number of images to generate depends on the polyhedron level (```-sub``` ).  
+The option ```POSE``` also generates a random orientation of the 3D model. The number of images to be generated can be set with ```-num```. The position limits can be set via command line options, see the manual or use ```-h``` for instructions. Additinally, this mode place the 3D model at a random position in front of the camera. 
+
 
 ![Figure 2: Option -m POSE generates a random pose for each object. ).](https://github.com/rafael-radkowski/DNNHelpers/blob/master/doc/images/pose_renderer_result.png)
 Figure 2: Option -m POSE generates a random pose for each object.
