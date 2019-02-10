@@ -26,3 +26,4 @@ data/
 ImageGen.dir/
 TemplateMatching/TemplateMatchingTest.dir/
 python_src/test.py
+/doc/.DS_Store
