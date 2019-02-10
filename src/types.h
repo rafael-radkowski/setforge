@@ -16,7 +16,8 @@ typedef enum _CameraModel
 	USER,
 	SPHERE,
 	POLY,
-	TREE
+	TREE,
+	POSE
 
 }CameraModel;
 
@@ -35,6 +36,9 @@ inline CameraModel CameraModelEnum(std::string m)
 	else if (m.compare("TREE") == 0) {
 		return TREE;
 	}
+	else if (m.compare("POSE") == 0) {
+		return POSE;
+	}
 }
 
 inline string  CameraModelString(CameraModel m)
@@ -50,6 +54,9 @@ inline string  CameraModelString(CameraModel m)
 	}
 	else if (m == TREE) {
 		return "TREE";
+	}
+	else if (m == POSE) {
+		return "POSE";
 	}
 }
 

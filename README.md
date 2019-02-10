@@ -18,11 +18,11 @@ start training.
 ### Prerequisites
 All code runs (tested) on Windows 10, Version 1803.
 It requires the following 3rd party tools:
- * [OpenCV v3.4.5] (https://opencv.org)
- * [Eigen3 v3.3.7] (http://eigen.tuxfamily.org)
- * [GLEW v2.1.0] (http://glew.sourceforge.net)
- * [GLFW v3.2.1] (https://www.glfw.org)
- * [glm, v0.9.9.3] (https://glm.g-truc.net/0.9.9/index.html)
+ * [OpenCV v3.4.5](https://opencv.org)
+ * [Eigen3 v3.3.7](http://eigen.tuxfamily.org)
+ * [GLEW v2.1.0](http://glew.sourceforge.net)
+ * [GLFW v3.2.1](https://www.glfw.org)
+ * [glm, v0.9.9.3](https://glm.g-truc.net/0.9.9/index.html)
 
  The code was prepared with Visual Studio 2017.
 
@@ -43,12 +43,18 @@ Figure 1: a) a RGB image (RGB 8bit), b) a normal map image (xyz short, 16 bit), 
 ```
 See help ``` DatasetRenderer.exe  -h  ``` or the manual for further instructions.
 
+Note that the software has two essential options, which one can control via the -m option: ```-m POLY``` and ```-m POSE```
+The first () one keeps the 3D model at its centroid. The camera position changes per (*POLY*) rendering and the number of images depends on the polyhedron level (```-sub``` ).
+The option *POSE* also generates a random position for the 3D model. The number of images to be generated can be set with ```-num```. The position limits can also be set, see the manual or use ```-h``` for instructions.
+
+![Figure 2: Option -m POSE generates a random pose for each object. ).](https://github.com/rafael-radkowski/DNNHelpers/blob/master/doc/images/pose_renderer_result.png)
+Figure 2: Option -m POSE generates a random pose for each object.
+
 
 ## ImageGen
 ImageGen generates training data by selecting random background images, e.g. from ImageNet,
 and by combining these images with a rendering that DatasetRenderer generated.
-Documentation can be found on Google Docs (currently incomplete)  
-[ImageGen Documentation](https://docs.google.com/document/d/11cj3LnpoDvg_DU1jRfriQeV9HwE6V29O1h4cRDKk1tA/edit?usp=sharing)
+Documentation can be found on Google Docs (currently incomplete)  [ImageGen Documentation](https://docs.google.com/document/d/11cj3LnpoDvg_DU1jRfriQeV9HwE6V29O1h4cRDKk1tA/edit?usp=sharing)
 
 Features:
  * Selects images by random.
@@ -58,8 +64,8 @@ Features:
  * Writes a log file.
 
 
-![Figure 2: Left, a rendered Stanford bunny appears on top of a random background image. Right: The tool estimates normal vectors from the RGB image and renders the Stanford bunny normals on top of this normal map.](https://github.com/rafael-radkowski/DNNHelpers/blob/master/doc/images/ImageGen_result.png)  
-Figure 2: Left, a rendered Stanford bunny appears on top of a random background image. Right: The tool estimates normal vectors from the RGB image and renders the Stanford bunny normals on top of this normal map.
+![Figure 3: Left, a rendered Stanford bunny appears on top of a random background image. Right: The tool estimates normal vectors from the RGB image and renders the Stanford bunny normals on top of this normal map.](https://github.com/rafael-radkowski/DNNHelpers/blob/master/doc/images/ImageGen_result.png)  
+Figure 3: Left, a rendered Stanford bunny appears on top of a random background image. Right: The tool estimates normal vectors from the RGB image and renders the Stanford bunny normals on top of this normal map.
 
 ### Usage  
 The software uses command line options to control its features. Example:

@@ -122,6 +122,8 @@ set(MAIN_SRC
 	./src/BPTReaderWriter.h
 	./src/BPTReaderWriter.cpp
 	./src/BPTTypes.h
+	./src/RandomPoseViewRenderer.h
+	./src/RandomPoseViewRenderer.cpp
 )
 
 

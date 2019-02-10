@@ -22,7 +22,7 @@ ModelRenderer::ModelRenderer(int window_width, int window_height, int image_widt
 
 	_verbose = false;
 
-	_projectionMatrix = glm::perspective(1.2f, (float)800 / (float)600, 0.1f, 10.f);
+	_projectionMatrix = glm::perspective(1.2f, (float)800 / (float)600, 0.1f, 100.f);
 	_viewMatrix = glm::lookAt(glm::vec3(0.0f, 0.0, 1.3f), glm::vec3(0.0f, 0.0f, 00.f), glm::vec3(0.0f, 1.0f, 0.0f));
 	_modelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f));  //glm::rotate(3.1415f, glm::vec3(0.0f, 1.0f, 0.0f)) *  glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
 

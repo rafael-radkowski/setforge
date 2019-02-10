@@ -90,6 +90,32 @@ Arguments ArgParser::Parse(int& argc, char** argv)
 			if (argc >= pos) opt.bpt_levels = atof(string(argv[pos + 1]).c_str());
 			else ParamError(c_arg);
 		}
+		else if(c_arg.compare("-num") == 0){ // number of images to generate
+			if (argc >= pos) opt.num_images =atoi(  string(argv[pos+1]).c_str() );
+			else ParamError(c_arg);
+		}
+		else if(c_arg.compare("-limx") == 0){ // x-axis position limit
+			if (argc >= pos) {
+				opt.lim_nx = -atof(string(argv[pos + 1]).c_str());
+				opt.lim_px = atof(string(argv[pos + 1]).c_str());
+			}
+			else ParamError(c_arg);
+		}
+		else if(c_arg.compare("-limy") == 0){ // y-axis (up axis) position limit
+			if (argc >= pos) {
+				opt.lim_ny = -atof(string(argv[pos + 1]).c_str());
+				opt.lim_py = atof(string(argv[pos + 1]).c_str());
+			}
+			else ParamError(c_arg);
+		}
+		else if(c_arg.compare("-lim_near") == 0){ // z-axis  near position limit 
+			if (argc >= pos) opt.lim_pz = -atof(  string(argv[pos+1]).c_str() );
+			else ParamError(c_arg);
+		}
+		else if(c_arg.compare("-lim_far") == 0){ // z-axis  far position limit 
+			if (argc >= pos) opt.lim_nz = -atof(  string(argv[pos+1]).c_str() );
+			else ParamError(c_arg);
+		}
 		else if(c_arg.compare("-help") == 0 || c_arg.compare("-h") == 0){ // help
 			Help();
 		}
@@ -128,10 +154,15 @@ void ArgParser::Help(void)
 	cout << "\t-seg [param] \t- for the camera path SPHERE model, set the number of segments (integer)." << endl;
 	cout << "\t-rows [param] \t-for the camera path SPHERE model, set the number of rows (integer)" << endl;
 	cout << "\t-dist [param] \t-for the camera path SPHERE model, set the sphere radius (float)" << endl;
-	cout << "\t-sub [param] \t-for the camera path POLY model, set the number of subdivisions for the polyheder (int)" << endl;
+	cout << "\t-sub [param] \t-for the camera path model POLY and POSE, set the number of subdivisions for the polyheder (int)" << endl;
+	cout << "\t-num [param] \t- for camera path control POSE, set the number of images to generate (int)" << endl;
+	cout << "\t-limx [param] \t- for camera path control POSE, set the x-axis limit for the random position (float)" << endl;
+	cout << "\t-limy [param] \t- for camera path control POSE, set the y-axis limit for the random position (float)" << endl;
+	cout << "\t-lim_near [param] \t- for camera path control POSE, set the near z-axis limit (positive along the camera axis) for the random position (float)" << endl;
+	cout << "\t-lim_far [param] \t- for camera path control POSE, set the far z-axis limit (postive along the camera axis) for the random position (float)" << endl;
 	cout << "\t-level [param] \t-for the camera path TREE, the number of tree levels for the Balanced Pose Tree (int)" << endl;
-	cout << "\t-verbose [param] \t- displays additional information." << endl;
-	cout << "\t-help [param] \t- displays this help menu" << endl;
+	cout << "\t-verbose \t- displays additional information." << endl;
+	cout << "\t-help \t- displays this help menu" << endl;
 
 	cout << "\nExample: DatasetRenderer ../data/stanford_bunny_02_rot.obj -m POLY -img_w 1280 -img_h 1024 -wnd_w 1280 - wnd_h 1024 -o output -sub=1 -rad 1.3\n" << endl;
 }
@@ -161,6 +192,14 @@ void ArgParser::Display(void)
 	if (opt.cam == TREE) {
 		std::cout << "BPT level: " << opt.bpt_levels << endl;
 		std::cout << "Polyheder radius: " << opt.camera_distance << endl;
+	}
+	if (opt.cam == POSE) {
+		std::cout << "Number of images to generate: " << opt.num_images << endl;
+		std::cout << "Polyheder subdivisions: " << opt.subdivisions << endl;
+		std::cout << "Limit x [" << opt.lim_nx << ", " << opt.lim_px << "]." << endl;
+		std::cout << "Limit y [" << opt.lim_ny << ", " << opt.lim_py << "]." << endl;
+		std::cout << "Limit z [" << opt.lim_nz << ", " << opt.lim_pz << "]; values inverted." << endl;
+		
 	}
 	std::cout << "Image width:\t" << opt.image_width << endl;
 	std::cout << "Image height:\t" << opt.image_height << endl;

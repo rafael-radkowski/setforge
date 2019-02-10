@@ -45,6 +45,15 @@ typedef struct _Arguments
 	bool		verbose;
 	bool		valid;
 
+	// for random image generator
+	int		num_images;
+	float	lim_px;
+	float	lim_nx;
+	float	lim_py;
+	float	lim_ny;
+	float	lim_pz;
+	float	lim_nz;
+
 	_Arguments()
 	{
 		cam = POLY;
@@ -65,6 +74,14 @@ typedef struct _Arguments
 
 		subdivisions = 0;
 		bpt_levels = 0;
+
+		num_images = 6000;
+		lim_px = 1.0;
+		lim_nx = -1.0;
+		lim_py = 1.0;
+		lim_ny = -1.0;
+		lim_pz = -1.5;
+		lim_nz = -3.0;
 
 		verbose = false;
 		valid = false;

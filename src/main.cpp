@@ -2,6 +2,8 @@
 
 //../data/stanford_bunny_02_rot.obj  -img_w 1280 -img_h 1024 -m SPHERE  -seg 5 -rows 5 -rad 1.3 -verbose
 // ../data/stanford_bunny_02_rot.obj  -img_w 1280 -img_h 1024 -m POLY -sub 0  -rad 1.3 -verbose
+// ../data/stanford_bunny_02_rot.obj -o debug_out -img_w 1280 -img_h 1024 -m POLY -sub 2 -level 2  -rad 1.3  -verbose
+// ../data/stanford_bunny_02_rot.obj -o debug_out -img_w 1280 -img_h 1024 -m POSE -num 1000 -sub 4 -lim_near 1.0 -lim_far 3.0 -verbose
 
 Rafael Radkowski
 Iowa State University
@@ -39,6 +41,7 @@ All copyrights reserved
 #include "ModelRenderer.h"
 #include "SphereCoordRenderer.h"
 #include "PolyhedronViewRenderer.h"
+#include "RandomPoseViewRenderer.h"
 #include "BalancedPoseTree.h"
 #include "ArgParser.h"
 #include "types.h"
@@ -70,10 +73,11 @@ GLfloat clear_depth[] = {1.0f, 1.0f, 1.0f, 1.0f};
 //	Models
 
 
-
+arlab::CameraModel				cam_control = arlab::CameraModel::USER;
 SphereCoordRenderer*				sphere_renderer = NULL;
 PolyhedronViewRenderer*			poly_renderer = NULL;
 BalancedPoseTree*				tree_renderer = NULL;
+RandomPoseViewRenderer*			pose_renderer = NULL;
 
 using namespace std;
 using namespace cs557;
@@ -98,7 +102,7 @@ void InitRenderer(Arguments& opt)
 {
      //---------------------------------------------------------
     // Create models
-
+	cam_control = opt.cam;
 	if (opt.cam == SPHERE) {
 		sphere_renderer = new SphereCoordRenderer(opt.windows_width, opt.window_height, opt.image_width, opt.image_height);
 		sphere_renderer->setVerbose(opt.verbose); // set first to get all the output info
@@ -124,7 +128,14 @@ void InitRenderer(Arguments& opt)
 		tree_renderer->setOutputPath(opt.output_path);
 		tree_renderer->create(opt.camera_distance, opt.bpt_levels);
 	}
-
+	else if (opt.cam == POSE)
+	{
+		pose_renderer = new RandomPoseViewRenderer(opt.windows_width, opt.window_height, opt.image_width, opt.image_height);
+		pose_renderer->setVerbose(opt.verbose); // set first to get all the output info
+		pose_renderer->setModel(opt.model_path_and_file);
+		pose_renderer->setOutputPath(opt.output_path);
+		pose_renderer->create(opt.num_images, opt.subdivisions);
+	}
 }
 
 
@@ -149,14 +160,27 @@ void DrawLoop(void)
         
 
 		bool ret = false;
-		if(sphere_renderer != NULL)
-			ret = sphere_renderer->draw_sequence();
-
-		if (poly_renderer != NULL)
-			ret = poly_renderer->draw_sequence();
-
-		if (tree_renderer != NULL)
-			ret = tree_renderer->draw_sequence();
+		switch (cam_control)
+		{
+		case USER:
+			break;
+		case SPHERE:
+			if(sphere_renderer != NULL)
+				ret = sphere_renderer->draw_sequence();
+			break;
+		case	 POLY:
+			if (poly_renderer != NULL)
+				ret = poly_renderer->draw_sequence();
+			break;
+		case TREE:
+			if (tree_renderer != NULL)
+				ret = tree_renderer->draw_sequence();
+			break;
+		case POSE:
+			if (pose_renderer != NULL)
+				ret = pose_renderer->draw_sequence();
+			break;
+		}
 
 
         // Swap the buffers so that what we drew will appear on the screen.
@@ -174,12 +198,14 @@ void DrawLoop(void)
 	int num = 0;
 	if(sphere_renderer != NULL)
 		num = sphere_renderer->size();
-	if (poly_renderer != NULL)
+	else if (poly_renderer != NULL)
 		num = poly_renderer->size();
-	if (tree_renderer != NULL)
+	else if (tree_renderer != NULL)
 		num = tree_renderer->size();
+	else if (pose_renderer != NULL)
+		num = pose_renderer->size();
 
-	cout << "[INFO] - Generated " << num << " images (time = " << elapsed_secs <<  "s)." << endl;
+	cout << "\n[INFO] - Generated " << num << " images (time = " << elapsed_secs <<  "s)." << endl;
 }
 
 
@@ -188,8 +214,9 @@ void DrawLoop(void)
 
 
 int main(int argc, char** argv) 
-{
-	cout << "ImageFromModel" << endl;
+{	
+	cout << "\n--------------------------------------" << endl;
+	cout << "Dataset Renderer" << endl;
 	cout << "Create RGB color maps, depth images (float), and normal maps (float) from a 3D model \n" << endl;
 	cout << "Rafael Radkowski" << endl;
 	cout << "Iowa State University" << endl;
