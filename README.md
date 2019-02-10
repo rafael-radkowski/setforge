@@ -40,7 +40,7 @@ Documentation can be found on Google Docs (currently incomplete)
 
 
 
-![Figure 2: Left, a rendered Stanford bunny appears on top of a random background image. Right: The tool estimates normal vectors from the RGB image and renders the Stanford bunny normals on top of this normal map.](https://github.com/rafael-radkowski/DNNHelpers/blob/master/doc/images/ImageGen_result.png | width=300)  
+![Figure 2: Left, a rendered Stanford bunny appears on top of a random background image. Right: The tool estimates normal vectors from the RGB image and renders the Stanford bunny normals on top of this normal map.](https://github.com/rafael-radkowski/DNNHelpers/blob/master/doc/images/ImageGen_result.png)  
 ]Figure 2: Left, a rendered Stanford bunny appears on top of a random background image. Right: The tool estimates normal vectors from the RGB image and renders the Stanford bunny normals on top of this normal map.
 
 
