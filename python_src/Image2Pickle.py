@@ -300,26 +300,33 @@ class Image2Pickle:
             #cv2.waitKey(0)
 
         # concatenate all temp pickle files
-        rgb_volume = []
-        normal_volume = []
-        pose_results = []
-        roi_results = []
-        for i in range(temp_count):
-            path = "temp_" + str(i)
-            pickle_in = open(path, "rb")
-            data = pickle.load(pickle_in)
-            if len(rgb_volume) == 0:
-                rgb_volume = data["X"]
-                normal_volume = data["X_norm"]
-                pose_results = data["Y_pose"]
-                roi_results = data["y_roi"]
-            else:
-                rgb_volume = np.concatenate((rgb_volume, data["X"]), axis=0)
-                normal_volume = np.concatenate((normal_volume, data["X_norm"]), axis=0)
-                pose_results = np.concatenate((pose_results, data["Y_pose"]), axis=0)
-                roi_results = np.concatenate((roi_results, data["y_roi"]), axis=0)
-            pickle_in.close()
-            data = []
+        if temp_count > 0:
+            rgb_volume = []
+            normal_volume = []
+            pose_results = []
+            roi_results = []
+            for i in range(temp_count):
+                path = "temp_" + str(i)
+                pickle_in = open(path, "rb")
+                data = pickle.load(pickle_in)
+                if len(rgb_volume) == 0:
+                    rgb_volume = np.array(data["X"])
+                    normal_volume = np.array(data["X_norm"])
+                    pose_results = np.array(data["Y_pose"])
+                    roi_results = np.array(data["y_roi"])
+                else:
+                    rgb_volume = np.concatenate((rgb_volume, data["X"]), axis=0)
+                    normal_volume = np.concatenate((normal_volume, data["X_norm"]), axis=0)
+                    pose_results = np.concatenate((pose_results, data["Y_pose"]), axis=0)
+                    roi_results = np.concatenate((roi_results, data["y_roi"]), axis=0)
+                pickle_in.close()
+                data = []
+        else:
+            rgb_volume = np.array(rgb_volume)
+            normal_volume = np.array(normal_volume)
+            pose_results = np.array(pose_results)
+            roi_results = np.array(roi_results)
+
 
         # removing temporary files
         for i in range(temp_count):

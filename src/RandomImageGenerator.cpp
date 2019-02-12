@@ -61,35 +61,56 @@ void RandomImageGenerator::setOutputPath(string path)
 
 
 /*
-Start processing
+The function distinguises the "combine" mode and the "rendering only" mode using the 
+image path string (setImagePath(...)). If the string is empty, the tool assues that 
+only foreground renderings ought to be processed.
+@param num_images - integer with the number of images to generate. 
+@param with_background -  if true, the process will combine given background images randomly with foreground renderings.
 @return - number of stored images
 */
-int RandomImageGenerator::process(int num_images)
+int RandomImageGenerator::process(int num_images) {
+
+	string path = _image_path[0];
+	std::transform(path.begin(), path.end(), path.begin(), ::tolower);
+
+	if ( path.compare("none") != 0) {
+		return process_combine(num_images);
+	}
+	else {
+		process_rendering();
+	}
+
+}
+/*
+Combine foreground images with rendering 
+@param num_images - integer with the number of images to generate. 
+@return - number of stored images
+*/
+int RandomImageGenerator::process_combine(int num_images)
 {
     // read the background images
     image_filenames.clear();
-    image_filenames = ReadImages::GetList(_image_path, _image_type);
+	image_filenames = ReadImages::GetList(_image_path, _image_type);
 
-    if(image_filenames.size() == 0){
-        cout << "[ERROR] - no images loaded" << endl;
-        return 0;
-    }
-    else{
-        cout << "[INFO] - Found " << image_filenames.size() << " images." << endl;
-    }
+	if (image_filenames.size() == 0) {
+		cout << "[ERROR] - no images loaded" << endl;
+		return 0;
+	}
+	else {
+		cout << "[INFO] - Found " << image_filenames.size() << " images." << endl;
+	}
 
-    // read the rendered images
-    rendered_files.clear();
+	// read the rendered images
+	rendered_files.clear();
 	ImageLogReader::Read(_render_path, &rendered_files);
 
-     if(rendered_files.size() == 0){
-        cout << "[ERROR] - no rendered images loaded" << endl;
-        return 0;
-    }
-    else{
-        cout << "[INFO] - Found " << rendered_files.size() << " images." << endl;
-    }
-
+	if (rendered_files.size() == 0) {
+		cout << "[ERROR] - no rendered images loaded" << endl;
+		return 0;
+	}
+	else {
+		cout << "[INFO] - Found " << rendered_files.size() << " images." << endl;
+	}
  
     // generate random numbers
     int N = image_filenames.size();
@@ -122,6 +143,9 @@ int RandomImageGenerator::process(int num_images)
         if(r < int(_image_height / 2) || c < int(_image_widht / 2) ) continue; // image too tiny
 
         cv::Mat img_resized = adaptImage(img);
+
+		//----------------------------------------------
+		// process renderer images
 
         cv::Mat rendering = cv::imread(path1);
 
@@ -178,6 +202,87 @@ int RandomImageGenerator::process(int num_images)
     return i;
 }
 
+
+/*
+Combine foreground background images
+@param num_images - integer with the number of images to generate. 
+@return - number of stored images
+*/
+int RandomImageGenerator::process_rendering(void)
+{
+	// read the rendered images
+	rendered_files.clear();
+	ImageLogReader::Read(_render_path, &rendered_files);
+
+	if (rendered_files.size() == 0) {
+		cout << "[ERROR] - no rendered images loaded" << endl;
+		return 0;
+	}
+	else {
+		cout << "[INFO] - Found " << rendered_files.size() << " images." << endl;
+	}
+ 
+    // generate random numbers
+    int M = rendered_files.size();
+	int num_images = M;
+
+    //std::default_random_engine generator;
+    std::random_device generator;
+    std::uniform_int_distribution<int> distribution_render(0,M-1);
+
+    int backup_i = 0; // prevents deadlocks
+    int i=0;
+
+
+	 while(i<num_images){
+        backup_i++;
+        if(backup_i > num_images*3) break;
+
+        int dice_rendering = distribution_render(generator);
+        string path1 = rendered_files[dice_rendering].rgb_file;
+		string path2 = rendered_files[dice_rendering].normal_file;
+
+		//----------------------------------------------
+		// process renderer images
+        cv::Mat rendering = cv::imread(path1);
+        int roi_x, roi_y, roi_width, roi_height;
+        cv::Mat ready_rgb = adaptRendering(rendering, roi_x, roi_y, roi_width, roi_height);
+		cv::Mat output = ready_rgb.clone();
+		cv::rectangle( output, cv::Point(roi_x, roi_y), cv::Point(roi_x + roi_width, roi_y + roi_height), cv::Scalar(255,0,0));
+		
+
+		//-----------------------------------------------------------------------------
+		// normal processing
+		// process normal image
+		cv::Mat rendering_normals = cv::imread(path2, cv::IMREAD_ANYDEPTH | cv::IMREAD_UNCHANGED); // 16UC1
+		cv::Mat rendering_normals_32F;
+		rendering_normals.convertTo(rendering_normals_32F, CV_32FC3, 1.0/65534.0);
+
+        int r_n = rendering_normals.rows;
+        int c_n = rendering_normals.cols;
+		cv::Mat rendered_normals2;
+		cv::resize(rendering_normals_32F, rendered_normals2, cv::Size(_rendering_height, _rendering_widht ));
+		cv::Mat ready_normals = rendered_normals2;
+		
+		//-----------------------------------------------------------------------------
+		// write data to file
+
+
+		writeData(i, ready_rgb, ready_normals, rendered_files[dice_rendering], cv::Rect(roi_x, roi_y, roi_width, roi_height));
+
+        cv::imshow("out",output );
+		cv::Mat img_normals_out;
+		//cv::cvtColor(img_normals, img_normals_out, cv::COLOR_RGB2BGR);
+		cv::imshow("out_normals", ready_normals );
+        cv::waitKey(1);
+		//Sleep(0.015);
+        i++;
+    }
+
+    cout << "[INFO] - Created " << i << " images." << endl;
+
+    return i;
+}
 
 
  /*

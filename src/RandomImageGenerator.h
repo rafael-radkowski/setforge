@@ -72,14 +72,34 @@ public:
     void setOutputPath(string path);
 
     /*
-    Start processing
+    Start processing.
+	The function distinguises the "combine" mode and the "rendering only" mode using the 
+	image path string (setImagePath(...)). If the string is empty, the tool assues that 
+	only foreground renderings ought to be processed.
     @param num_images - integer with the number of images to generate. 
     @return - number of stored images
     */
     int process(int num_images);
 
 
+
 private:
+
+	/*
+	Combine foreground images with rendering 
+	@param num_images - integer with the number of images to generate. 
+	@return - number of stored images
+	*/
+	int process_combine(int num_images);
+
+
+	/*
+	Combine foreground background images
+	@return - number of stored images
+	*/
+	int process_rendering(void);
+
+
 
     /*
     Adapt the loaded image to geometric constraints. 

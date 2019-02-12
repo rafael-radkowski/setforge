@@ -53,7 +53,7 @@ public:
 			image_width = 512;
 			image_height = 512;
 
-			num_images = 100;
+			num_images = 10000;
 			verbose = false;
 			valid = false;
 		}
