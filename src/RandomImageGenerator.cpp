@@ -137,6 +137,10 @@ int RandomImageGenerator::process_combine(int num_images)
 		string path2 = rendered_files[dice_rendering].normal_file;
 
         cv::Mat img = cv::imread(path0);
+		if(img.rows == 0||img.cols == 0){
+			std::cout << "[ERROR] - Did not find image " << path0 << ". Check the path." << std::endl;
+		}
+
         int r = img.rows;
         int c = img.cols;
         
@@ -148,6 +152,9 @@ int RandomImageGenerator::process_combine(int num_images)
 		// process renderer images
 
         cv::Mat rendering = cv::imread(path1);
+		if(rendering.rows == 0||rendering.cols == 0){
+			std::cout << "[ERROR] - Did not find image " << path1 << ". Check the path." << std::endl;
+		}
 
         int roi_x, roi_y, roi_width, roi_height;
         cv::Mat rendered_image = adaptRendering(rendering, roi_x, roi_y, roi_width, roi_height);
@@ -167,6 +174,9 @@ int RandomImageGenerator::process_combine(int num_images)
 
 		// process normal image
 		cv::Mat rendering_normals = cv::imread(path2, cv::IMREAD_ANYDEPTH | cv::IMREAD_UNCHANGED); // 16UC1
+		if(rendering_normals.rows == 0||rendering_normals.cols == 0){
+			std::cout << "[ERROR] - Did not find normal map " << path2 << ". Check the path." << std::endl;
+		}
 		cv::Mat rendering_normals_32F;
 		rendering_normals.convertTo(rendering_normals_32F, CV_32FC3, 1.0/65534.0);
 
@@ -245,6 +255,9 @@ int RandomImageGenerator::process_rendering(void)
 		//----------------------------------------------
 		// process renderer images
         cv::Mat rendering = cv::imread(path1);
+		if(rendering.rows == 0||rendering.cols == 0){
+			std::cout << "[ERROR] - Did not find image " << path1 << ". Check the path." << std::endl;
+		}
         int roi_x, roi_y, roi_width, roi_height;
         cv::Mat ready_rgb = adaptRendering(rendering, roi_x, roi_y, roi_width, roi_height);
 		cv::Mat output = ready_rgb.clone();
@@ -255,6 +268,9 @@ int RandomImageGenerator::process_rendering(void)
 		// normal processing
 		// process normal image
 		cv::Mat rendering_normals = cv::imread(path2, cv::IMREAD_ANYDEPTH | cv::IMREAD_UNCHANGED); // 16UC1
+		if(rendering_normals.rows == 0||rendering_normals.cols == 0){
+			std::cout << "[ERROR] - Did not find normal map " << path2 << ". Check the path." << std::endl;
+		}
 		cv::Mat rendering_normals_32F;
 		rendering_normals.convertTo(rendering_normals_32F, CV_32FC3, 1.0/65534.0);
 
