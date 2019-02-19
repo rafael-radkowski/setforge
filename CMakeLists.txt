@@ -124,6 +124,8 @@ set(MAIN_SRC
 	./src/BPTTypes.h
 	./src/RandomPoseViewRenderer.h
 	./src/RandomPoseViewRenderer.cpp
+	./src/Model3D.h
+	./src/Model3D.cpp
 )
 
 

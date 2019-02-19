@@ -43,6 +43,7 @@ All copyrights reserved
 #include "PolyhedronViewRenderer.h"
 #include "RandomPoseViewRenderer.h"
 #include "BalancedPoseTree.h"
+#include "Model3D.h"
 #include "ArgParser.h"
 #include "types.h"
 
@@ -78,6 +79,7 @@ SphereCoordRenderer*				sphere_renderer = NULL;
 PolyhedronViewRenderer*			poly_renderer = NULL;
 BalancedPoseTree*				tree_renderer = NULL;
 RandomPoseViewRenderer*			pose_renderer = NULL;
+Model3D*							model_renderer = NULL;
 
 using namespace std;
 using namespace cs557;
@@ -136,6 +138,11 @@ void InitRenderer(Arguments& opt)
 		pose_renderer->setOutputPath(opt.output_path);
 		pose_renderer->create(opt.num_images, opt.subdivisions);
 	}
+	else if (opt.cam == USER)
+	{
+		model_renderer = new Model3D();
+		model_renderer->create(opt.model_path_and_file);
+	}
 }
 
 
@@ -147,6 +154,7 @@ void DrawLoop(void)
 	glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);
 
 	 // Init the view matrix. 
+	viewMatrix = glm::lookAt(glm::vec3(0.0f, 0.0, 1.3f), glm::vec3(0.0f, 0.0f, 00.f), glm::vec3(0.0f, 1.0f, 0.0f));
     cs557::InitControlsViewMatrix(viewMatrix);
 
 	clock_t begin = clock();
@@ -163,6 +171,8 @@ void DrawLoop(void)
 		switch (cam_control)
 		{
 		case USER:
+			if (model_renderer != NULL)
+				model_renderer->draw(cs557::GetCamera().getViewMatrix());
 			break;
 		case SPHERE:
 			if(sphere_renderer != NULL)
@@ -240,6 +250,8 @@ int main(int argc, char** argv)
 	if(sphere_renderer != NULL) delete sphere_renderer;
 	if (poly_renderer != NULL) delete poly_renderer;
 	if (tree_renderer != NULL) delete tree_renderer;
+	if (model_renderer != NULL) delete model_renderer;
+	if (pose_renderer != NULL) delete pose_renderer;
 
 	return 1;
 }
