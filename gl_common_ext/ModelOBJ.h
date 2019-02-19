@@ -19,6 +19,9 @@ Last edit:
 Dec 16, 2018, RR
 	- fixed a bug that skipped severa triangles from being rendeered.
 	- changed the code to process all data. 
+Feb 19, 2019, RR
+	- added material: The obj material from a mat file was not used correctly. 
+		Added a feature to process it per mesh. 
 */
 #pragma once
 
@@ -41,7 +44,7 @@ Dec 16, 2018, RR
 // local
 #include "VertexBuffers.h"			// create vertex buffer object
 #include "ShaderProgram.h"			// create a shader program
-
+#include "CommonTypes.h"  
 
 
 using namespace std;
@@ -88,6 +91,11 @@ namespace cs557
 		int modelMatrixLocation;
 		int projMatrixLocation;
 
+		// indices to render
+		std::vector<int>		start_index;
+		std::vector<int>		length;
+
+		std::vector<cs557::Material>		materials;//material per mesh
 	
 		int _N; // number of vertices
 		int _I; // number indices

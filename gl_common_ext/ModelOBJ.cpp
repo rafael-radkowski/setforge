@@ -71,7 +71,6 @@ void cs557::OBJModel::create(string path_and_filename, int shader_program)
 	std::vector<std::pair<glm::vec3, glm::vec2> > points; // points and texture coordinates
 	std::vector<glm::vec3> normals;
 	std::vector<int> indices;
-
 	
 
 	// create a shader program only if the progrm was not overwritten. 
@@ -92,12 +91,29 @@ void cs557::OBJModel::create(string path_and_filename, int shader_program)
 	objl::Loader loader;
 	loader.LoadFile(path_and_filename);
 
+
+	int current_start_index = 0;
+	start_index.clear();
+	length.clear();
+
+
 	int size = loader.LoadedMeshes.size();
 
 	for(int i=0; i<size; i++)
 	{
 
 		objl::Mesh curMesh = loader.LoadedMeshes[i];
+
+		cs557::Material mat;
+		mat.ambient_mat = glm::vec3(curMesh.MeshMaterial.Ka.X, curMesh.MeshMaterial.Ka.Y, curMesh.MeshMaterial.Ka.Z) ;
+		mat.diffuse_mat = glm::vec3(curMesh.MeshMaterial.Kd.X, curMesh.MeshMaterial.Kd.Y, curMesh.MeshMaterial.Kd.Z) ;
+		mat.specular_mat = glm::vec3(curMesh.MeshMaterial.Ks.X, curMesh.MeshMaterial.Ks.Y, curMesh.MeshMaterial.Ks.Z) ;
+		mat.specular_s = curMesh.MeshMaterial.Ns;
+		mat.specular_int = 0.2;
+		mat.ambient_int = 0.2;
+		mat.diffuse_int = 0.8;
+
+		materials.push_back(mat);
 
 		for (int j = 0; j < curMesh.Vertices.size(); j++)
 		{
@@ -106,11 +122,19 @@ void cs557::OBJModel::create(string path_and_filename, int shader_program)
 			normals.push_back(glm::vec3(curMesh.Vertices[j].Normal.X, curMesh.Vertices[j].Normal.Y, curMesh.Vertices[j].Normal.Z) );
 		}
 		
+		start_index.push_back(current_start_index);
+		length.push_back(curMesh.Indices.size());
 
 		for (int j = 0; j < curMesh.Indices.size(); j++)
 		{
-			indices.push_back(curMesh.Indices[j]);
+			indices.push_back(curMesh.Indices[j] + current_start_index); 
+			//  + current_start_index is requires since the obj loader objl::Loader loader
+			// starts a new index count for each mesh instead of keeping the original indices. 
+			// This code puts all vertices and indices into one vertex buffer and index buffer. 
+			// So the + current_start_index implements the offset jump. 
 		}
+
+		current_start_index += curMesh.Indices.size();
 		//glBindAttribLocation(program, pos_location, "in_Position");
 		//glBindAttribLocation(program, norm_location, "in_Normal");
 		//glBindAttribLocation(program, tex_location, "in_Texture");
@@ -146,9 +170,13 @@ void cs557::OBJModel::draw(glm::mat4 projectionMatrix, glm::mat4 viewMatrix, glm
 	 // Bind the buffer and switch it to an active buffer
 	glBindVertexArray(vaoID[0]);
 
-	// Draw the triangles
- 	glDrawElements(GL_TRIANGLES, _I, GL_UNSIGNED_INT, 0);
-	
+	for (int i = 0; i < start_index.size(); i++) {
+		materials[i].apply(program);
+		glUseProgram(program);
+		// Draw the triangles
+		glDrawElements(GL_TRIANGLES, length[i], GL_UNSIGNED_INT, (GLint*)(sizeof(int)*start_index[i]));
+	}
+	//glDrawElements(GL_TRIANGLES, _I, GL_UNSIGNED_INT, 0);
 
 	// Unbind our Vertex Array Object
 	glBindVertexArray(0);

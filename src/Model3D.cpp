@@ -12,6 +12,7 @@ Model3D::Model3D()
 	_light0.pos = glm::vec3(0.0f, -3.0f, 3.0f);
 	_light0.dir = glm::vec3(0.0f, 0.0f, 0.0f);
 	_light0.k1 = 0.1;
+	_light0.intensity = 1.7;
 	_light0.index = 0;
 	
 	_light1.pos = glm::vec3(0.0f, 3.0f, 3.0f);
@@ -56,7 +57,7 @@ bool Model3D::create(string path_and_file)
 
 
 	_light0.apply(program);
-	_light1.apply(program);
+	//_light1.apply(program);
 	_mat0.apply(program);
 
 

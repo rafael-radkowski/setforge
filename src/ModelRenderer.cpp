@@ -29,6 +29,7 @@ ModelRenderer::ModelRenderer(int window_width, int window_height, int image_widt
 	_light0.pos = glm::vec3(0.0f, -3.0f, 3.0f);
 	_light0.dir = glm::vec3(0.0f, 0.0f, 0.0f);
 	_light0.k1 = 0.1;
+	_light0.intensity = 1.7;
 	_light0.index = 0;
 	
 	_light1.pos = glm::vec3(0.0f, 3.0f, 3.0f);
@@ -85,7 +86,7 @@ bool ModelRenderer::setModel(string path_and_file)
 
 
 	_light0.apply(program);
-	_light1.apply(program);
+	//_light1.apply(program);
 	_mat0.apply(program);
 
 	//-----------------------
@@ -96,7 +97,7 @@ bool ModelRenderer::setModel(string path_and_file)
 	_obj_model_normals->create(path_and_file, program_normals);
 
 	_light0.apply(program_normals);
-	_light1.apply(program_normals);
+	//_light1.apply(program_normals);
 	
 
 	CreatePrerendererScene();

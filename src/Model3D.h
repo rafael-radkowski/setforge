@@ -2,38 +2,27 @@
 /*
 class Model3D
 
-This class renders a 3D model (RGB), a normal map, and a depth map (linear) into an fbo,
-and saves the output into files. 
-Note that the viewmatrix as well as the intrinsic parameters must be set correctly. 
-The scene will not work correctly otherwise. 
-
-The class creates a light source for an object. 
-The light source is attached to the camera, thus, simulates a uniform distributed light. 
-The light is updated in 'setCameraMatrix'
+This class implements a simple model renderer with the sole purpose to show the object in a window.
+It links the shader code with the geometry with a default light source and calls the draw function.
 
 Features:
-- Renders an RGB image of the model into a fbo color attachment (RGB8, CV_8UC3)
-- Renders a normal map of the model into an fbo color attachment as float (GL_RGBA32F_ARB, CV_32FC1)
-- Renders a depth map (linearized) into a fbo depth attachment as float (GL_DEPTH_COMPONENT32, CV_32FC1).
-- Writes the images to files (.png)
+- Loads an obj file and renders it. 
+- Links a shader program to the obj geometry. 
+- Adds a default light source, attaches this light source to the camera (viewmatrix) and points it towards
+	the 3D model
 
 Usage:
-renderer = new ModelRenderer(1280, 1024, 1280, 1024);
-renderer->setVerbose(true); // set first to get all the output info
-renderer->setModel("path to model");
-renderer->setOutputPath("output");
-
-Use 'draw_and_save()' to draw and save the model. 
+renderer = new Model3D();
+renderer->create("path to model");
+ 
 Use 'draw()' to only draw the model. 
 Note that an OpenGL window context must be ready. 
-
-Use 'enable_writer(true/false)' to enable/disable the file writer. 
 
 Rafael Radkowski
 Iowa State University
 rafael@iastate.edu
 +1 (515) 294 7044
-Jan 2019
+Feb 19, 2019
 All copyrights reserved
 --------------------------------------------------------------------------
 last edited:
