@@ -131,6 +131,7 @@ class Image2Pickle:
 
         # Split the lines by random into two sets
         num_test = int(len(self.csv_dataset) * self.ratio_validation)
+        num_train = int(len(self.csv_dataset) - num_test)
         print(f'[INFO] - Selecting {num_test} datasets for validation.')  # -1, to not count the header line
 
         random.seed()
@@ -172,6 +173,7 @@ class Image2Pickle:
         mydata["Xte_norm"] = Xte_norm
         mydata["Yte_pose"] = Yte_pose
         mydata["Yte_roi"] = Yte_roi
+        pickle_in.close()
 
         # store the data
         pickle_out = open(dst_file, "wb")
@@ -179,6 +181,9 @@ class Image2Pickle:
         pickle_out.close()
 
         print(f'[DONE] - Stored all data in {dst_file}')
+
+        # test the file for the right size
+        self.__checkFiles(dst_file, num_test, num_train )
 
     def setTrain2TestRatio(self, ratio):
         """
@@ -274,30 +279,31 @@ class Image2Pickle:
 
             if count%100 == 0:
                 print(".", end=" ", flush=True)
-                if count % 1000 == 0:
-                    print(f' {count}/{len(data_tr)}')
-                    # temp file
 
-                    temp = dict()
-                    temp["X"] = rgb_volume
-                    temp["X_norm"] = normal_volume
-                    temp["Y_pose"] = pose_results
-                    temp["y_roi"] = roi_results
-
-                    path = "temp_" + str(temp_count)
-                    pickle_out = open(path, "wb")
-                    pickle.dump(temp, pickle_out)
-                    pickle_out.close()
-                    temp_count = temp_count + 1
-                    temp.clear()
-                    rgb_volume = []
-                    pose_results = []
-                    roi_results = []
-
-
+            # write the data into temporary pickle file.
+            # Python dramatically slows down if the array becomes too large.
+            if count % 1000 == 0:
+                print(f' {count}/{len(data_tr)}')
+                # write a temporary file.
+                temp_count = self.__writeTempFile(temp_count, rgb_volume, normal_volume, pose_results, roi_results)
+                rgb_volume = []
+                normal_volume = []
+                pose_results = []
+                roi_results = []
 
             #cv2.imshow("rgb", rgb)
             #cv2.waitKey(0)
+
+        # write the remaining files into a temporary pickle file.
+        # This is necessary at this location if the number of images is not divisible by 1000
+        if len(rgb_volume) > 0:
+            print(f' {count}/{len(data_tr)}')
+            temp_count = self.__writeTempFile(temp_count, rgb_volume, normal_volume, pose_results, roi_results)
+            rgb_volume = []
+            normal_volume = []
+            pose_results = []
+            roi_results = []
+
 
         # concatenate all temp pickle files
         if temp_count > 0:
@@ -357,6 +363,62 @@ class Image2Pickle:
             dst_path = "/"
             dst_path =  dst_path + path
             return dst_path
+
+    def __writeTempFile(self, index, rgb_volume, normal_volume, pose, roi):
+        temp = dict()
+        temp["X"] = rgb_volume
+        temp["X_norm"] = normal_volume
+        temp["Y_pose"] = pose
+        temp["y_roi"] = roi
+
+        path = "temp_" + str(index)
+        self.__writeToPickle(temp, path)
+        index = index + 1
+        temp.clear()
+
+        return index
+
+    def __writeToPickle(self, data_dict, path):
+        """
+        Write a dictionary into a pickle file
+        :param data_dict: the data dictionary
+        :param path: relative of absolute path to the file
+        :return:
+        """
+        pickle_out = open(path, "wb")
+        pickle.dump(data_dict, pickle_out)
+        pickle_out.close()
+
+    def __checkFiles(self, path_and_file, num_test, num_train):
+
+        pickle_in = open(path_and_file, "rb")
+        data = pickle.load(pickle_in)
+
+        error = 0
+
+        if data["Xtr"].shape[0] != num_train:
+            error = error + 1
+        if data["Xtr_norm"].shape[0] != num_train:
+            error = error + 1
+        if data["Ytr_pose"].shape[0] != num_train:
+            error = error + 1
+        if data["Ytr_roi"].shape[0] != num_train:
+            error = error + 1
+        if data["Xte"].shape[0] != num_test:
+            error = error + 1
+        if data["Xte_norm"].shape[0]!= num_test:
+            error = error + 1
+        if data["Yte_pose"].shape[0]!= num_test:
+            error = error + 1
+        if data["Yte_roi"].shape[0]!= num_test:
+            error = error + 1
+
+        pickle_in.close()
+        
+        if error == 0:
+            print("[INFO] - All checks done. Pickle file size matches the expected shape")
+        else:
+            print("[ERROR] - The pickle file dimensions do not meet the expectations (" , str(error), "). Something went wrong.")
 
 def main(argv):
     inputfile = ''
