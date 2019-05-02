@@ -94,7 +94,7 @@ private:
 
 
 	/*
-	Combine foreground background images
+	Just renders the fprground image. No background image added
 	@return - number of stored images
 	*/
 	int process_rendering(void);
@@ -115,6 +115,8 @@ private:
 
 
 	bool writeData(int id, cv::Mat& image_rgb, cv::Mat& image_normal, ImageLogReader::ImageLog& data, cv::Rect& roi);
+
+	bool writeDataEx(int id, cv::Mat& image_rgb, cv::Mat& image_normal, cv::Mat& image_depth,cv::Mat& image_mask, ImageLogReader::ImageLog& data, cv::Rect& roi);
 
     //----------------------------------------
     // members

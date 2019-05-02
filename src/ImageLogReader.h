@@ -57,20 +57,24 @@ public:
 		string rgb_file;
 		string normal_file;
 		string depth_file;
+		string maske_file;
 		string matrix_file;
 
 		glm::vec3	p;
 		glm::quat	q;
+		cv::Rect2f	roi;
 
-		_ImageLog(int idx, string rgb, string normal, string depth, string matrix, glm::vec3 p_, glm::quat q_)
+		_ImageLog(int idx, string rgb, string normal, string depth, string mask, string matrix, glm::vec3 p_, glm::quat q_, cv::Rect2f roi_)
 		{
 			id = idx;
 			rgb_file = rgb;
 			normal_file = normal;
 			depth_file = depth;
+			maske_file = mask;
 			matrix_file = matrix;
 			p = p_;
 			q = q_;
+			roi = roi_;
 		}
 
 	}ImageLog;

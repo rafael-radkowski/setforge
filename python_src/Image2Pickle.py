@@ -97,7 +97,7 @@ class Image2Pickle:
                         #print(f'Column names are {", ".join(row)}')
                         line_count += 1
 
-                    #index, rgb_file, normals_file, depth_file, mat_file, tx, ty, tz, qx, qy, qz, qw, roi_x,  roi_y, dx, dy
+                    #index, rgb_file, normals_file, depth_file, mask_file, mat_file, tx, ty, tz, qx, qy, qz, qw, roi_x,  roi_y, dx, dy
                     #print(row['index'], ":", row['rgb_file'], ", ", row['normals_file'], ", ", row['depth_file'])
                     line_count += 1
 
@@ -106,6 +106,7 @@ class Image2Pickle:
                         "rgb_file": row['rgb_file'],
                         "normals_file": row['normals_file'],
                         "depth_file": row['depth_file'],
+                        "mask_file": row['mask_file'],
                         "mat_file": row['mat_file'],
                         "tx": float(row['tx']),
                         "ty": float(row['ty']),

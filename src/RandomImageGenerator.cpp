@@ -124,6 +124,7 @@ int RandomImageGenerator::process_combine(int num_images)
 
     int backup_i = 0; // prevents deadlocks
     int i=0;
+	cout << "\n[INFO] - Start to generate " << num_images << " images." << endl;
     while(i<num_images){
         backup_i++;
         if(backup_i > num_images*3) break;
@@ -135,6 +136,8 @@ int RandomImageGenerator::process_combine(int num_images)
         string path0 = image_filenames[dice_image];
         string path1 = rendered_files[dice_rendering].rgb_file;
 		string path2 = rendered_files[dice_rendering].normal_file;
+		string path3 = rendered_files[dice_rendering].depth_file;
+		string path4 = rendered_files[dice_rendering].maske_file;
 
         cv::Mat img = cv::imread(path0);
 		if(img.rows == 0||img.cols == 0){
@@ -173,7 +176,7 @@ int RandomImageGenerator::process_combine(int num_images)
 		NormalMapSobel::EstimateNormalMap(img_resized, img_normals, 3, 25);
 
 		// process normal image
-		cv::Mat rendering_normals = cv::imread(path2, cv::IMREAD_ANYDEPTH | cv::IMREAD_UNCHANGED); // 16UC1
+		cv::Mat rendering_normals = cv::imread(path2, cv::IMREAD_ANYDEPTH | cv::IMREAD_UNCHANGED); // 16UC3
 		if(rendering_normals.rows == 0||rendering_normals.cols == 0){
 			std::cout << "[ERROR] - Did not find normal map " << path2 << ". Check the path." << std::endl;
 		}
@@ -192,11 +195,32 @@ int RandomImageGenerator::process_combine(int num_images)
 		cv::resize(rendering_normals_32F, rendered_normals2, cv::Size(_rendering_height, _rendering_widht ));
 		cv::Mat ready_normals = combineNormals(img_normals, rendered_normals2, rendered_image,  10);
 		
+
+		//-----------------------------------------------------------------------------
+		// Read and resize depth file
+		cv::Mat ready_depth;
+		cv::Mat img_depth = cv::imread(path3,  cv::IMREAD_UNCHANGED | cv::IMREAD_ANYDEPTH); // 16UC3
+		if(img_depth.rows == 0||img_depth.cols == 0){
+			std::cout << "[ERROR] - Did not find the depth image " << path3 << ". Check the path." << std::endl;
+		}else
+			cv::resize(img_depth, ready_depth, cv::Size(_rendering_height, _rendering_widht ));
+
+
+		//-----------------------------------------------------------------------------
+		// Read and resize mask file
+		cv::Mat ready_mask;
+		cv::Mat img_mask = cv::imread(path4,  cv::IMREAD_UNCHANGED | cv::IMREAD_ANYDEPTH); // 16UC3
+		if(img_mask.rows == 0||img_mask.cols == 0){
+			std::cout << "[ERROR] - Did not find the depth image " << path3 << ". Check the path." << std::endl;
+		}else
+			cv::resize(img_mask, ready_mask, cv::Size(_rendering_height, _rendering_widht ));
+
+
 		//-----------------------------------------------------------------------------
 		// write data to file
 
 
-		writeData(i, ready_rgb, ready_normals, rendered_files[dice_rendering], cv::Rect(roi_x, roi_y, roi_width, roi_height));
+		writeDataEx(i, ready_rgb, ready_normals, ready_depth, ready_mask, rendered_files[dice_rendering], cv::Rect(roi_x, roi_y, roi_width, roi_height));
 
         cv::imshow("out",output );
 		cv::Mat img_normals_out;
@@ -205,16 +229,24 @@ int RandomImageGenerator::process_combine(int num_images)
         cv::waitKey(1);
 		//Sleep(0.015);
         i++;
+
+		// progress ticker
+		if (i > 1 && i % 100 == 0) {
+			cout << ". ";
+			if (i % 1000 == 0) {
+				cout << " [" <<i << "/"<< num_images<< "]\n";
+			}
+		}
     }
 
-    cout << "[INFO] - Created " << i << " images." << endl;
+   // cout << "[INFO] - Created " << i << " images." << endl;
 
     return i;
 }
 
 
 /*
-Combine foreground background images
+Just renders the fprground image. No background image added
 @param num_images - integer with the number of images to generate. 
 @return - number of stored images
 */
@@ -472,7 +504,7 @@ bool RandomImageGenerator::writeHeader(void)
 	// write header
 	std::ofstream of(out, std::ifstream::out | std::ifstream::app);
 	if (of.is_open()){
-		of << "index,rgb_file,normals_file,depth_file,mat_file,tx,ty,tz,qx,qy,qz,qw,roi_x,roi_y,dx,dy\n";
+		of << "index,rgb_file,normals_file,depth_file,mask_file,mat_file,tx,ty,tz,qx,qy,qz,qw,roi_x,roi_y,dx,dy\n";
 	}
 	of.close();
 
@@ -543,6 +575,125 @@ bool RandomImageGenerator::writeData(int id,  cv::Mat& image_rgb, cv::Mat& image
 
 	if (of.is_open()) {
 		of << id << "," << name << "," << name_d << "," << data.depth_file << "," << data.matrix_file  << "," << data.p.x << "," << data.p.y << "," << data.p.z << "," << data.q.x << "," << data.q.y << "," << data.q.z << "," << data.q.w << "," << roi.x << ',' << roi.y << "," << roi.width << "," << roi.height << "\n";
+	}
+	of.close();
+
+	return true;
+}
+
+
+
+bool RandomImageGenerator::writeDataEx(int id, cv::Mat& image_rgb, cv::Mat& image_normal, cv::Mat& image_depth, cv::Mat& image_mask, ImageLogReader::ImageLog& data, cv::Rect& roi)
+{
+	//----------------------------------------------
+	// RGB image
+
+	string name = _output_path;
+	name.append("/");
+	name.append(to_string(id));
+	name.append("-");
+	name.append(data.rgb_file);
+		
+	// removes the path name if the original file name comes with a path
+	int index = data.rgb_file.find_last_of("/");
+	if (index != -1) {
+		string sub = data.rgb_file.substr(index + 1, data.rgb_file.length() - index - 1);
+
+		name = _output_path;
+		name.append("/");
+		name.append(to_string(id));
+		name.append("-");
+		name.append(sub);
+
+	}
+
+	cv::imwrite(name, image_rgb);
+
+	//----------------------------------------------
+	// Normal image
+
+	string name_d = _output_path;
+	name_d.append("/");
+	name_d.append(to_string(id));
+	name_d.append("-");
+	name_d.append(data.normal_file);
+	// removes the path name if the original file name comes with a path
+	index = data.normal_file.find_last_of("/");
+	if (index != -1) {
+		string sub = data.normal_file.substr(index + 1, data.normal_file.length() - index - 1);
+
+		name_d = _output_path;
+		name_d.append("/");
+		name_d.append(to_string(id));
+		name_d.append("-");
+		name_d.append(sub);
+
+	}
+
+	cv::Mat normals_16UC3;
+	image_normal.convertTo(normals_16UC3, CV_16UC3, 65535 );
+	cv::imwrite(name_d, normals_16UC3);
+
+
+	//----------------------------------------------
+	// depth image
+
+	string name_de = _output_path;
+	name_de.append("/");
+	name_de.append(to_string(id));
+	name_de.append("-");
+	name_de.append(data.depth_file);
+	// removes the path name if the original file name comes with a path
+	index = data.depth_file.find_last_of("/");
+	if (index != -1) {
+		string sub = data.depth_file.substr(index + 1, data.depth_file.length() - index - 1);
+
+		name_de = _output_path;
+		name_de.append("/");
+		name_de.append(to_string(id));
+		name_de.append("-");
+		name_de.append(sub);
+
+	}
+
+	cv::imwrite(name_de, image_depth);//CV_16UC1
+	//cout << image_depth.type() << ", ";
+
+
+	//----------------------------------------------
+	// mask image
+
+	string name_m = _output_path;
+	name_m.append("/");
+	name_m.append(to_string(id));
+	name_m.append("-");
+	name_m.append(data.maske_file);
+	// removes the path name if the original file name comes with a path
+	index = data.maske_file.find_last_of("/");
+	if (index != -1) {
+		string sub = data.maske_file.substr(index + 1, data.maske_file.length() - index - 1);
+
+		name_m = _output_path;
+		name_m.append("/");
+		name_m.append(to_string(id));
+		name_m.append("-");
+		name_m.append(sub);
+
+	}
+
+	cv::imwrite(name_m, image_mask);//CV_16UC1
+	//cout << image_mask.type() << "\n";
+
+	//----------------------------------------------
+	// Log file
+
+	string out = _output_path;
+	out.append("/");
+	out.append(_output_file_name);
+	std::ofstream of(out, std::ifstream::out | std::ifstream::app);
+
+	if (of.is_open()) {
+		of << id << "," << name << "," << name_d << "," << name_de << "," << name_m << "," << data.matrix_file  << "," << data.p.x << "," << data.p.y << "," << data.p.z << "," << data.q.x << "," << data.q.y << "," << data.q.z << "," << data.q.w << "," << roi.x << ',' << roi.y << "," << roi.width << "," << roi.height << "\n";
 	}
 	of.close();
 

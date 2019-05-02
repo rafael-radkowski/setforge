@@ -31,10 +31,12 @@ using namespace std;
 
 int main(int argc, char** argv)
 {
-	cout << "Image Generator\n" << endl;
+	cout << "---------------------------------------------" << endl;
+	cout << "Image Generator" << endl;
+	cout << "Version 1.1\n" << endl;
 	cout << "Generate images for cnn training" << endl;
 	cout << "Rafael Radkowski" << endl;
-
+	cout << "---------------------------------------------\n" << endl;
 
 	Parser::Arguments arg = Parser::Parse(argc, argv);
 
