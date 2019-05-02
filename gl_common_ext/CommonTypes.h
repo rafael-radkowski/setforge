@@ -12,6 +12,11 @@ November 2018
 rafael@iastate.edu
 
 All copyrights reserved. 
+
+------------------------------------------------------------------
+last edited:
+May 2nd, 2019, RR
+- Added a variable bool with_error_check to the matrial and Light structs. It disables the shader name check if set to false. 
 */
 
 
@@ -84,6 +89,7 @@ typedef struct Material
 
     // error count, a helper to issue warning.
     int      error_count;
+	bool	 with_error_check;
 
 	Material(){
 		texture_id = -1;
@@ -98,6 +104,7 @@ typedef struct Material
         specular_s = 12.0;
 
         error_count = 0;
+		with_error_check = true;
 	}
 
 
@@ -132,13 +139,14 @@ typedef struct Material
     {
         
         int ret = glGetUniformLocation(program_id, name.c_str());
-        if(ret == -1 && error_count < 7){
+        if(ret == -1 && error_count < 7 && with_error_check){
             std::cout << ret << " [ERROR] - Material - Cannot find shader program variable " << name << ".\nDid you add the right variable name?" << std::endl; 
             error_count++;
             return false;
         }
         return true;
     }
+
 
 
 } Material;
@@ -217,6 +225,7 @@ typedef struct _LightSource
 
      // error count, a helper to issue warning.
     int      error_count;
+	bool	 with_error_check;
 
 	_LightSource(){
         index = -1;
@@ -232,6 +241,7 @@ typedef struct _LightSource
         used = true;
 
         error_count = 0;
+		with_error_check = true;
 	}
 
 
@@ -269,7 +279,7 @@ typedef struct _LightSource
     {
 
         int ret = glGetUniformLocation(shader_program_id, variable_name.c_str());
-        if(ret == -1 && error_count < 10){
+        if(ret == -1 && error_count < 10 & with_error_check){
             std::cout << ret << " [ERROR] - LightSource " << index << "  - Cannot find shader program variable " << variable_name << " (program: "<< shader_program_id << ").\nDid you add the right variable name?" << std::endl; 
 			error_count++;
 			return false;

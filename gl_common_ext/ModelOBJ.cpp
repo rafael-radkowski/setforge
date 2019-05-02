@@ -112,6 +112,7 @@ void cs557::OBJModel::create(string path_and_filename, int shader_program)
 		mat.specular_int = 0.2;
 		mat.ambient_int = 0.2;
 		mat.diffuse_int = 0.8;
+		mat.with_error_check = false;
 
 		materials.push_back(mat);
 

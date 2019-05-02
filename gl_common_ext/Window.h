@@ -3,6 +3,8 @@
 // stl include
 #include <iostream>
 #include <string>
+#include <vector>
+#include <functional>
 
 // GLEW include
 #include <GL/glew.h>
@@ -59,5 +61,13 @@ namespace cs557
 	@param vm - 4x4 view matrix. 
 	*/
 	void InitControlsViewMatrix(glm::mat4 vm);
+
+
+	/*
+	Add a keyboard callback function of type
+	void name(int key, int action).
+	The keyboard function will call it. 
+	*/
+	void AddKeyboardCallbackPtr(std::function<void(int, int)> fc);
 
 }

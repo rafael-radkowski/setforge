@@ -28,7 +28,7 @@ set(_OSG_DEFAULT_INSTALL_DIR
 				"C:/SDK/OpenSceneGraph-3.2.4" 
 				"D:/SDK/OpenSceneGraph-3.2.3"
 				 )
-    
+
 
 
 
@@ -37,7 +37,7 @@ set (OSG_FOUND "NO")
 
 
 find_path(OSG_ROOT 
-	NAMES /src/osg/Node.cpp
+	NAMES /include/osg/Node
 	PATHS ${_OSG_DEFAULT_INSTALL_DIR}
 )
 

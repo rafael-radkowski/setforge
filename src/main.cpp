@@ -11,12 +11,17 @@ rafael@iastate.edu
 +1 (515) 294 7044
 Jan 2019
 All copyrights reserved
+
+------------------------------------------------------------------
+last edited:
+May 2nd, 2019, RR
+- Added an instance of UserViewRenderer, which allows a user to manually select camera viewpoints and to store them.
 */
 
 #include <iostream>
 #include <string>
 #include <time.h>
-
+#include <functional>
 
 // GLEW include
 #include <GL/glew.h>
@@ -43,12 +48,13 @@ All copyrights reserved
 #include "PolyhedronViewRenderer.h"
 #include "RandomPoseViewRenderer.h"
 #include "BalancedPoseTree.h"
+#include "UserViewRenderer.h"
 #include "Model3D.h"
 #include "ArgParser.h"
 #include "types.h"
 
 using namespace cs557;
-
+using namespace std::placeholders;
 
 
 //------------------------------------------------------------
@@ -75,15 +81,19 @@ GLfloat clear_depth[] = {1.0f, 1.0f, 1.0f, 1.0f};
 
 
 arlab::CameraModel				cam_control = arlab::CameraModel::USER;
-SphereCoordRenderer*				sphere_renderer = NULL;
+SphereCoordRenderer*			sphere_renderer = NULL;
 PolyhedronViewRenderer*			poly_renderer = NULL;
 BalancedPoseTree*				tree_renderer = NULL;
 RandomPoseViewRenderer*			pose_renderer = NULL;
-Model3D*							model_renderer = NULL;
+UserViewRenderer*				model_renderer = NULL;
 
 using namespace std;
 using namespace cs557;
 using namespace arlab;
+
+
+
+
 
 void InitWindow(void)
 {
@@ -92,11 +102,10 @@ void InitWindow(void)
 
 
 	// Init the GLFW Window
-    window = cs557::initWindow("Render to Image");
+	window = cs557::initWindow("Render to Image");
 
-    // Initialize the GLEW apis
-    cs557::initGlew();
-
+	// Initialize the GLEW apis
+	cs557::initGlew();
 }
 
 
@@ -140,8 +149,13 @@ void InitRenderer(Arguments& opt)
 	}
 	else if (opt.cam == USER)
 	{
-		model_renderer = new Model3D();
+		model_renderer = new UserViewRenderer(opt.windows_width, opt.window_height, opt.image_width, opt.image_height);
+		model_renderer->setVerbose(opt.verbose); // set first to get all the output info
+		model_renderer->setOutputPath(opt.output_path);
 		model_renderer->create(opt.model_path_and_file);
+
+		cs557::AddKeyboardCallbackPtr(std::bind(&UserViewRenderer::keyboardCallback, model_renderer, _1, _2 ));
+
 	}
 }
 
@@ -172,7 +186,7 @@ void DrawLoop(void)
 		{
 		case USER:
 			if (model_renderer != NULL)
-				model_renderer->draw(cs557::GetCamera().getViewMatrix());
+				model_renderer->draw_view(cs557::GetCamera().getViewMatrix());
 			break;
 		case SPHERE:
 			if(sphere_renderer != NULL)
