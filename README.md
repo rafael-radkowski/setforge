@@ -43,14 +43,14 @@ Figure 1: a) a RGB image (RGB 8bit), b) a normal map image (xyz short, 16 bit), 
 ```
 See help ``` DatasetRenderer.exe  -h  ``` or the manual for further instructions.
 
-Note that the software has two essential options, which one can control via the -m option: ```-m POLY``` and ```-m POSE```  
+Note that the software has two essential options, which one can control via the -m option: ```-m POLY``` and ```-m POSE```; additionally, one manual mode is available with ```-m USER```. 
 The first option (```POLY```) keeps the 3D model at its centroid. Only the camera position changes per rendering. Thus, the 3D model is rendered from different orientations only. The number of images to generate depends on the polyhedron level (```-sub``` ).  
-The option ```POSE``` also generates a random orientation of the 3D model. The number of images to be generated can be set with ```-num```. The position limits can be set via command line options, see the manual or use ```-h``` for instructions. Additinally, this mode place the 3D model at a random position in front of the camera. 
-
+The option ```POSE``` also generates a random orientation of the 3D model. Additinally, this mode place the 3D model at a random position in front of the camera. The number of images to be generated can be set with ```-num```. The position limits can be set via command line options, see the manual or use ```-h``` for instructions.  
 
 ![Figure 2: Option -m POSE generates a random pose for each object. ).](https://github.com/rafael-radkowski/DNNHelpers/blob/master/doc/images/pose_renderer_result.png)
 Figure 2: Option -m POSE generates a random pose for each object.
 
+The ```USER``` mode allows a user to select the camera position iteractively. Press the 'w' key to store the image set to the selected folder. s
 
 ## ImageGen
 ImageGen generates training data by selecting random background images, e.g. from ImageNet,
