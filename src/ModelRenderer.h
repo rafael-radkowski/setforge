@@ -39,6 +39,11 @@ All copyrights reserved
 last edited:
 Jan 19, 2019, RR
 - added a normal map to the renderer. 
+
+May 2nd, 2019, RR
+- Added a region of interest detection. A simple algorithm that finds the roi using the RGB image. 
+- Added a function to extract an image mask from the rendered color image by separating foreground from background. 
+- Changed the ImageWriter->write function this class uses. The new version uses a struct as datatype.
 */
 
 // stl
@@ -66,6 +71,8 @@ Jan 19, 2019, RR
 #include "ModelPlane.h"
 #include "ImageWriter.h"
 #include "ModelCoordinateSystem.h"
+#include "RoIDetect.h"
+#include "ImageMask.h"
 
 using namespace std;
 
@@ -221,6 +228,10 @@ private:
 	// a corodinate system
 	cs557::CoordinateSystem     _coordinateSystem;
 	glm::mat4                   _modelMatrixCoordSystem; // for the coordinate system
+
+
+	bool					_with_roi; // also extracts the roi from the color image
+	bool					_with_mask;//  extracts the mask from the depth image
 
 protected:
 

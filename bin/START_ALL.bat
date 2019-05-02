@@ -38,15 +38,19 @@ set img_h=512
 set rows=128
 set cols=128
 
+:: 6. Set the camera path method. 
+:: POLY for polyhedron image
+:: POSE if a random pose should be selected. 
+set method=POLY
+
 :: 6. Set the polyhedron sub-level. This will define the number of images to render
 :: The higher the number, the more images. I tested to 6
-set method=POLY
 set sublevel=4
 
-:: 7. Set the number of final images you like to generate
+:: 8. Set the number of final images you like to generate
 set num=1000
 
-:: 8. Set the percentage of images that should go into the cross-validation test file
+:: 9. Set the percentage of images that should go into the cross-validation test file
 :: as a percentage of num, in a range from [0,1] with 0->0%, 0.1-> 10%, 1.0 -> 100%
 set x_test=0.1
 

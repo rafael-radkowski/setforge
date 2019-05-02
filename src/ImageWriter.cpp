@@ -216,6 +216,103 @@ bool ImageWriter::write(int index, cv::Mat& rgb, cv::Mat& normals, cv::Mat& dept
 }
 
 
+
+
+/*
+Write the image data to a file
+@param data - a dataset of type IMData
+*/
+bool ImageWriter::write(IWData& data)
+{
+	string name = _output_file_path;
+	name.append("/");
+	name.append(to_string(data.index));
+	name.append("_");
+	name.append(_output_file_name);
+
+	string name_rgb = name;
+	name_rgb.append("_rgb.png");
+
+	string name_normals = name;
+	name_normals.append("_normals.png");
+
+	string name_depth = name;
+	name_depth.append("_depth.png");
+
+	string name_mask = name;
+	name_mask.append("_mask.png");
+
+	string name_mat = name;
+	name_mat.append("_pose.txt");
+
+	// Delete all clear buffer values from the depth map.
+
+	cv::Mat output_depth;
+
+	if(data.depth != NULL){
+		cv::Mat depth = *data.depth;
+		//output_depth = depth.clone();
+		float *input = (float*)((*data.depth).data);
+		for(int j = 0;j < depth.rows;j++){
+			for(int i = 0;i < depth.cols;i++){
+				float d = input[depth.cols * j + i ] ;
+				if (d == 1.0) input[depth.cols * j + i] = 0.0;
+			}
+		}
+	}
+
+
+	// png only permits 16 bit
+	cv::Mat depth_16UC1, normals_16UC3;
+	if(data.depth != NULL)
+		data.depth->convertTo(depth_16UC1, CV_16UC1, 65535 );
+
+	if(data.normals != NULL)
+		data.normals->convertTo(normals_16UC3, CV_16UC3, 65535 );
+
+	cv::imwrite(name_rgb, *data.rgb);
+	cv::imwrite(name_depth, depth_16UC1);
+	cv::imwrite(name_normals, normals_16UC3);
+	cv::imwrite(name_mask, *data.mask);
+
+#ifdef LOAD_TEST
+	cv::imshow("16bit", normals_16UC3);
+	cout << "Write " << name_normals << " as " << type2str(normals_16UC3.type()) << endl;
+#endif
+	
+	Eigen::Matrix4f mat;
+	Eigen::Quaternionf q;
+	glm::mat4 pose = data.pose;
+	mat << pose[0][0], pose[1][0], pose[2][0], pose[3][0],
+		pose[0][1], pose[1][1], pose[2][1], pose[3][1],
+		pose[0][2], pose[1][2], pose[2][2], pose[3][2],
+		pose[0][3], pose[1][3], pose[2][3], pose[3][3];
+
+
+	MatrixFileUtils::WriteMatrix4f(name_mat, mat, "pose:");
+	MatrixHelpers::MatrixToQuaternion(mat, q);
+
+
+	string list_str = "./";
+	list_str.append(_output_file_path);
+	list_str.append("/");
+	list_str.append(_logfile_name);
+
+	
+	std::ofstream of(list_str, std::ifstream::out | std::ifstream::app);
+
+	if (of.is_open())
+	{
+		of << to_string(data.index) << "," << name_rgb << "," << name_normals << "," << name_depth << "," << name_mask << "," <<
+			name_mat << "," <<  pose[3][0]<< "," <<  pose[3][1]  << "," <<  pose[3][2] <<
+			"," <<  q.x() << "," <<  q.y() <<"," <<  q.z() <<"," <<  q.w() << "," << data.roi.x << "," << data.roi.y << "," << data.roi.width << "," << data.roi.height << "\n";
+	}
+	of.close();
+
+	return true;
+}
+
+
 /*
 Check whether the path exists.
 Create a folder if the path does not exist.
@@ -254,7 +351,7 @@ bool ImageWriter::checkFolder(string path)
 		// create a header
 		std::ofstream of(list_str, std::ifstream::out | std::ifstream::app);
 		if (of.is_open()){
-			of << "index,rgb_file,normals_file,depth_file,mat_file,tx,ty,tz,qx,qy,qz,qw\n";
+			of << "index,rgb_file,normals_file,depth_file,mask_file,mat_file,tx,ty,tz,qx,qy,qz,qw,roix,roiy,roiw,roih\n";
 		}
 		of.close();
 	}

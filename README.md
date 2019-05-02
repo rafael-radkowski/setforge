@@ -50,6 +50,11 @@ The option ```POSE``` also generates a random orientation of the 3D model. Addit
 ![Figure 2: Option -m POSE generates a random pose for each object. ).](https://github.com/rafael-radkowski/DNNHelpers/blob/master/doc/images/pose_renderer_result.png)
 Figure 2: Option -m POSE generates a random pose for each object.
 
+```
+ DatasetRenderer.exe ../data/stanford_bunny_02_rot.obj -o debug_pose -img_w 512 -img_h 512 -m POSE -num 5000 -sub 4 -limx 0.6 -limy 0.6 -lim_near 1.0 -lim_far 2.5 -verbose
+```
+The parameters limx, limy, lim_near, lim_far control the size of the box in which the object can move in front of the camera. 
+
 The ```USER``` mode allows a user to select the camera position iteractively. Press the 'w' key to store the image set to the selected folder. s
 
 ## ImageGen

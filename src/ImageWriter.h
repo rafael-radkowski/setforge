@@ -26,6 +26,9 @@ Jan 21, 2019:
 - Added the pose and orientation of the model to the log file
 - Added a variable for the log file to the class
 - Fixed a bug that prevented that the class cleans the output folder. 
+
+May 2, 2019, RR
+- Added a new function to write data to a file. This new write function stores additional data and uses a struct as datatype. 
 */
 
 // stl
@@ -58,6 +61,33 @@ class ImageWriter
 {
 public:
 
+	typedef struct IWData {
+		int index;
+		cv::Mat* rgb;
+		cv::Mat* normals;
+		cv::Mat* depth;
+		cv::Mat* mask;
+		cv::Rect2f roi;
+		glm::mat4 pose;
+
+
+		IWData(){
+			index = 0;
+			roi.x = 0;
+			roi.y = 0;
+			roi.width = 0;
+			roi.height = 0;
+
+			rgb = NULL;
+			normals = NULL;
+			depth = NULL;
+			mask = NULL;
+		}
+
+	}IWData;
+
+
+
 	ImageWriter();
 	~ImageWriter();
 
@@ -79,6 +109,14 @@ public:
 	@para pose - the current camera pose
 	*/
 	bool write(int index, cv::Mat& rgb, cv::Mat& normals, cv::Mat& depth, glm::mat4 pose);
+
+
+	/*
+	Write the image data to a file
+	@param data - a dataset of type IMData
+	*/
+	bool write(IWData& data);
+
 
 
 private:

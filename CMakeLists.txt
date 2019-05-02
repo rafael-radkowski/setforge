@@ -126,6 +126,12 @@ set(MAIN_SRC
 	./src/RandomPoseViewRenderer.cpp
 	./src/Model3D.h
 	./src/Model3D.cpp
+	./src/UserViewRenderer.h
+	./src/UserViewRenderer.cpp
+	./src/RoIDetect.h
+	./src/RoIDetect.cpp
+	./src/ImageMask.h
+	./src/ImageMask.cpp
 )
 
 

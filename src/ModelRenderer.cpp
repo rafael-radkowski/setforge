@@ -20,6 +20,9 @@ ModelRenderer::ModelRenderer(int window_width, int window_height, int image_widt
 	_output_file_name = "model";
 	_writer_enabled = true;
 
+	_with_roi = true; 
+	_with_mask = true;
+
 	_verbose = false;
 
 	_projectionMatrix = glm::perspective(1.2f, (float)800 / (float)600, 0.1f, 100.f);
@@ -189,7 +192,20 @@ bool ModelRenderer::drawFBO(void)
 	cv::Mat dst_norm, output_norm;
 	cv::flip(image_normals, dst_norm, 0);
 
-	
+
+	//-------------------------------------------------------------------------------------
+	// region of interest extraction
+	cv::Rect2f roi;
+	if (_with_roi) {
+		RoIDetect::Extract(dst, roi);
+	}
+
+	//-------------------------------------------------------------------------------------
+	// Extract an image mask
+	cv::Mat mask;
+	if (_with_mask) {
+		ImageMask::Extract(dst, mask);
+	}
 
 
 	// switch back to the regular output buffer
@@ -211,10 +227,29 @@ bool ModelRenderer::drawFBO(void)
 		cv::imshow("Depth image (float)", output_depth);
 		cv::imshow("Normal image (float)", output_norm);
 		cv::waitKey(1);
+
+		if (_verbose && _with_roi) 
+			RoIDetect::RenderRoI(dst, roi);
+	
 	}
 
+	
+
 	if (_save && _writer_enabled && _writer){
-		_writer->write(_output_file_id, dst, dst_norm, dst_depth, glm::inverse(_viewMatrix));
+
+		ImageWriter::IWData odata;
+		odata.index = _output_file_id;
+		odata.rgb = &dst;
+		odata.normals = &dst_norm;
+		odata.depth = &dst_depth;
+		if (_with_mask) {
+			odata.mask = &mask;
+		}
+		odata.pose = glm::inverse(_viewMatrix);
+		odata.roi = roi;
+		_writer->write(odata);
+
+		//_writer->write(_output_file_id, dst, dst_norm, dst_depth, glm::inverse(_viewMatrix));
 		_output_file_id++;
 	}
 
