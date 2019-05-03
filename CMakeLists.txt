@@ -142,6 +142,7 @@ set(SHADER_SRC
 	./src/image_renderer.vs
 	./src/normal_renderer.fs
 	./src/normal_renderer.vs
+	./src/GLSLShaderSrc.h
 )
 
 

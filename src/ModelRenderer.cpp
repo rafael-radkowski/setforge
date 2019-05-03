@@ -49,7 +49,12 @@ ModelRenderer::ModelRenderer(int window_width, int window_height, int image_widt
 	_mat0.specular_mat = glm::vec3(1.0, 1.0, 1.0);
 	_mat0.specular_int = 0.2;
 	_mat0.specular_s = 6.0;
-
+	
+#ifndef _DEVELOP
+	_light0.with_error_check = false;
+	_light1.with_error_check = false;
+	_mat0.with_error_check = false;
+#endif
 
 	_data_rgb = (unsigned char*)malloc(_image_width * _image_height * 3 * sizeof(int));
 	_data_depth = (unsigned char*)malloc(_image_width * _image_height * 1 * sizeof(float));
@@ -80,9 +85,12 @@ bool ModelRenderer::setModel(string path_and_file)
 	if (path_and_file.empty()) return false;
 
 
+#ifdef _DEVELOP
 	// load shader
 	int program = cs557::LoadAndCreateShaderProgram("./shaders/image_renderer.vs", "./shaders/image_renderer.fs");
-
+#else
+	int program = cs557::CreateShaderProgram(glslshader::image_renderer_vs, glslshader::image_renderer_fs);
+#endif
 	// create model
 	_obj_model = new cs557::OBJModel();
 	_obj_model->create(path_and_file, program);
@@ -95,7 +103,11 @@ bool ModelRenderer::setModel(string path_and_file)
 	//-----------------------
 	// create a secodn object to render only normal vectors
 	// load shader
+#ifdef _DEVELOP
 	int program_normals = cs557::LoadAndCreateShaderProgram("./shaders/normal_renderer.vs", "./shaders/normal_renderer.fs");
+#else
+	int program_normals = cs557::CreateShaderProgram(glslshader::normal_renderer_vs, glslshader::normal_renderer_fs);
+#endif
 	_obj_model_normals = new cs557::OBJModel();
 	_obj_model_normals->create(path_and_file, program_normals);
 
@@ -320,8 +332,11 @@ Creates some helper displays
 void ModelRenderer::CreateHelperContent(void)
 {
 	// Load the shader program
+#ifdef _DEVELOP
 	int shader = cs557::LoadAndCreateShaderProgram("./shaders/display.vs", "./shaders/display.fs");
-
+#else
+	int shader = cs557::CreateShaderProgram(glslshader::display_renderer_vs, glslshader::display_renderer_fs);
+#endif
 	// create a plane
 	_display.create(0.56, 0.45, shader);
 	_display_m = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f));

@@ -73,6 +73,7 @@ May 2nd, 2019, RR
 #include "ModelCoordinateSystem.h"
 #include "RoIDetect.h"
 #include "ImageMask.h"
+#include "GLSLShaderSrc.h"
 
 using namespace std;
 
