@@ -163,7 +163,7 @@ int RandomImageGenerator::process_combine(int num_images)
         cv::Mat rendered_image = adaptRendering(rendering, roi_x, roi_y, roi_width, roi_height);
         //cout << roi_x << " : " << roi_y << "\n";
        // cv::rectangle( rendered_image, cv::Point(roi_x, roi_y), cv::Point(roi_x + roi_width, roi_y + roi_height), cv::Scalar(255,0,0));
-        cv::Mat ready_rgb = combineImages(img_resized, rendered_image, 10);
+        cv::Mat ready_rgb = combineImages(img_resized, rendered_image, 0);
 		cv::Mat output = ready_rgb.clone();
 		cv::rectangle( output, cv::Point(roi_x, roi_y), cv::Point(roi_x + roi_width, roi_y + roi_height), cv::Scalar(255,0,0));
 		
@@ -193,7 +193,7 @@ int RandomImageGenerator::process_combine(int num_images)
         int c_n = rendering_normals.cols;
 		cv::Mat rendered_normals2;
 		cv::resize(rendering_normals_32F, rendered_normals2, cv::Size(_rendering_height, _rendering_widht ));
-		cv::Mat ready_normals = combineNormals(img_normals, rendered_normals2, rendered_image,  10);
+		cv::Mat ready_normals = combineNormals(img_normals, rendered_normals2, rendered_image,  0);
 		
 
 		//-----------------------------------------------------------------------------
