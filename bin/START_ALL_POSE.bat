@@ -1,6 +1,13 @@
 :: This batch file allows you to create a training dataset from scratch. 
+:: It creates rendered images at a random pose and stackes them with a background image. 
 :: Follow the instructions. 
 :: The result is a Python .pickle file with a dictionary containg the image data.
+:: Note that the pickle file only contains
+:: 
+:: rgb images
+:: normal maps
+:: pose data (translation, quaterion)
+:: stored in a dictionary as Xtr, Xtr_norm, Ytr_pose, Ytr_roi, Xte, Xte_norm, Yte_pose, Yte_roi
 
 :: Note that the path to Python.exe needs to be set in PATH
 
@@ -19,45 +26,55 @@ SET cam_distance=1.3
 
 :: 2. Set the temporary data folder and the output folder
 ::  Also, set the final pickle filename and path
-SET temp_folder="./database2"
-SET output_folder="./database2"
+SET temp_folder="./debug_pose"
+SET output_folder="./debug_pose_4_512_512"
 
-SET final_pickle_path="./database2/BunnyRotation.pickle"
+SET final_pickle_path="./debug_pose/final.pickle"
 
 :: 3. Set the path to all background RGB images.
 :: WRITE 'NONE' IF YOU DO NOT LIKE TO COMBINE THE RENERING WITH RANDOM BACKGROUND IMAGES 
-SET bg_image_path=../data/imagenet
+SET bg_image_path="../data/imagenet"
 
 :: 4. Set the image width and image height in pixel
-set img_w=256
-set img_h=256
+set img_w=512
+set img_h=512
 
 :: 5. Set the image width and height in pixels for the final pickle file
 :: Note that this size can vary from the previous one, e.g., if you intend to reuse the images with a different resolution. 
 :: (saves time)
-set rows=256
-set cols=246
+set rows=128
+set cols=128
 
 :: 6. Set the camera path method. 
 :: POLY for polyhedron image
 :: POSE if a random pose should be selected. 
-set method=POLY
+set method=POSE
 
 :: 6. Set the polyhedron sub-level. This will define the number of images to render
 :: The higher the number, the more images. I tested to 6
-set sublevel=5
+set sublevel=4
 
-:: 8. Set the number of final images you like to generate
-set num=10000
+:: 7. Set the number of rendered images you like to generate
+set ren_num=2000
 
-:: 9. Set the percentage of images that should go into the cross-validation test file
+:: 8. Set the boundaries for the object to be moved around in front of the camera.
+:: The position of the model is selected by random within the given range. 
+set limx=0.6
+set limy=0.6
+set near=1.0
+set far=2.5 
+
+:: 9. Set the number of final images you like to generate
+set num=1000
+
+:: 10. Set the percentage of images that should go into the cross-validation test file
 :: as a percentage of num, in a range from [0,1] with 0->0%, 0.1-> 10%, 1.0 -> 100%
 set x_test=0.1
 
 :: THAT'S IT
 ::----------------------------------------------------------------------------------
 
-set arg1=%model% -o %temp_folder% -img_w %img_w% -img_h %img_h% -m %method% -sub %sublevel%  -rad %cam_distance%
+set arg1=%model% -o %temp_folder% -img_w %img_w% -img_h %img_h% -m %method% -sub %sublevel%  -rad %cam_distance% -num %ren_num% -limx %limx% -limy %limy% -lim_near %near% -lim_far %far%s
 set arg2=-n %num% -ipath %bg_image_path% -itype jpeg -rlog %temp_folder%/render_log.csv -img_w %img_w% -img_h %img_h% -o %output_folder% 
 set arg3=-i %output_folder%/batch.csv -o %final_pickle_path% -d ../bin -r %rows% -c %cols% -x %x_test%
 

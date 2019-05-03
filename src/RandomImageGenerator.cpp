@@ -504,7 +504,7 @@ bool RandomImageGenerator::writeHeader(void)
 	// write header
 	std::ofstream of(out, std::ifstream::out | std::ifstream::app);
 	if (of.is_open()){
-		of << "index,rgb_file,normals_file,depth_file,mask_file,mat_file,tx,ty,tz,qx,qy,qz,qw,roi_x,roi_y,dx,dy\n";
+		of << "index,rgb_file,normals_file,depth_file,mask_file,mat_file,tx,ty,tz,qx,qy,qz,qw,roi_x,roi_y,roi_w,roi_h\n";
 	}
 	of.close();
 

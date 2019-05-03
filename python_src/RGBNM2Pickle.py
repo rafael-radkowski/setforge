@@ -1,18 +1,24 @@
 """
-class Image2Pickle
+class RGBNM2Pickle
 
 This file prepares a pickle dataset using the results the program ImageGen produces.
-This file processes RGB and normal maps data only.
+This script bundles
+- RGB images, uint8 [0,255]
+- Normal maps, uint16 [0,1]
+- Image masks, uint16 [0,1]
 
 The pickle contains a dict with the following labels:
     Xtr - the training data set, rgb images of shape (num_images, width, height, channels = 3), uint8 [0,255]
     Xtr_norm - the training data set, normal maps images of shape (num_images, width, height, channels = 3). Values are stored of type uint16 [0,1]
+    Xtr_mask - the training mask, each pixel in indicates the location of the object.
     Ytr_pose - the training poses of each object stored as (num_images, x, y, z, qx, qy, qz, qw)
     Ytr_roi - the training region of interest for each object stored as (num_images, rx, ry, dx, dy)
     Xte - the test data set, rgb images of shape (num_images, width, height, channels = 3)
     Xte_norm - the test data set, normal map images of shape (num_images, width, height, channels = 3). Values are stored of type uint16 [0,1]
+    Xte_mask - the test mask, with each pixel indicating the location of the object.
     Yte_pose - the test poses of each object stored as (num_images, x, y, z, qx, qy, qz, qw)
     Yte_roi - the test region of interest for each object stored as (num_images, rx, ry, dx, dy)
+
 
 Note that this script works with temporary pickle files to store data while process. All temp files will be deleted when done.
 
@@ -32,12 +38,11 @@ Example:
 Rafael Radkowski
 Iowa State University
 rafael@iastate.edu
-Jan 2019
+May 3rd, 2019
 MIT license
 -------------------------------------
 Last edited:
-May 3rd, 2019, RR
-- Changed the csv-file parameters to roi_w and roi_h to match the latest file writer.
+
 """
 
 import cv2
@@ -49,7 +54,7 @@ import getopt
 import random
 import os
 
-class Image2Pickle:
+class RGBNM2Pickle:
 
     # Percentage of the dataset used for validation
     ratio_validation = 0.1
@@ -152,12 +157,13 @@ class Image2Pickle:
 
 
         # prepare the training  data set
-        Xtr, Xtr_norm, Ytr_pose, Ytr_roi = self.__prepare_data(self.train_data, working_directory )
+        Xtr, Xtr_norm, Xtr_mask, Ytr_pose, Ytr_roi = self.__prepare_data(self.train_data, working_directory )
         all_data = dict()
         all_data["Xtr"] = Xtr
         all_data["Xtr_norm"] = Xtr_norm
         all_data["Ytr_pose"] = Ytr_pose
         all_data["Ytr_roi"] = Ytr_roi
+        all_data["Xtr_mask"] = Xtr_mask
 
         # store the data
         pickle_out = open(dst_file, "wb")
@@ -166,7 +172,7 @@ class Image2Pickle:
         all_data.clear()
 
         # prepare the test dataset
-        Xte, Xte_norm, Yte_pose, Yte_roi = self.__prepare_data(self.test_data, working_directory)
+        Xte, Xte_norm, Xte_mask,  Yte_pose, Yte_roi = self.__prepare_data(self.test_data, working_directory)
 
 
         pickle_in = open(dst_file, "rb")
@@ -175,6 +181,7 @@ class Image2Pickle:
         mydata["Xte_norm"] = Xte_norm
         mydata["Yte_pose"] = Yte_pose
         mydata["Yte_roi"] = Yte_roi
+        mydata["Xte_mask"] = Xte_mask
         pickle_in.close()
 
         # store the data
@@ -211,6 +218,8 @@ class Image2Pickle:
         :param data_tr:  a dict with the loaded csv data.
         :param working_directory: the start working directory in which the data is located
         :return: rgb_volume, the rgb image volume of size (num items, with, height, channels) ,
+                 normal_volume,
+                 mask_volume
                  pose_results, the pose results of size  (num items, 7) ,
                  roi_results, the roi results of size  (num items, 4)
         """
@@ -220,6 +229,7 @@ class Image2Pickle:
         rgb_volume = []
         normal_volume = []
         depth_volum = []
+        mask_volume = []
 
         pose_results = []
         roi_results = []
@@ -230,15 +240,18 @@ class Image2Pickle:
             path_rgb = working_directory + self.__checkFilename(each['rgb_file'])
             path_norm = working_directory + self.__checkFilename(each['normals_file'])
            # path_depth = working_directory + self.__checkFilename(each['depth_file'])
+            path_mask = working_directory + self.__checkFilename(each['mask_file'])
 
             # read the images
             rgb = cv2.imread(path_rgb)
             normals = cv2.imread(path_norm, cv2.IMREAD_COLOR | cv2.IMREAD_ANYDEPTH)  # uint16
             #depth = cv2.imread(path_depth, cv2.IMREAD_GRAYSCALE | cv2.IMREAD_ANYDEPTH)  # uint16
+            mask = cv2.imread(path_mask, cv2.IMREAD_COLOR | cv2.IMREAD_ANYDEPTH)
 
             # resize the images
             resized_rgb = cv2.resize(rgb, (self.dst_height, self.dst_width))
             resized_normals = cv2.resize(normals, (self.dst_height, self.dst_width))
+            resized_mask = cv2.resize(mask, (self.dst_height, self.dst_width))
             #resized_depth = cv2.resize(depth, (self.dst_height, self.dst_width))
 
             # change normal vector datatype
@@ -248,8 +261,10 @@ class Image2Pickle:
             # reshape them
             (h, w, c) = resized_rgb.shape
             (oh, ow, oc) = rgb.shape
+            (mh, mw, mc) = resized_mask.shape
             resized_rgb = resized_rgb.reshape([1, h, w, c])
             resized_normals = resized_normals.reshape([1, h, w, c])
+            resized_mask = resized_mask.reshape([1, mh, mw, mc])
             #resized_depth = resized_depth.reshape([1, h, w, 1])
 
             #rgb = cv2.rectangle(rgb, (int(each["rx"]), int(each["ry"])), (int(each["rx"] + each["dx"]), int(each["ry"] + each["dy"])), (0, 255, 0), 2)
@@ -269,6 +284,7 @@ class Image2Pickle:
                 rgb_volume = resized_rgb
                 normal_volume = resized_normals
                # depth_volume = resized_depth
+                mask_volume = resized_mask
                 pose_results = r0
                 roi_results = r1
             else:
@@ -277,6 +293,7 @@ class Image2Pickle:
                # depth_volume = np.concatenate((self.depth_volume, resized_depth), axis=0)
                 pose_results =  np.concatenate((pose_results, r0), axis=0)
                 roi_results = np.concatenate((roi_results, r1), axis=0)
+                mask_volume = np.concatenate((mask_volume, resized_mask), axis=0)
             count = count + 1
 
             if count%100 == 0:
@@ -287,11 +304,14 @@ class Image2Pickle:
             if count % 1000 == 0:
                 print(f' {count}/{len(data_tr)}')
                 # write a temporary file.
-                temp_count = self.__writeTempFile(temp_count, rgb_volume, normal_volume, pose_results, roi_results)
+                temp_count = self.__writeTempFile(temp_count, rgb_volume, normal_volume, mask_volume, pose_results, roi_results)
+
+                # empty the data
                 rgb_volume = []
                 normal_volume = []
                 pose_results = []
                 roi_results = []
+                mask_volume = []
 
             #cv2.imshow("rgb", rgb)
             #cv2.waitKey(0)
@@ -300,17 +320,19 @@ class Image2Pickle:
         # This is necessary at this location if the number of images is not divisible by 1000
         if len(rgb_volume) > 0:
             print(f' {count}/{len(data_tr)}')
-            temp_count = self.__writeTempFile(temp_count, rgb_volume, normal_volume, pose_results, roi_results)
+            temp_count = self.__writeTempFile(temp_count, rgb_volume, normal_volume, mask_volume, pose_results, roi_results)
             rgb_volume = []
             normal_volume = []
             pose_results = []
             roi_results = []
+            mask_volume = []
 
 
         # concatenate all temp pickle files
         if temp_count > 0:
             rgb_volume = []
             normal_volume = []
+            mask_volume = []
             pose_results = []
             roi_results = []
             for i in range(temp_count):
@@ -322,11 +344,13 @@ class Image2Pickle:
                     normal_volume = np.array(data["X_norm"])
                     pose_results = np.array(data["Y_pose"])
                     roi_results = np.array(data["y_roi"])
+                    mask_volume = np.array(data["X_mask"])
                 else:
                     rgb_volume = np.concatenate((rgb_volume, data["X"]), axis=0)
                     normal_volume = np.concatenate((normal_volume, data["X_norm"]), axis=0)
                     pose_results = np.concatenate((pose_results, data["Y_pose"]), axis=0)
                     roi_results = np.concatenate((roi_results, data["y_roi"]), axis=0)
+                    mask_volume = np.concatenate((mask_volume, data["X_mask"]), axis=0)
                 pickle_in.close()
                 data = []
         else:
@@ -334,6 +358,7 @@ class Image2Pickle:
             normal_volume = np.array(normal_volume)
             pose_results = np.array(pose_results)
             roi_results = np.array(roi_results)
+            mask_volume = np.array(mask_volume)
 
 
         # removing temporary files
@@ -345,10 +370,11 @@ class Image2Pickle:
         print("[INFO] - Done processing")
         print("[INFO] - RGB volume shape: ", rgb_volume.shape)
         print("[INFO] - Normals volume shape: ", normal_volume.shape)
+        print("[INFO] - Mask volume shape: ", mask_volume.shape)
         print("[INFO] - Pose results shape: ", pose_results.shape)
         print("[INFO] - RoI results shape: ", roi_results.shape)
 
-        return rgb_volume, normal_volume, pose_results, roi_results
+        return rgb_volume, normal_volume, mask_volume, pose_results,  roi_results
 
     def __checkFilename(self, path):
         """
@@ -366,12 +392,23 @@ class Image2Pickle:
             dst_path =  dst_path + path
             return dst_path
 
-    def __writeTempFile(self, index, rgb_volume, normal_volume, pose, roi):
+    def __writeTempFile(self, index, rgb_volume, normal_volume, mask_volume, pose, roi):
+        """
+        Write a dictionary to a temporary pickle file.
+        :param index:
+        :param rgb_volume:
+        :param normal_volume:
+        :param mask_volume:
+        :param pose:
+        :param roi:
+        :return:
+        """
         temp = dict()
         temp["X"] = rgb_volume
         temp["X_norm"] = normal_volume
         temp["Y_pose"] = pose
         temp["y_roi"] = roi
+        temp["X_mask"] = mask_volume
 
         path = "temp_" + str(index)
         self.__writeToPickle(temp, path)
@@ -402,6 +439,8 @@ class Image2Pickle:
             error = error + 1
         if data["Xtr_norm"].shape[0] != num_train:
             error = error + 1
+        if data["Xtr_mask"].shape[0] != num_train:
+            error = error + 1
         if data["Ytr_pose"].shape[0] != num_train:
             error = error + 1
         if data["Ytr_roi"].shape[0] != num_train:
@@ -409,6 +448,8 @@ class Image2Pickle:
         if data["Xte"].shape[0] != num_test:
             error = error + 1
         if data["Xte_norm"].shape[0]!= num_test:
+            error = error + 1
+        if data["Xte_mask"].shape[0] != num_test:
             error = error + 1
         if data["Yte_pose"].shape[0]!= num_test:
             error = error + 1
@@ -431,7 +472,7 @@ def main(argv):
     ratio = 0.1
 
     print("--------------------------------------------------------------------")
-    print("Image2Pickle")
+    print("RGBNM2Pickle")
     print("Packing files into a pickle")
 
     try:
@@ -462,7 +503,7 @@ def main(argv):
     print(f'[INFO] - Image width: {image_width}, Image height: {image_height}')
     print(f'[INFO] - Train to test ratio: {ratio}')
 
-    i2p = Image2Pickle(image_height, image_width, ratio)
+    i2p = RGBNM2Pickle(image_height, image_width, ratio)
     i2p.process(inputfile, outputfile, workingpath)
 
 

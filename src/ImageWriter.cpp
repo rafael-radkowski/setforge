@@ -351,7 +351,7 @@ bool ImageWriter::checkFolder(string path)
 		// create a header
 		std::ofstream of(list_str, std::ifstream::out | std::ifstream::app);
 		if (of.is_open()){
-			of << "index,rgb_file,normals_file,depth_file,mask_file,mat_file,tx,ty,tz,qx,qy,qz,qw,roix,roiy,roiw,roih\n";
+			of << "index,rgb_file,normals_file,depth_file,mask_file,mat_file,tx,ty,tz,qx,qy,qz,qw,roi_x,roi_y,roi_w,roi_h\n";
 		}
 		of.close();
 	}

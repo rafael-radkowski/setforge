@@ -29,6 +29,8 @@ Jan 21, 2019:
 
 May 2, 2019, RR
 - Added a new function to write data to a file. This new write function stores additional data and uses a struct as datatype. 
+May 3, 2019, RR
+- Changed the csv parameter to roi_x, roi_y, roi_w, roi_h to align all tools.
 */
 
 // stl

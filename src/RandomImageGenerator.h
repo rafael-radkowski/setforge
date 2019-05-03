@@ -16,6 +16,8 @@ last edits:
 Feb 5th, 2019, RR
 - Added a normal map estimator to estimate normal maps from RGB images.
 - Wrote the normal map with a stacked rendering to a file and logged the output.
+May 3, 2019, RR
+- Changed the csv parameter to roi_x, roi_y, roi_w, roi_h to align all tools.
 */
 
 
