@@ -8,7 +8,7 @@
 bool ImageMask::Extract(cv::Mat& image, cv::Mat& mask_out )
 {
 	float threshold_value = 0;
-	cv::Mat img, mask, grayscaleMat;
+	cv::Mat img, grayscaleMat;
     img = image.clone();
     cvtColor(img, grayscaleMat, CV_RGB2GRAY);
     cv::threshold(grayscaleMat, mask_out, threshold_value, 255, CV_THRESH_BINARY);

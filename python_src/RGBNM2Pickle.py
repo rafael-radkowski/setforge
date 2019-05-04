@@ -165,11 +165,15 @@ class RGBNM2Pickle:
         all_data["Ytr_roi"] = Ytr_roi
         all_data["Xtr_mask"] = Xtr_mask
 
+        print("[INFO] - Storing data")
+
         # store the data
         pickle_out = open(dst_file, "wb")
         pickle.dump(all_data, pickle_out)
         pickle_out.close()
         all_data.clear()
+
+        print(f'[INFO] - Stored all data in {dst_file}')
 
         # prepare the test dataset
         Xte, Xte_norm, Xte_mask,  Yte_pose, Yte_roi = self.__prepare_data(self.test_data, working_directory)
@@ -184,13 +188,15 @@ class RGBNM2Pickle:
         mydata["Xte_mask"] = Xte_mask
         pickle_in.close()
 
+        print("[INFO] - Storing data")
+
         # store the data
         pickle_out = open(dst_file, "wb")
         pickle.dump(mydata, pickle_out)
         pickle_out.close()
 
-        print(f'[DONE] - Stored all data in {dst_file}')
-
+        print(f'[INFO] - Stored all data in {dst_file}')
+        print('[DONE]')
         # test the file for the right size
         self.__checkFiles(dst_file, num_test, num_train )
 
@@ -223,7 +229,7 @@ class RGBNM2Pickle:
                  pose_results, the pose results of size  (num items, 7) ,
                  roi_results, the roi results of size  (num items, 4)
         """
-        print("[INFO] - Preparing")
+        print("\n[INFO] - Preparing")
 
         count  = 0
         rgb_volume = []
@@ -246,7 +252,7 @@ class RGBNM2Pickle:
             rgb = cv2.imread(path_rgb)
             normals = cv2.imread(path_norm, cv2.IMREAD_COLOR | cv2.IMREAD_ANYDEPTH)  # uint16
             #depth = cv2.imread(path_depth, cv2.IMREAD_GRAYSCALE | cv2.IMREAD_ANYDEPTH)  # uint16
-            mask = cv2.imread(path_mask, cv2.IMREAD_COLOR | cv2.IMREAD_ANYDEPTH)
+            mask = cv2.imread(path_mask, cv2.IMREAD_UNCHANGED  | cv2.IMREAD_ANYDEPTH)
 
             # resize the images
             resized_rgb = cv2.resize(rgb, (self.dst_height, self.dst_width))
@@ -261,10 +267,10 @@ class RGBNM2Pickle:
             # reshape them
             (h, w, c) = resized_rgb.shape
             (oh, ow, oc) = rgb.shape
-            (mh, mw, mc) = resized_mask.shape
+            (mh, mw) = resized_mask.shape
             resized_rgb = resized_rgb.reshape([1, h, w, c])
             resized_normals = resized_normals.reshape([1, h, w, c])
-            resized_mask = resized_mask.reshape([1, mh, mw, mc])
+            resized_mask = resized_mask.reshape([1, mh, mw, 1]) # mask has one channel
             #resized_depth = resized_depth.reshape([1, h, w, 1])
 
             #rgb = cv2.rectangle(rgb, (int(each["rx"]), int(each["ry"])), (int(each["rx"] + each["dx"]), int(each["ry"] + each["dy"])), (0, 255, 0), 2)
@@ -430,6 +436,7 @@ class RGBNM2Pickle:
 
     def __checkFiles(self, path_and_file, num_test, num_train):
 
+        print("[INFO] - Checking data.")
         pickle_in = open(path_and_file, "rb")
         data = pickle.load(pickle_in)
 

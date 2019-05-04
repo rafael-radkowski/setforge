@@ -12,7 +12,7 @@ RandomImageGenerator::RandomImageGenerator(int image_height, int image_widht):
     _render_path = "";
     _render_type = "";
 	_output_path = "./batch";
-	_output_file_name = "batch.csv";
+	_output_file_name = "render_log.csv";
 
     _rendering_height = image_height; 
     _rendering_widht = image_widht;
