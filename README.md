@@ -57,8 +57,7 @@ The parameters limx, limy, lim_near, lim_far control the size of the box in whic
 
 The ```USER``` mode allows a user to select the camera position iteractively. Press the 'w' key to store the image set to the selected folder. s
 
-### Usage
-Output
+### Output
  * RGB rendering (CV_8UC3, 24 bit)
  * Normal map (CV_16UC3, 48 bit)
  * Depth map (CV_16UC1, 16 bit)
@@ -89,9 +88,10 @@ ImageGen.exe -ipath ../data/imagenet -itype jpeg -rlog ./output/render_log.csv -
 
 ## Exaple dataset
 
-Figure 3 shows some rendered results. Some more (as pickle files) are available on [http://public.vrac.iastate.edu/~rafael/dataset/](http://public.vrac.iastate.edu/~rafael/dataset/)
+Figure 3 shows some rendered results combinded with random background images. Some datasets (as pickle files) are available on [http://public.vrac.iastate.edu/~rafael/dataset/](http://public.vrac.iastate.edu/~rafael/dataset/)
 
 ![Figure 3: An example dataset. ](https://github.com/rafael-radkowski/DNNHelpers/blob/master/doc/images/datasets_example.png)
+
 Figure 3: An example dataset.
 
 Rafael Radkowski  
