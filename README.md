@@ -32,7 +32,7 @@ The 3D model is automatically rotated using a polyhedron to control the angle.
 A documentation can be found on Google Docs (ongoing work): [DatasetRenderer Introduction](https://docs.google.com/document/d/1aDyw3eXaGTcLeBlfpghiZg230qUybzcgZsdz7eNEcqg/edit?usp=sharing)
 
 ![Figure 1: a) a RGB image (RGB 8bit), b) a normal map image (xyz short, 16 bit), c) and a depth map image (depth, short 16 bit).](https://github.com/rafael-radkowski/DNNHelpers/blob/master/doc/images/Dataset_renderer_result.png)
-Figure 1: a) a RGB image (RGB 8bit), b) a normal map image (xyz short, 16 bit), c) and a depth map image (depth, short 16 bit).
+Figure 1: a) a RGB image (RGB 8bit), b) a normal map image (xyz short, 16 bit), c) and a depth map image (depth, short 16 bit). The application also provides a image mask for semantic segmentation, etc. (not in this image).
 
 
 ### Usage
@@ -57,6 +57,14 @@ The parameters limx, limy, lim_near, lim_far control the size of the box in whic
 
 The ```USER``` mode allows a user to select the camera position iteractively. Press the 'w' key to store the image set to the selected folder. s
 
+### Usage
+Output
+ * RGB rendering (CV_8UC3, 24 bit)
+ * Normal map (CV_16UC3, 48 bit)
+ * Depth map (CV_16UC1, 16 bit)
+ * Image mask (CV_8UC1, 8bit)
+ * Pose (quaternion, translation)
+
 ## ImageGen
 ImageGen generates training data by selecting random background images, e.g. from ImageNet,
 and by combining these images with a rendering that DatasetRenderer generated.
@@ -79,11 +87,16 @@ The software uses command line options to control its features. Example:
 ImageGen.exe -ipath ../data/imagenet -itype jpeg -rlog ./output/render_log.csv -img_w 512 -img_h 512 -o ./batch
 ```
 
+## Exaple dataset
 
+Figure 3 shows some rendered results. Some more (as pickle files) are available on [http://public.vrac.iastate.edu/~rafael/dataset/](http://public.vrac.iastate.edu/~rafael/dataset/)
+
+![Figure 3: An example dataset. ](https://github.com/rafael-radkowski/DNNHelpers/blob/master/doc/images/datasets_example.png)
+Figure 3: An example dataset.
 
 Rafael Radkowski  
 Iowa State University  
 rafael@iastate.edu  
 MIT license  
 
-Last edited: Feb 8, 2019
+Last edited: May 7, 2019
