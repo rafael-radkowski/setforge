@@ -1,6 +1,13 @@
 #include "NormalMapSobel.h"
 
+/* To activate some helper functions to write the 
+output of this filter into files for documentation, debugging, etc. 
+*/
+//#define WRITE_OUTPUT
 
+#ifdef WRITE_OUTPUT
+int scount = 0;
+#endif
 /*
 Estimate a normal map from an RGB image
 @param src - the source image - should be of type CV_8UC3
@@ -23,6 +30,13 @@ bool NormalMapSobel::EstimateNormalMap(cv::Mat& src, cv::Mat& dst, int kernel_si
 
 	int w = img_gray.cols;
 	int h = img_gray.rows;
+
+#ifdef WRITE_OUTPUT
+	cv::imwrite("normal_maps/normal_1" + to_string(scount) + ".png", src);
+	cv::imwrite("normal_maps/sobelx_1" + to_string(scount) + ".png", sobelx);
+	cv::imwrite("normal_maps/sobely_1" + to_string(scount) + ".png", sobely);
+#endif
+
 
 	// compute normals
 	cv::Mat normal_map = cv::Mat::zeros(h, w, CV_32FC3);
@@ -54,6 +68,18 @@ bool NormalMapSobel::EstimateNormalMap(cv::Mat& src, cv::Mat& dst, int kernel_si
 	}
 
 	cv::bilateralFilter( normal_map, dst, 3, 10, 10 );
+
+#ifdef WRITE_OUTPUT
+	cv::Mat normals_16UC3;
+	normal_map.convertTo(normals_16UC3, CV_16UC3, 65535 );
+
+	cv::imwrite("normal_maps/normal_map" + to_string(scount) + ".png", normals_16UC3);
+	cv::imshow("normal_map", normals_16UC3);
+	cv::waitKey();
+
+	scount++;
+#endif
+
 	//dst = normal_map;
 	return true;
 }

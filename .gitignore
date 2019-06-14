@@ -27,3 +27,9 @@ ImageGen.dir/
 TemplateMatching/TemplateMatchingTest.dir/
 python_src/test.py
 /doc/.DS_Store
+python_src/dataset_lab02/
+python_src/results_bagging/
+TemplateMatching/
+*.pickle
+python_src/experiments.py
+python_src/__pycache__/
