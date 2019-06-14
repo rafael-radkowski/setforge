@@ -1,4 +1,20 @@
 #pragma once
+/*
+
+
+Rafael Radkowski
+Iowa State University
+rafael@iastate.edu
+MIT License
+
+------------------------------------------------------
+Edits:
+
+06/14/19, RR:
+-	Added a new function api for initWindow, with parameters for the window width and height.
+	It overwrites the previous version.
+
+*/
 
 // stl include
 #include <iostream>
@@ -27,10 +43,6 @@ using namespace std;
 
 
 
-#define WINDOW_WIDTH 1280
-#define WINDOW_HEIGHT 1024
-
-
 
 
 namespace cs557
@@ -38,9 +50,20 @@ namespace cs557
 
 	/*!
 	This function initializes the GLFW window
+	@param window_name - string containing the window name
 	@return - a pointer storing a handle to the window
 	*/
 	GLFWwindow* initWindow(string window_name = "OpenGL Window for 557");
+
+
+	/*!
+	This function initializes the GLFW window
+	@param wnd_height - height of the window in pixel
+	@param wnd_width - width of the window in pixel
+	@param window_name - string containing the window name
+	@return - a pointer storing a handle to the window
+	*/
+	GLFWwindow* initWindow(int wnd_height, int wnd_width, string window_name = "OpenGL Window for 557");
 
 
 	/*

@@ -251,3 +251,4 @@ target_link_libraries(ImageGen  ${OPENCV_LIBRARIES}  )
 
 
 add_subdirectory(test_src)
+add_subdirectory(src)

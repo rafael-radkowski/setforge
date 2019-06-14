@@ -6,6 +6,12 @@
 namespace cs557
 {
 
+	
+	int WINDOW_WIDTH = 1280;
+	int WINDOW_HEIGHT = 1024;
+
+
+
 	/*
 	Vector for keyboard callbacks
 	*/
@@ -129,6 +135,15 @@ namespace cs557
 		return window;
 	}
 
+
+
+	GLFWwindow* initWindow(int wnd_height, int wnd_width, string window_name)
+	{
+		WINDOW_WIDTH = wnd_width;
+		WINDOW_HEIGHT = wnd_height;
+
+		return initWindow(window_name);
+	}
 
 
 

@@ -110,8 +110,8 @@ void RandomPoseViewRenderer::setPoseLimits(float nx, float px, float ny, float p
 		cout << "[WARNING] - Positive y limit < negative y limit. Flipped values." << endl;
 	}
 	if (pz < nz) {
-		_lim_px = nx;
-		_lim_nx = px;
+		_lim_pz = nz;
+		_lim_nz = pz;
 		cout << "[WARNING] - Positive z limit < negative z limit. Flipped values." << endl;
 	}
 }
@@ -186,7 +186,6 @@ glm::mat4  RandomPoseViewRenderer::getRandomPosition(void)
 
 
 	// position
-	
 	std::mt19937 generator(_rd());
     std::uniform_real_distribution<float> distribution_x(_lim_nx,_lim_px);
 	std::uniform_real_distribution<float> distribution_y(_lim_ny,_lim_py);

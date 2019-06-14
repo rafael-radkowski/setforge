@@ -145,6 +145,7 @@ void InitRenderer(Arguments& opt)
 		pose_renderer->setVerbose(opt.verbose); // set first to get all the output info
 		pose_renderer->setModel(opt.model_path_and_file);
 		pose_renderer->setOutputPath(opt.output_path);
+		pose_renderer->setPoseLimits(opt.lim_nx, opt.lim_px, opt.lim_ny, opt.lim_py, opt.lim_nz, opt.lim_pz);
 		pose_renderer->create(opt.num_images, opt.subdivisions);
 	}
 	else if (opt.cam == USER)
