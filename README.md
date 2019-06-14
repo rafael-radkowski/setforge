@@ -86,7 +86,7 @@ The software uses command line options to control its features. Example:
 ImageGen.exe -ipath ../data/imagenet -itype jpeg -rlog ./output/render_log.csv -img_w 512 -img_h 512 -o ./batch
 ```
 
-## Exaple dataset
+## Example dataset
 
 Figure 3 shows some rendered results combinded with random background images. Some datasets (as pickle files) are available on [http://public.vrac.iastate.edu/~rafael/dataset/](http://public.vrac.iastate.edu/~rafael/dataset/)
 
