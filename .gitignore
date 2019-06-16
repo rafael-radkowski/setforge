@@ -33,3 +33,4 @@ TemplateMatching/
 *.pickle
 python_src/experiments.py
 python_src/__pycache__/
+src/PoseEvalRenderer/PoseEval3D.dir/
