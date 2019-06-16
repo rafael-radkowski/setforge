@@ -257,7 +257,8 @@ bool ModelRenderer::drawFBO(void)
 		if (_with_mask) {
 			odata.mask = &mask;
 		}
-		odata.pose = glm::inverse(_viewMatrix);
+		// this view matrix describes the object's pose in camera coordinates since the object is at 0,0,0
+		odata.pose = _viewMatrix;
 		odata.roi = roi;
 		_writer->write(odata);
 
