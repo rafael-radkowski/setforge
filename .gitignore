@@ -34,3 +34,6 @@ TemplateMatching/
 python_src/experiments.py
 python_src/__pycache__/
 src/PoseEvalRenderer/PoseEval3D.dir/
+test_src/Coordinate_transformation_test.m
+python_src/test_script.py
+python_src/NormalMapEstimate.py

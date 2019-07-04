@@ -507,7 +507,7 @@ class Cam2Pickle:
         tempN = 0
         for key, value in data_list.items():
 
-            for i in range(6): # bagging
+            for i in range(1): # bagging
                 self.bootstrap_type = i
 
                 mask_file = value['mask']

@@ -132,6 +132,7 @@ set(MAIN_SRC
 	./src/RoIDetect.cpp
 	./src/ImageMask.h
 	./src/ImageMask.cpp
+	
 )
 
 
@@ -202,6 +203,9 @@ set(GENERATOR_SRC
 	./src/NormalMapSobel.h
 	./src/NormalMapSobel.cpp
 	./src/MatHelpers.h
+	./src/NoiseFilter.h
+	./src/NoiseFilter.cpp
+	
 )
 
 source_group(MAIN FILES ${MAIN_SRC})
