@@ -74,6 +74,13 @@ bool RoIDetect::Extract(cv::Mat& image, cv::Rect2f& roi )
 	roi.width = width;
 	roi.height = height;
 
+#ifdef DEBUG
+	cv::Mat clone = image.clone();
+	cv::rectangle( clone, cv::Point(x, y), cv::Point(x + width, y + height), cv::Scalar(0,255,255), 1);
+	cv::imshow("Region", clone);
+	cv::waitKey(1);
+#endif
+
 	return true;
 }
 
@@ -88,18 +95,19 @@ Render the RoI
 bool RoIDetect::RenderRoI(cv::Mat& image, cv::Rect2f roi)
 {
 
-	float scalex = 512 / image.rows;
-	float scaley = 512 / image.cols;
+	float scalex = (float)512 / (float)image.cols;
+	float scaley = (float)512 / (float)image.rows;
 
-	int px = roi.x * scalex;
-	int py = roi.y * scaley;
-	int wx = roi.width * scalex;
-	int wy = roi.height * scaley;
+	int px = (float)roi.x * scalex;
+	int py = (float)roi.y * scaley;
+	int wx = (float)roi.width * scalex;
+	int wy = (float)roi.height * scaley;
 
 	cv::Mat output_resized;
 	cv::Mat output = image.clone();
 	cv::resize(output, output_resized, cv::Size(512, 512));
-	cv::rectangle( output_resized, cv::Point(px, py), cv::Point(px + wx, py + wy), cv::Scalar(0,255,255));
+	cv::rectangle( output_resized, cv::Point(px, py), cv::Point(px + wx, py + wy), cv::Scalar(0,255,255), 2);
+
 
 	std::string str = "x: ";
 	str.append(std::to_string(std::floor(roi.x)));

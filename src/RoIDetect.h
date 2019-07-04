@@ -17,6 +17,11 @@ rafael@iastate.edu
 +1 (515) 294 7044
 May 2019
 All copyrights reserved
+----------------------------------------------------------------------------------------
+Last edited:
+
+July 4th, 2019, RR
+- Fixed a bug that displayed an incorred ROI when image rows != cols
 */
 
 #include <iostream>

@@ -22,8 +22,13 @@ Dec 16, 2018, RR
 Feb 19, 2019, RR
 	- added material: The obj material from a mat file was not used correctly. 
 		Added a feature to process it per mesh. 
+July 4th, 2019, RR
+	- Added a function to process diffuse, specular, and ambient textures. 
+	- Added an api to change the texture blend mode e.g, MODULATE, DECAL 
 */
 #pragma once
+#include "OBJLoader.h"
+
 
 // stl include
 #include <iostream>
@@ -45,7 +50,9 @@ Feb 19, 2019, RR
 #include "VertexBuffers.h"			// create vertex buffer object
 #include "ShaderProgram.h"			// create a shader program
 #include "CommonTypes.h"  
-
+#include "TextureLoader.h"
+#include "Texture2D.h"
+#include "../src/TextureLoader.h"
 
 using namespace std;
 
@@ -54,7 +61,7 @@ namespace cs557
 {
 
 	class OBJModel {
-	
+
 	public:
 		/*
 		Load an OBJ model from file
@@ -76,9 +83,26 @@ namespace cs557
 		Return the shader program
 		@return - int containing the shader program
 		*/
-		int getProgram(void){return program;}
+		int getProgram(void) { return program; }
+
+
+		/*
+		Set the texture parameters.
+		@param blend_mode - set the texture blend mode. MODULATE and REPLACE are currently supported. 
+		*/
+		void setTextureParam(TextureMode blend_mode);
 
 	private:
+
+		/*
+		Process the diffuse, ambient, and specular texture of the object. 
+		The function loads the textures from a file (using OpenCV), creates the texture object, 
+		and copies the textures to the gpu.
+		@param program - the shader program for this object. 
+		@param curMesh - the current mesh that this instance creates.
+		@param path - the path and file from which this object gets loaded. The function extracts the path.
+		*/
+		void processTextures(int& program, objl::Mesh& curMesh, string path);
 
 
 		int vaoID[1]; // Our Vertex Array Object
@@ -96,7 +120,8 @@ namespace cs557
 		std::vector<int>		length;
 
 		std::vector<cs557::Material>		materials;//material per mesh
-	
+		std::vector < cs557::TexMaterial>	textures;// textures per mesh
+
 		int _N; // number of vertices
 		int _I; // number indices
 	};

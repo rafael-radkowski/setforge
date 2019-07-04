@@ -17,6 +17,9 @@ All copyrights reserved.
 last edited:
 May 2nd, 2019, RR
 - Added a variable bool with_error_check to the matrial and Light structs. It disables the shader name check if set to false. 
+
+July 4th, 2019, RR
+- Added storage for textures
 */
 
 
@@ -302,6 +305,141 @@ typedef struct _LightSource
     }
 
 }LightSource;
+
+
+
+
+
+
+typedef enum {
+	REPLACE,	//C = Ct
+	MODULATE, //	C = Ct*Cf
+	DECAL //	C = Cf * (1 – At) + Ct * At
+
+}TextureMode;
+
+
+
+
+/*
+Datatype for a single textures.
+Stores all relevant texture data and meta data. 
+*/
+typedef struct _Texture {
+
+	unsigned int		tex_unit; // texture unit
+	unsigned int		tex_id; // texture id
+	int					tex_loc; // texture shader location. 
+	unsigned char*		map; // location of the texture data
+	int					width; // texture height 
+	int					height; // texture width
+	int					channels; // texture channels
+
+
+	_Texture() {
+		tex_unit = 0;
+		tex_id = 0;
+		tex_loc = -1;
+		map = 0;
+		width = 0;
+		height = 0;
+		channels = 0;
+	
+	}
+
+}Texture;
+
+
+/*
+Texture material data. 
+Stores the texture reflection properties. 
+
+Expects to find a texture struct in the shader code as follows
+
+uniform struct Textures {
+	sampler2D tex_kd; // diffuse texture
+	bool with_tex_kd; // default is false
+	sampler2D tex_ka; // ambient texture
+	bool with_tex_ka; // 
+	sampler2D tex_ks; // specular texture
+	bool with_tex_ks;
+	sampler2D tex_bump; // specular texture
+	bool with_tex_bump; // bumpmap
+	int mode;  // 0: replace, 1: modulate, 2: decal, default = 1
+
+} tex[1];
+
+
+
+*/
+typedef struct _TexMaterial
+{
+	// number of texturs
+	int					num_textures;
+	Texture				diff;  // diffuse textures
+	Texture				spec; // specular texturs
+	Texture				ambi; // ambient textures
+	Texture				bump; // bump map
+	Texture				env; // environment map. 
+
+	TextureMode			tex_mode;
+
+	  // error count, a helper to issue warning.
+    int      error_count;
+	bool	 with_error_check;
+
+
+	_TexMaterial() {
+		num_textures = 0;
+		error_count = 0;
+		with_error_check = true;
+		tex_mode = MODULATE;
+	}
+
+
+
+	
+    /*
+    The function passes all the uniform variables to the passed program.
+    Note that the shader program must use the correct variable names.
+    @param program_id - the shader program id as integer
+    */
+    inline void apply(int shader_program_id)
+    {
+        glUseProgram(shader_program_id );
+		if (checkName(shader_program_id, "tex_kd")) {
+			diff.tex_loc = glGetUniformLocation(shader_program_id, "tex_kd");
+			glUniform1i(diff.tex_loc, 0);
+		}
+	
+     
+        glUseProgram(0);
+    }
+
+	
+    /*
+    This function checks for the variable names in the shader program shader_program_id
+    */
+    inline bool checkName(int shader_program_id, std::string variable_name)
+    {
+
+        int ret = glGetUniformLocation(shader_program_id, variable_name.c_str());
+        if(ret == -1 && error_count < 1 & with_error_check){
+            std::cout << ret << " [ERROR] - Texture - Cannot find shader program variable " << variable_name << " (program: "<< shader_program_id << ").\nDid you add the right variable name?" << std::endl; 
+			error_count++;
+			return false;
+        }
+        return true;
+    }
+
+
+
+
+}TexMaterial;
+
+
+
+
 
 }//namespace cs557
 

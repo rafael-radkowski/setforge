@@ -84,7 +84,7 @@ bool ModelRenderer::setModel(string path_and_file)
 {
 	if (path_and_file.empty()) return false;
 
-
+//#define _DEVELOP
 #ifdef _DEVELOP
 	// load shader
 	int program = cs557::LoadAndCreateShaderProgram("./shaders/image_renderer.vs", "./shaders/image_renderer.fs");
@@ -94,7 +94,7 @@ bool ModelRenderer::setModel(string path_and_file)
 	// create model
 	_obj_model = new cs557::OBJModel();
 	_obj_model->create(path_and_file, program);
-
+	_obj_model->setTextureParam(cs557::TextureMode::MODULATE);
 
 	_light0.apply(program);
 	//_light1.apply(program);

@@ -6,7 +6,10 @@ cmake_policy(SET CMP0015 NEW)
 
 
 # Main project name
-project(DatasetRenderer)
+project(setforge)
+
+# define the name for the renderer
+set(RENDERER setforge_g)
 
 
 set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
@@ -132,7 +135,8 @@ set(MAIN_SRC
 	./src/RoIDetect.cpp
 	./src/ImageMask.h
 	./src/ImageMask.cpp
-	
+	./src/TextureLoader.h
+	./src/TextureLoader.cpp
 )
 
 
@@ -188,6 +192,7 @@ set(OPENGL_SRC
 	./gl_common_ext/CameraControls.h
 	./gl_common_ext/CameraControls.cpp
 	./gl_common_ext/CommonTypes.h
+	./gl_common_ext/OBJLoader.h
 )
 
 set(GENERATOR_SRC
@@ -225,7 +230,7 @@ set(CMAKE_C_STANDARD_REQUIRED ON)
 
 
 # Create an executable
-add_executable(${PROJECT_NAME} 
+add_executable(${RENDERER} 
 ${MAIN_SRC} ${OPENGL_SRC} ${UTILS_SRC} ${SHADER_SRC})
 
 
@@ -248,7 +253,7 @@ ENDIF(WIN32)
 
 
 # Add libraries
-target_link_libraries(${PROJECT_NAME}   ${GLEW_LIBRARIES} ${GLEW_LIBRARY} ${GLFW3_LIBRARY} ${OPENGL_LIBRARIES} ${OPENCV_LIBRARIES}  )
+target_link_libraries(${RENDERER}   ${GLEW_LIBRARIES} ${GLEW_LIBRARY} ${GLFW3_LIBRARY} ${OPENGL_LIBRARIES} ${OPENCV_LIBRARIES}  )
 
 # Add libraries
 target_link_libraries(ImageGen  ${OPENCV_LIBRARIES}  )
