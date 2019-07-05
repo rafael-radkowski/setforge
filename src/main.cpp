@@ -52,6 +52,7 @@ May 2nd, 2019, RR
 #include "Model3D.h"
 #include "ArgParser.h"
 #include "types.h"
+#include "CameraParameters.h"
 
 using namespace cs557;
 using namespace std::placeholders;
@@ -111,6 +112,10 @@ void InitWindow(void)
 
 void InitRenderer(Arguments& opt)
 {
+	/* Load the camera parameters from file. */
+	CameraParameters::Read("Camera_params.json");
+
+
      //---------------------------------------------------------
     // Create models
 	cam_control = opt.cam;
