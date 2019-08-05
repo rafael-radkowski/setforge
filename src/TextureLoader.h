@@ -16,6 +16,9 @@ MIT License
 ---------------------------------------------------------------
 Last edits:
 
+July 13, 2019, RR 
+- Flipped the texture to align the blender/opencv coordinate system with the GL coordinate system. 
+
 
 */
 

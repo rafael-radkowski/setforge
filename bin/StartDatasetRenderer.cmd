@@ -1,1 +1,1 @@
-DatasetRenderer.exe ../data/stanford_bunny_02_rot.obj -o dataset01  -img_w 512 -img_h 512 -m POLY -sub 5  -rad 1.3 
+DatasetRenderer.exe ../data/transducer/transducer_map.obj -o dataset01  -img_w 512 -img_h 512 -m USER -sub 5  -rad 6.0

@@ -194,7 +194,8 @@ glm::mat4  RandomPoseViewRenderer::getRandomPosition(void)
 	float y = distribution_y(generator); 
 	float z = distribution_z(generator); 
 
-	glm::mat4 pose = glm::translate(glm::vec3(x, y, z));
+	// subtract the camera distance to account for the camera at location _camera_distance
+	glm::mat4 pose = glm::translate(glm::vec3(x, y, z+_camera_distance));
 
 	if (_verbose) {
 		std::cout << std::fixed;

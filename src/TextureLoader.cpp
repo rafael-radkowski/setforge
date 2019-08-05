@@ -32,6 +32,9 @@ bool  TextureLoader::Load(string path_and_name, unsigned char** texture, int* wi
 	int new_size = std::max(FindNextPower2(image.rows), FindNextPower2(image.cols));
 	cv::resize(image, image_rs, cv::Size2f(new_size, new_size));
 
+	// flip the texture to match the opengl coordinate system
+	cv::flip(image_rs, image_rs, 0);
+
 	textures_storage.push_back(image_rs);
 	files.push_back(path_and_name);
 

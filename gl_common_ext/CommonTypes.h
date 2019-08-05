@@ -393,7 +393,7 @@ typedef struct _TexMaterial
 		num_textures = 0;
 		error_count = 0;
 		with_error_check = true;
-		tex_mode = MODULATE;
+		tex_mode = REPLACE;
 	}
 
 

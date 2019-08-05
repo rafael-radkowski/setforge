@@ -64,7 +64,7 @@ typedef struct _Arguments
 		output_filename = "rendering";
 
 		windows_width = 1280;
-		window_height = 1024;
+		window_height = 1280;
 		image_width = 1280;
 		image_height = 1024;
 

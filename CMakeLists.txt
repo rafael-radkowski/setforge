@@ -210,6 +210,8 @@ set(GENERATOR_SRC
 	./src/MatHelpers.h
 	./src/NoiseFilter.h
 	./src/NoiseFilter.cpp
+	./src/HistogramFilter.h
+	./src/HistogramFilter.cpp
 	
 )
 

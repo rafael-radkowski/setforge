@@ -96,14 +96,14 @@ using namespace arlab;
 
 
 
-void InitWindow(void)
+void InitWindow(Arguments& opt)
 {
 
 	//cout << _MSC_VER << endl;
 
 
 	// Init the GLFW Window
-	window = cs557::initWindow("Render to Image");
+	window = cs557::initWindow(opt.window_height, opt.windows_width, "Render to Image");
 
 	// Initialize the GLEW apis
 	cs557::initGlew();
@@ -173,9 +173,19 @@ void DrawLoop(void)
     glEnable(GL_BLEND); 
 	glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);
 
-	 // Init the view matrix. 
-	viewMatrix = glm::lookAt(glm::vec3(0.0f, 0.0, 1.3f), glm::vec3(0.0f, 0.0f, 00.f), glm::vec3(0.0f, 1.0f, 0.0f));
-    cs557::InitControlsViewMatrix(viewMatrix);
+	switch (cam_control)
+	{
+	case SPHERE:
+		// Init the view matrix. 
+		viewMatrix = glm::lookAt(glm::vec3(0.0f, 0.0, 0.0f), glm::vec3(0.0f, 0.0f, 00.f), glm::vec3(0.0f, 1.0f, 0.0f));
+		cs557::InitControlsViewMatrix(viewMatrix);
+		break;
+	default:
+		// Init the view matrix. 
+		viewMatrix = glm::lookAt(glm::vec3(0.0f, 0.0, 0.5f), glm::vec3(0.0f, 0.0f, 00.f), glm::vec3(0.0f, 1.0f, 0.0f));
+		cs557::InitControlsViewMatrix(viewMatrix);
+		break;
+	}
 
 	clock_t begin = clock();
 
@@ -259,7 +269,7 @@ int main(int argc, char** argv)
 	if (options.valid == false) return -1;
 
 	// Init the output window
-	InitWindow();
+	InitWindow(options);
 
 	// Init the image renderer 
 	InitRenderer(options);
