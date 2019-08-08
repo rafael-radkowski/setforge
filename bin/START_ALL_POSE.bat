@@ -50,6 +50,9 @@ set cols=128
 :: POSE if a random pose should be selected. 
 set method=POSE
 
+:: if set to 1, the object will only be rendered in its upright position. 
+set upright=1
+
 :: 6. Set the polyhedron sub-level. This will define the number of images to render
 :: The higher the number, the more images. I tested to 6
 set sublevel=4
@@ -67,16 +70,28 @@ set far=2.5
 :: 9. Set the number of final images you like to generate
 set num=1000
 
-:: 10. Set the percentage of images that should go into the cross-validation test file
+:: 10. Activate noise by setting the variable to 1. 
+set with_noise=1
+set noise_dev=0.15
+
+:: 11. Enable chromatic adaptation
+set with_chromatic=1
+
+:: 12. Set the percentage of images that should go into the cross-validation test file
 :: as a percentage of num, in a range from [0,1] with 0->0%, 0.1-> 10%, 1.0 -> 100%
 set x_test=0.1
 
 :: THAT'S IT
 ::----------------------------------------------------------------------------------
 
-set arg1=%model% -o %temp_folder% -img_w %img_w% -img_h %img_h% -m %method% -sub %sublevel%  -rad %cam_distance% -num %ren_num% -limx %limx% -limy %limy% -lim_near %near% -lim_far %far%s
-set arg2=-n %num% -ipath %bg_image_path% -itype jpeg -rlog %temp_folder%/render_log.csv -img_w %img_w% -img_h %img_h% -o %output_folder% 
-set arg3=-i %output_folder%/batch.csv -o %final_pickle_path% -d ../bin -r %rows% -c %cols% -x %x_test%
+set arg1=%model% -o %temp_folder% -img_w %img_w% -img_h %img_h% -m %method% -sub %sublevel%  -rad %cam_distance% -num %ren_num% -limx %limx% -limy %limy% -lim_near %near% -lim_far %far% 
+if %upright% == 1 set arg1=%arg1% -up
+
+set arg2=-n %num% -ipath %bg_image_path% -itype jpg -rlog %temp_folder%/render_log.csv -img_w %img_w% -img_h %img_h% -o %output_folder% 
+IF %with_noise% == 1 set arg2=%arg2% -noise %noise_dev%
+IF %with_chromatic% == 1 set arg2=%arg2% -chromatic 
+
+set arg3=-i %output_folder%/render_log.csv -o %final_pickle_path% -d ../bin -r %rows% -c %cols% -x %x_test%
 
 
 DatasetRenderer.exe %arg1%
