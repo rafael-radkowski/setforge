@@ -51,6 +51,9 @@ int main(int argc, char** argv)
 	generator->setImagePath(path, arg.background_images_type);
 	generator->setRenderPath(arg.rendered_images_log_file);
 	generator->setOutputPath(arg.output_path);
+	generator->setFilter(RandomImageGenerator::NOISE, arg.with_noise, arg.noise_sigma, 0.0);
+	generator->setFilter(RandomImageGenerator::CHROMATIC, arg.with_chromatic, 0.0, 0.0);
+
 	int num = generator->process(arg.num_images);
 
 	clock_t end = clock();

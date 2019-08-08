@@ -5,19 +5,23 @@
 Constructor
 @param image_height, image_width - the output image size in pixels. 
 */
-RandomImageGenerator::RandomImageGenerator(int image_height, int image_widht):
-    _image_height(image_height),  _image_widht(image_widht)
+RandomImageGenerator::RandomImageGenerator(int image_height, int image_widht) :
+	_image_height(image_height), _image_widht(image_widht)
 {
-    _image_type = "";
-    _render_path = "";
-    _render_type = "";
+	_image_type = "";
+	_render_path = "";
+	_render_type = "";
 	_output_path = "./batch";
 	_output_file_name = "render_log.csv";
 
-    _rendering_height = image_height; 
-    _rendering_widht = image_widht;
-}
+	_rendering_height = image_height;
+	_rendering_widht = image_widht;
 
+	_with_chromatic_adpat = false;
+	_wtih_noise_adapt = false;
+	_noise_sigma = 0.1;
+	_noise_mean = 0.0;
+}
 
 RandomImageGenerator::~RandomImageGenerator()
 {
@@ -61,6 +65,30 @@ void RandomImageGenerator::setOutputPath(string path)
 
 
 /*
+Set a filter and its parameters. The filter to be change is set with 'type'
+The parameters param1 and param2 depend on the filter to be set.
+@param type - a filter of type Filtertype, NOISE or CHROMATIC
+@param enable - enable or disable this filter with true or false. Default is false. 
+@param param1 - depends on the filter to set. 
+			For NOISE: param1: sigma, param2: mean
+			For CHROMATIC: no parameters
+*/
+void RandomImageGenerator::setFilter(Filtertype type, bool enable, float param1, float param2)
+{
+	switch (type) {
+	case NOISE:
+		_wtih_noise_adapt = enable;
+		_noise_sigma = param1;
+		_noise_mean = param2;
+		break;
+	case CHROMATIC:
+		_with_chromatic_adpat = enable;
+		break;
+	}
+}
+
+
+/*
 The function distinguises the "combine" mode and the "rendering only" mode using the 
 image path string (setImagePath(...)). If the string is empty, the tool assues that 
 only foreground renderings ought to be processed.
@@ -81,6 +109,7 @@ int RandomImageGenerator::process(int num_images) {
 	}
 
 }
+
 /*
 Combine foreground images with rendering 
 @param num_images - integer with the number of images to generate. 
@@ -133,12 +162,15 @@ int RandomImageGenerator::process_combine(int num_images)
         int dice_rendering = distribution_render(generator);
         //cout << dice_image << " : " << image_filenames[dice_image] << "\n";
 
+		// Get the image paths. 
         string path0 = image_filenames[dice_image];
         string path1 = rendered_files[dice_rendering].rgb_file;
 		string path2 = rendered_files[dice_rendering].normal_file;
 		string path3 = rendered_files[dice_rendering].depth_file;
 		string path4 = rendered_files[dice_rendering].maske_file;
 
+		//----------------------------------------------
+		// Read the background image and check if its ok.
         cv::Mat img = cv::imread(path0);
 		if(img.rows == 0||img.cols == 0){
 			std::cout << "[ERROR] - Did not find image " << path0 << ". Check the path." << std::endl;
@@ -162,8 +194,24 @@ int RandomImageGenerator::process_combine(int num_images)
         int roi_x, roi_y, roi_width, roi_height;
         cv::Mat rendered_image = adaptRendering(rendering, roi_x, roi_y, roi_width, roi_height);
         //cout << roi_x << " : " << roi_y << "\n";
-       // cv::rectangle( rendered_image, cv::Point(roi_x, roi_y), cv::Point(roi_x + roi_width, roi_y + roi_height), cv::Scalar(255,0,0));
-        cv::Mat ready_rgb = combineImages(img_resized, rendered_image, 0);
+
+
+		//----------------------------------------------
+		// Chromatic adaptation and noise filtering
+		if (_with_chromatic_adpat) {
+			_imageFilter.setChromaticTemplate(img_resized);
+			_imageFilter.apply(rendered_image, rendered_image);
+		}
+
+		if (_wtih_noise_adapt) {
+			rendered_image = NoiseFilter::AddGaussianNoise(rendered_image, _noise_mean, _noise_sigma);
+		}
+
+
+		//----------------------------------------------
+		// Combine foreground with background
+
+        cv::Mat ready_rgb = combineImages(img_resized, rendered_image, 0.0);
 		cv::Mat output = ready_rgb.clone();
 		cv::rectangle( output, cv::Point(roi_x, roi_y), cv::Point(roi_x + roi_width, roi_y + roi_height), cv::Scalar(255,0,0));
 		
@@ -438,6 +486,7 @@ cv::Mat RandomImageGenerator::adaptRendering(cv::Mat& image, int& x, int& y, int
 cv::Mat RandomImageGenerator::combineImages(cv::Mat image1, cv::Mat image2, int threshold_value)
 {
 
+	// find the rendering first by assuming that the background is black. 
     cv::Mat img, mask, grayscaleMat;
     img = image2.clone();
     cvtColor(img, grayscaleMat, CV_RGB2GRAY);

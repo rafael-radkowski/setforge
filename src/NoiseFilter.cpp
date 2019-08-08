@@ -10,10 +10,7 @@
 using namespace cv;
 using namespace std;
 
-AddNoise::AddNoise()
-{
-	
-}
+
 
 /**
 * Add Gaussian Noise for RGB CV_8U or CV_16U 3-channel-images
@@ -23,15 +20,25 @@ AddNoise::AddNoise()
 * @param sigma Standard deviation of Gaussian noise. range from 0 to 1.
 * @return noise  Image with guassian noise
 */
-cv::Mat AddNoise::addGuasNoise(cv::Mat img, float mean, float sigma) {
+cv::Mat NoiseFilter::AddGaussianNoise(cv::Mat img, float mean, float sigma) {
 	Mat noise;
 	noise = img.clone();
 	RNG rng;
 	sigma = sigma * 255;
-	rng.fill(noise, RNG::NORMAL, mean, sigma);
-	add(noise, img, noise);
 
-	return noise;
+	// generate noise
+	rng.fill(noise, RNG::NORMAL, mean, sigma);
+
+	// create a mask to make sure to only affect the area with color and not the empty background. 
+	cv::Mat grayscaleMat, mask;
+	cvtColor(img, grayscaleMat, CV_RGB2GRAY);
+    cv::threshold(grayscaleMat, mask, 0.0, 255, CV_THRESH_BINARY); // 0.0 -> black background
+
+	// add the noise
+	cv::Mat out;
+	add( noise, img, out, mask);
+
+	return out;
 }
 
 /**
@@ -41,7 +48,7 @@ cv::Mat AddNoise::addGuasNoise(cv::Mat img, float mean, float sigma) {
 * @param dev Standard deviation of speckle noise. range from 0 to 1.
 * @return noise  Image with speckle noise
 */
-cv::Mat AddNoise::addSpeckleNoiseRGB(cv::Mat img, float dev) {
+cv::Mat NoiseFilter::AddSpeckleNoiseRGB(cv::Mat img, float dev) {
 	Mat res;
 	res = img.clone();
 	CvMat* pNoise = cvCreateMat(img.rows, img.cols, CV_32F);
@@ -59,7 +66,3 @@ cv::Mat AddNoise::addSpeckleNoiseRGB(cv::Mat img, float dev) {
 	return res;
 }
 
-AddNoise::~AddNoise()
-{
-
-}
