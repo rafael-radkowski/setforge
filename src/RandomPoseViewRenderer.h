@@ -47,6 +47,9 @@ last edited:
 Jan 21, 2019:
 - Updated the up * eye  vector check to prevent that the view matrix becomes NaN. 
 	Verified that the model is correctly oriented. 
+Aug 8, 2019, RR
+- Added a function that removes all canera viewpoints in the lower hemisphere of the polyhedron. 
+	As a result, the 3D model will only be rendered in its upright position. 
 */
 
 
@@ -103,6 +106,14 @@ public:
 	*/
 	void setPoseLimits(float nx, float px, float ny, float py, float nz, float pz);
 
+
+	/*
+	Limits the orientation to upper hemisphere orientations only.
+	Note that up means positive y direction
+	@param upright - true to limit the orientations to upright poses. 
+	*/
+	void setHemisphere(bool upright);
+
 	/*
 	Draw the image sequence and save all images to a file
 	@return - false, if images still need to be rendered. 
@@ -137,6 +148,8 @@ private:
 	// the polyhedron results. Defines the camera viewpoins. 
 	std::vector<glm::vec3> _points;
 	std::vector<glm::vec3> _normals;
+
+	bool				_upper_hemisphere; // if true, only camera views from the upper hemisphere will be rendered. 
 
 	int						_subdivisions;
 	float					_lim_px, _lim_nx;

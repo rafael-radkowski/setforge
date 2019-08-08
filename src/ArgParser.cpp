@@ -116,6 +116,9 @@ Arguments ArgParser::Parse(int& argc, char** argv)
 			if (argc >= pos) opt.lim_nz = -atof(  string(argv[pos+1]).c_str() );
 			else ParamError(c_arg);
 		}
+		else if(c_arg.compare("-up") == 0 ){ // upright images only
+			opt.upright = true;
+		}
 		else if(c_arg.compare("-help") == 0 || c_arg.compare("-h") == 0){ // help
 			Help();
 		}
@@ -161,6 +164,7 @@ void ArgParser::Help(void)
 	cout << "\t-lim_near [param] \t- for camera path control POSE, set the near z-axis limit (positive along the camera axis) for the random position (float)" << endl;
 	cout << "\t-lim_far [param] \t- for camera path control POSE, set the far z-axis limit (postive along the camera axis) for the random position (float)" << endl;
 	cout << "\t-level [param] \t-for the camera path TREE, the number of tree levels for the Balanced Pose Tree (int)" << endl;
+	cout << "\t-up \t- Renders objects only in the upright position if set, where up is the positive y-direction." << endl;
 	cout << "\t-verbose \t- displays additional information." << endl;
 	cout << "\t-help \t- displays this help menu" << endl;
 

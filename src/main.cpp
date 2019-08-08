@@ -16,6 +16,9 @@ All copyrights reserved
 last edited:
 May 2nd, 2019, RR
 - Added an instance of UserViewRenderer, which allows a user to manually select camera viewpoints and to store them.
+
+August 8, 2019, RR
+- Added a api to limit the pose and poly orientations of the model to upright orientations. 
 */
 
 #include <iostream>
@@ -133,6 +136,7 @@ void InitRenderer(Arguments& opt)
 		poly_renderer->setVerbose(opt.verbose); // set first to get all the output info
 		poly_renderer->setModel(opt.model_path_and_file);
 		poly_renderer->setOutputPath(opt.output_path);
+		poly_renderer->setHemisphere(opt.upright);
 		poly_renderer->create(opt.camera_distance, opt.subdivisions);
 		
 	}
@@ -151,6 +155,7 @@ void InitRenderer(Arguments& opt)
 		pose_renderer->setModel(opt.model_path_and_file);
 		pose_renderer->setOutputPath(opt.output_path);
 		pose_renderer->setPoseLimits(opt.lim_nx, opt.lim_px, opt.lim_ny, opt.lim_py, opt.lim_nz, opt.lim_pz);
+		pose_renderer->setHemisphere(opt.upright);
 		pose_renderer->create(opt.num_images, opt.subdivisions);
 	}
 	else if (opt.cam == USER)

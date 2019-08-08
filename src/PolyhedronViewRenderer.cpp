@@ -19,6 +19,7 @@ PolyhedronViewRenderer::PolyhedronViewRenderer(int window_width, int window_heig
 	_camera_distance = 1.3;
 
 	_subdivisions = 0;
+	_upright = false;
 }
 
 PolyhedronViewRenderer::~PolyhedronViewRenderer()
@@ -61,6 +62,20 @@ void PolyhedronViewRenderer::create(float camera_distance, int subdivisions)
 	_points = final_mesh.first;
 	_normals = final_mesh.first;
 
+	// filter all poses to only get the upright hemisphere.
+	// up is y.
+
+	if (_upright) {
+		for (int i = 0; i < _points.size(); i++) {
+			glm::vec3 p = _points[i];
+			if (p.y < 0) {
+				_points.erase(_points.begin() + i);
+				_normals.erase(_normals.begin() + i);
+				i--;
+			}
+		}
+	}
+
 	_N = _points.size();
 	
 	if(_verbose)
@@ -69,6 +84,16 @@ void PolyhedronViewRenderer::create(float camera_distance, int subdivisions)
 	return;
 }
 
+
+/*
+Limits the orientation to upper hemisphere orientations only.
+Note that up means positive y direction
+@param upright - true to limit the orientations to upright poses. 
+*/
+void PolyhedronViewRenderer::setHemisphere(bool upright)
+{
+	_upright = upright;
+}
 
 /*
 Draw the image sequence and save all images to a file

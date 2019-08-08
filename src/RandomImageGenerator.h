@@ -18,6 +18,9 @@ Feb 5th, 2019, RR
 - Wrote the normal map with a stacked rendering to a file and logged the output.
 May 3, 2019, RR
 - Changed the csv parameter to roi_x, roi_y, roi_w, roi_h to align all tools.
+Aug 8, 2019, RR
+- Added a noise filter to the process
+- Added a chromatic adaptation filter to the process. 
 */
 
 

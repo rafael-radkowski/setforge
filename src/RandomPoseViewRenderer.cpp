@@ -17,7 +17,7 @@ RandomPoseViewRenderer::RandomPoseViewRenderer(int window_width, int window_heig
 	_N = 0;
 	_N_current = 0;
 	_camera_distance = 1.2;
-
+	_upper_hemisphere = true;
 	_subdivisions = 0;
 
 	_lim_px = 2;
@@ -75,6 +75,23 @@ void RandomPoseViewRenderer::create(int num_images ,  int subdivisions)
 	_points = final_mesh.first;
 	_normals = final_mesh.first;
 
+
+	// filter all poses to only get the upright hemisphere.
+	// up is y.
+
+	if (_upper_hemisphere) {
+		for (int i = 0; i < _points.size(); i++) {
+			glm::vec3 p = _points[i];
+			if (p.y < 0) {
+				_points.erase(_points.begin() + i);
+				_normals.erase(_normals.begin() + i);
+				i--;
+			}
+		}
+	}
+
+
+
 	
 	if(_verbose)
 		cout << "[INFO] - Created " << _N << " coordinates around a sphere." << endl;
@@ -97,7 +114,7 @@ void RandomPoseViewRenderer::setPoseLimits(float nx, float px, float ny, float p
 	_lim_py = py;
 	_lim_ny = ny;
 	_lim_pz = min(pz, -1.0);
-	_lim_nz = min(nz, -1.0f);
+	_lim_nz = min(nz, -0.5f);
 
 	if (px < nx) {
 		_lim_px = nx;
@@ -114,6 +131,17 @@ void RandomPoseViewRenderer::setPoseLimits(float nx, float px, float ny, float p
 		_lim_nz = pz;
 		cout << "[WARNING] - Positive z limit < negative z limit. Flipped values." << endl;
 	}
+}
+
+
+/*
+Limits the orientation to upper hemisphere orientations only.
+Note that up means positive y direction
+@param upright - true to limit the orientations to upright poses. 
+*/
+void RandomPoseViewRenderer::setHemisphere(bool upright)
+{
+	_upper_hemisphere = upright;
 }
 
 /*

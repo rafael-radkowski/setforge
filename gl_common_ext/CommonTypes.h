@@ -312,6 +312,7 @@ typedef struct _LightSource
 
 
 typedef enum {
+	DISABLED,
 	REPLACE,	//C = Ct
 	MODULATE, //	C = Ct*Cf
 	DECAL //	C = Cf * (1 – At) + Ct * At
