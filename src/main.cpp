@@ -262,12 +262,12 @@ int main(int argc, char** argv)
 {	
 	cout << "\n--------------------------------------" << endl;
 	cout << "Dataset Renderer" << endl;
-	cout << "Version 1.1" << endl;
+	cout << "Version 1.1.1" << endl;
 	cout << "Create RGB color maps, depth images (float), and normal maps (float) from a 3D model \n" << endl;
 	cout << "Rafael Radkowski" << endl;
 	cout << "Iowa State University" << endl;
 	cout << "Rafael@iastate.edu" << endl;
-	cout << "Jan 2019, All copyrights reserved.\n" << endl;
+	cout << "August 2019, MIT License.\n" << endl;
 
 	Arguments options = ArgParser::Parse(argc, argv);
 
