@@ -1,4 +1,4 @@
-# Main cmake file 
+# Main cmake file
 cmake_minimum_required(VERSION 2.6)
 
 # policy for relative subfolders
@@ -137,6 +137,8 @@ set(MAIN_SRC
 	./src/ImageMask.cpp
 	./src/TextureLoader.h
 	./src/TextureLoader.cpp
+	./src/CameraParameters.h
+	./src/CameraParameters.cpp
 )
 
 
@@ -212,7 +214,7 @@ set(GENERATOR_SRC
 	./src/NoiseFilter.cpp
 	./src/ImageFilter.h
 	./src/ImageFilter.cpp
-	
+
 )
 
 source_group(MAIN FILES ${MAIN_SRC})
@@ -232,11 +234,11 @@ set(CMAKE_C_STANDARD_REQUIRED ON)
 
 
 # Create an executable
-add_executable(${RENDERER} 
+add_executable(${RENDERER}
 ${MAIN_SRC} ${OPENGL_SRC} ${UTILS_SRC} ${SHADER_SRC})
 
 
-add_executable(ImageGen 
+add_executable(ImageGen
 ${GENERATOR_SRC} )
 
 
