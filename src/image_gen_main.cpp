@@ -33,11 +33,11 @@ int main(int argc, char** argv)
 {
 	cout << "---------------------------------------------" << endl;
 	cout << "Image Generator" << endl;
-	cout << "Version 1.1.1\n" << endl;
+	cout << "Version 1.1.2\n" << endl;
 	cout << "Generate images for cnn training" << endl;
 	cout << "Rafael Radkowski" << endl;
 	cout << "Iowa State University" << endl;
-	cout << "August 2019, MIT License" << endl;
+	cout << "December 2019, MIT License" << endl;
 	cout << "---------------------------------------------\n" << endl;
 
 	Parser::Arguments arg = Parser::Parse(argc, argv);

@@ -10,6 +10,11 @@ Iowa State University
 rafael@iastate.edu
 Jan 25, 2019
 MIT license
+---------------------------------------------------------------------------------
+Last edited:
+
+Dec 10, 2019, RR:
+- Added #include "FileUtils.h" 
 */
 
 
@@ -19,14 +24,11 @@ MIT license
 #include <vector>
 #include <algorithm>
 
-#ifdef _WIN32
-    #include <experimental/filesystem>
-#else
-    #include <dirent.h>
-#endif
-
 // opencv
 #include <opencv2/opencv.hpp>
+
+// local
+#include "FileUtils.h"
 
 using namespace std;
 

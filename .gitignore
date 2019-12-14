@@ -37,3 +37,6 @@ src/PoseEvalRenderer/PoseEval3D.dir/
 test_src/Coordinate_transformation_test.m
 python_src/test_script.py
 python_src/NormalMapEstimate.py
+setforge_r.dir/
+setforge_g.dir/
+python_src/testcode/img/

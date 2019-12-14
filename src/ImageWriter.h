@@ -31,13 +31,23 @@ May 2, 2019, RR
 - Added a new function to write data to a file. This new write function stores additional data and uses a struct as datatype. 
 May 3, 2019, RR
 - Changed the csv parameter to roi_x, roi_y, roi_w, roi_h to align all tools.
+
+Dec 10, 2019, RR:
+- Added FileUtils.h to address the deprecation of experimental/filesystem
 */
 
 // stl
 #include <iostream>
 #include <vector>
 #include <string>
+#if _MSC_VER >= 1920 && _MSVC_LANG  == 201703L 
+#include <filesystem>
+#else
+#define _SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING
 #include <experimental/filesystem>
+#endif
+#include "FileUtils.h"
+
 
 // opencv
 #include <opencv2/opencv.hpp>

@@ -21,6 +21,8 @@ May 3, 2019, RR
 Aug 8, 2019, RR
 - Added a noise filter to the process
 - Added a chromatic adaptation filter to the process. 
+Dec 10, 2019, RR:
+- Added #include "FileUtils.h" to manage experimental/filesyste, and filesystem ambiguity
 */
 
 
@@ -42,6 +44,7 @@ Aug 8, 2019, RR
 #include "MatHelpers.h"
 #include "ImageFilter.h" // for chromatic adaptation
 #include "NoiseFilter.h" // for noise
+#include "FileUtils.h"
 
 using namespace std;
 

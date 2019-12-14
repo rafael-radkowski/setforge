@@ -1,5 +1,12 @@
 #pragma once
+/*
 
+-----------------------------------------------------------------
+Last edits:
+
+Dec 10, 2019, RR:
+- Added FileUtils.h to address the deprecation of experimental/filesystem
+*/
 
 // stl include
 #include <stdio.h>
@@ -10,7 +17,6 @@
 #include <vector>
 #ifdef _WIN32
 #include <conio.h>
-#include  <experimental/filesystem>
 #else
 #include <unistd.h>
 #endif
@@ -26,6 +32,9 @@
 
 // glfw includes
 #include <GLFW/glfw3.h>
+
+// local
+#include "FileUtils.h"
 
 
 using namespace std;
@@ -45,11 +54,5 @@ namespace cs557
 
 
 
-
-    /*!
-    Verifies wheterh a file [name] exits
-    @param name - the path and the name of the file.
-    */
-    bool Exists (const std::string& name);
 
 }

@@ -74,7 +74,7 @@ typedef struct _Arguments
 
 		segments = 10;
 		rows = 10;
-		camera_distance = 1.3;
+		camera_distance = 1.3f;
 
 		subdivisions = 0;
 		bpt_levels = 0;

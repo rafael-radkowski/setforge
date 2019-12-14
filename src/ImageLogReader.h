@@ -18,6 +18,12 @@ Usage:
  rafael@iastate.edu
  Jan 9, 2019
  MIT License
+
+ ----------------------------------------------------------------------------------------
+ Last edits:
+
+ Dec 10, 2019, RR:
+ - Removed #incude <experimental/filesystem> since unused. 
 */
 #pragma once
 
@@ -28,7 +34,6 @@ Usage:
 #include <vector>
 #include <list>
 #include <numeric>
-#include <experimental/filesystem>
 
 // opencv
 #include <opencv2/opencv.hpp>
@@ -44,7 +49,6 @@ Usage:
 // local
 #include "BPTTypes.h"
 #include "TimeUtils.h"
-
 
 using namespace std;
 

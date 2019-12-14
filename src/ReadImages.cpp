@@ -57,12 +57,14 @@ vector<string>  ReadImages::getFileList(string path)
     vector<string>  files;
 
 #ifdef _WIN32
-	std::experimental::filesystem::directory_iterator itr(path);
 
-	for (const auto & entry : itr) {
-		//std::cout << entry.path().string() << std::endl;
-		files.push_back(entry.path().string());
-	}
+	files = FileUtils::GetFileList(path);
+	//std::experimental::filesystem::directory_iterator itr(path);
+
+	//for (const auto & entry : itr) {
+	//	//std::cout << entry.path().string() << std::endl;
+	//	files.push_back(entry.path().string());
+	//}
 
 #else
     DIR *dir;

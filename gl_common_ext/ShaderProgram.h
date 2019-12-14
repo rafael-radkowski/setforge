@@ -9,10 +9,6 @@
 #include <strstream>
 #include <string>
 
-#ifdef _WIN32
-#include <experimental\filesystem>
-#endif
-
 
 // GLEW include
 #include <GL/glew.h>
@@ -25,7 +21,7 @@
 
 // locals
 #include "ShaderSource.h"
-
+#include "FileUtils.h"
 
 using namespace std;
 

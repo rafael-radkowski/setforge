@@ -15,14 +15,15 @@ echo off
 
 :: 1. Set the relative path to the 3D model as well as the distance between camera and model
 SET model=../data/stanford_bunny_02_rot.obj
-SET cam_distance=1.3
+SET cam_distance=2.3
 
 :: 2. Set the temporary data folder and the output folder
 ::  Also, set the final pickle filename and path
-SET temp_folder="./database2"
-SET output_folder="./database2"
+SET temp_folder="./database3_tmp"
+:: Note that two different folders are required. 
+SET output_folder="./database3"
 
-SET final_pickle_path="./database2/BunnyRotation.pickle"
+SET final_pickle_path="./database3/BunnyRotation.pickle"
 
 :: 3. Set the path to all background RGB images.
 :: WRITE 'NONE' IF YOU DO NOT LIKE TO COMBINE THE RENERING WITH RANDOM BACKGROUND IMAGES 
@@ -45,10 +46,10 @@ set method=POLY
 
 :: 6. Set the polyhedron sub-level. This will define the number of images to render
 :: The higher the number, the more images. I tested to 6
-set sublevel=5
+set sublevel=3
 
 :: 8. Set the number of final images you like to generate
-set num=10000
+set num=100
 
 :: 9. Set the percentage of images that should go into the cross-validation test file
 :: as a percentage of num, in a range from [0,1] with 0->0%, 0.1-> 10%, 1.0 -> 100%
@@ -59,14 +60,14 @@ set x_test=0.1
 
 set arg1=%model% -o %temp_folder% -img_w %img_w% -img_h %img_h% -m %method% -sub %sublevel%  -rad %cam_distance%
 set arg2=-n %num% -ipath %bg_image_path% -itype jpeg -rlog %temp_folder%/render_log.csv -img_w %img_w% -img_h %img_h% -o %output_folder% 
-set arg3=-i %output_folder%/batch.csv -o %final_pickle_path% -d ../bin -r %rows% -c %cols% -x %x_test%
+set arg3=-i %output_folder%/render_log.csv -o %final_pickle_path% -d ../bin -r %rows% -c %cols% -x %x_test%
 
 
-DatasetRenderer.exe %arg1%
-ImageGen.exe %arg2%
+setforge_r.exe %arg1%
+setforge_g.exe %arg2%
 Python.exe ../python_src/Image2Pickle.py %arg3%
 
 pause
-:: DatasetRenderer.exe ../data/stanford_bunny_02_rot.obj -o output_4  -img_w 1280 -img_h 1024 -m POLY -sub 4  -rad 1.3 -verbose
-:: ImageGen.exe  -n 10000 -ipath ../data/imagenet -itype jpeg -rlog ./output_4/render_log.csv -img_w 512 -img_h 512 -o ./batch_4_512_512 
+:: setforge_r.exe ../data/stanford_bunny_02_rot.obj -o output_4  -img_w 1280 -img_h 1024 -m POLY -sub 4  -rad 1.3 -verbose
+:: setforge_g.exe  -n 10000 -ipath ../data/imagenet -itype jpeg -rlog ./output_4/render_log.csv -img_w 512 -img_h 512 -o ./batch_4_512_512 
 :: Python.exe ../python_src/Image2Pickle.py -i batch_4_256_256/batch.csv -o batch_4_256_256.pickle -d ../bin -r 128 -c 128 -x 0.1

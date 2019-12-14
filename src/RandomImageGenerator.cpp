@@ -532,19 +532,19 @@ bool RandomImageGenerator::writeHeader(void)
 	out.append("/");
 	out.append(_output_file_name);
 
-	bool ret = std::experimental::filesystem::exists(_output_path);
+	bool ret = FileUtils::Exists(_output_path);
 
 	if (ret)
 	{
 		// delete the log file if one exist 
-		if (std::experimental::filesystem::exists(out))
-			std::experimental::filesystem::remove(out);
+		if (FileUtils::Exists(out))
+			FileUtils::Remove(out);
 	}
 
 
 	if (!ret) {
 
-		std::experimental::filesystem::create_directory(_output_path);
+		FileUtils::CreateDirectory(_output_path);
 	}
 
 
