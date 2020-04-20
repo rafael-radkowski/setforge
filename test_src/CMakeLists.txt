@@ -1,3 +1,10 @@
+#
+# Last Edits:
+#
+# April 20, 2020, RR
+# - Added an option to enable or disable the polyhderon renderer. 
+
+
 # Main cmake file 
 cmake_minimum_required(VERSION 2.6)
 
@@ -174,6 +181,12 @@ set(CMAKE_C_STANDARD 11)
 set(CMAKE_C_STANDARD_REQUIRED ON)
 
 
+SET(polyhedron_test OFF)
+OPTION(polyhedron_test "Enable Polyhedron Test" OFF)
+
+
+if( ${polyhedron_test} )
+
 # Create an executable
 add_executable(${AppName} 
 ${MAIN_SRC} ${OPENGL_SRC} ${UTILS_SRC} ${SHADER_SRC})
@@ -195,3 +208,5 @@ ENDIF(WIN32)
 
 # Add libraries
 target_link_libraries(${AppName}   ${GLEW_LIBRARIES} ${GLEW_LIBRARY} ${GLFW3_LIBRARY} ${OPENGL_LIBRARIES} ${OPENCV_LIBRARIES}  )
+
+endif()
