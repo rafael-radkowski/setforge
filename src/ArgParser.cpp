@@ -125,6 +125,12 @@ Arguments ArgParser::Parse(int& argc, char** argv)
 		else if(c_arg.compare("-verbose") == 0 ){ // help
 			opt.verbose = true;
 		}
+		else if(c_arg.compare("-rand_col") == 0 ){ // help
+			opt.with_random_colors = true;
+		}
+
+
+	
 	
 
 		pos++;

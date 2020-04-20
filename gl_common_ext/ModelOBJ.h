@@ -25,6 +25,8 @@ Feb 19, 2019, RR
 July 4th, 2019, RR
 	- Added a function to process diffuse, specular, and ambient textures. 
 	- Added an api to change the texture blend mode e.g, MODULATE, DECAL 
+April 20, 2020, RR
+	- Added an override material so that the user can overwrite the loaded material. 
 */
 #pragma once
 #include "OBJLoader.h"
@@ -92,6 +94,13 @@ namespace cs557
 		*/
 		void setTextureParam(TextureMode blend_mode);
 
+
+		/*
+		Set a material for this object
+		@param material - the material parameters. 
+		*/
+		void setMaterial(cs557::Material material);
+
 	private:
 
 		/*
@@ -121,6 +130,9 @@ namespace cs557
 
 		std::vector<cs557::Material>		materials;//material per mesh
 		std::vector < cs557::TexMaterial>	textures;// textures per mesh
+
+		cs557::Material						override_material;
+		bool								with_override_material;
 
 		int _N; // number of vertices
 		int _I; // number indices

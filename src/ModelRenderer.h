@@ -44,6 +44,10 @@ May 2nd, 2019, RR
 - Added a region of interest detection. A simple algorithm that finds the roi using the RGB image. 
 - Added a function to extract an image mask from the rendered color image by separating foreground from background. 
 - Changed the ImageWriter->write function this class uses. The new version uses a struct as datatype.
+
+April 20, 2020, RR
+- Added a class and function to render random colors. 
+
 */
 
 // stl
@@ -74,6 +78,7 @@ May 2nd, 2019, RR
 #include "RoIDetect.h"
 #include "ImageMask.h"
 #include "GLSLShaderSrc.h"
+#include "MaterialRandomization.h"  // for random colors
 
 using namespace std;
 
@@ -134,6 +139,23 @@ public:
 	Return the number of generated images
 	*/
 	int size(void) { return _output_file_id; }
+
+
+	/*
+	Enable or disable random color rendering. 
+	@param enable - true enables random colors. 
+	*/
+	void setRandomColors(bool enable );
+
+
+	/*
+	Set the min / max values for hue and saturation
+	@param hue_min - a min. hue value in the range from 0 to 360 degree.
+	@param hue_max - a max. hue value in the range from 0 to 360 degree.
+	@param sat_min - a min. saturation value in the range from 0 to 1.
+	@param sat_max - a max. saturation value in the range from 0 to 1.
+	*/
+	void setRandomColorsParams(bool hue_min, bool hue_max, bool sat_min, bool sat_max);
 
 
 protected:
@@ -233,6 +255,11 @@ private:
 
 	bool					_with_roi; // also extracts the roi from the color image
 	bool					_with_mask;//  extracts the mask from the depth image
+
+
+	// For random colors
+	MaterialRandomization	_rand_col;
+	bool					_with_rand_col;
 
 protected:
 

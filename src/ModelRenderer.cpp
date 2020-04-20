@@ -22,6 +22,7 @@ ModelRenderer::ModelRenderer(int window_width, int window_height, int image_widt
 
 	_with_roi = true; 
 	_with_mask = true;
+	_with_rand_col = true;
 
 	_verbose = false;
 
@@ -278,6 +279,13 @@ bool ModelRenderer::draw(void)
 	if (_obj_model == NULL) return false;
 
 
+	if (_with_rand_col) {
+		std::vector<float> col = _rand_col.getRGB();
+
+	}
+
+	
+
 	drawFBO();
 
 
@@ -300,6 +308,34 @@ bool  ModelRenderer::draw_and_save(void)
 {
 	if (_obj_model == NULL) return false;
 	_save = true;
+
+
+	if (_with_rand_col) {
+		cs557::Material mat;
+		std::vector<float> rgb = _rand_col.getRGB();
+		mat.diffuse_mat.r = rgb[0]/255.0;
+		mat.diffuse_mat.g = rgb[1]/255.0;
+		mat.diffuse_mat.b = rgb[2]/255.0;
+
+		mat.ambient_mat.r = rgb[0]/255.0;
+		mat.ambient_mat.g = rgb[1]/255.0;
+		mat.ambient_mat.b = rgb[2]/255.0;
+
+		mat.specular_mat.r = 1.0;
+		mat.specular_mat.g = 1.0;
+		mat.specular_mat.b = 1.0;
+
+		mat.specular_int = 0.1;
+		mat.ambient_int = 0.2;
+		mat.diffuse_int = 0.8;
+		mat.specular_s = 10.0;
+
+		std::cout << "[INFO] - Random color r " << rgb[0] << "\tg " << rgb[1] << "\tv " << rgb[2]  << std::endl;
+	
+
+		_obj_model->setMaterial(mat);
+	}
+
 
 	draw();
 }
@@ -410,4 +446,29 @@ bool  ModelRenderer::enable_writer(bool enable)
 	_writer_enabled = enable;
 
 	return true;
+}
+
+
+/*
+Enable or disable random color rendering. 
+@param enable - true enables random colors. 
+*/
+void ModelRenderer::setRandomColors(bool enable )
+{
+	_with_rand_col = enable;
+}
+
+
+/*
+Set the min / max values for hue and saturation
+@param hue_min - a min. hue value in the range from 0 to 360 degree.
+@param hue_max - a max. hue value in the range from 0 to 360 degree.
+@param sat_min - a min. saturation value in the range from 0 to 1.
+@param sat_max - a max. saturation value in the range from 0 to 1.
+*/
+void ModelRenderer::setRandomColorsParams(bool hue_min, bool hue_max, bool sat_min, bool sat_max)
+{
+	_rand_col.setHueRange(hue_min/360.0, hue_max/360.0);
+	_rand_col.setSaturationRange(sat_min, sat_max);
+
 }

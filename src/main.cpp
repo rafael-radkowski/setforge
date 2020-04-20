@@ -127,6 +127,7 @@ void InitRenderer(Arguments& opt)
 		sphere_renderer->setVerbose(opt.verbose); // set first to get all the output info
 		sphere_renderer->setModel(opt.model_path_and_file);
 		sphere_renderer->setOutputPath(opt.output_path);
+		sphere_renderer->setRandomColors(opt.with_random_colors);
 		sphere_renderer->createSphereGeometry(opt.camera_distance, opt.segments, opt.rows);
 		
 	}
@@ -137,6 +138,7 @@ void InitRenderer(Arguments& opt)
 		poly_renderer->setModel(opt.model_path_and_file);
 		poly_renderer->setOutputPath(opt.output_path);
 		poly_renderer->setHemisphere(opt.upright);
+		poly_renderer->setRandomColors(opt.with_random_colors);
 		poly_renderer->create(opt.camera_distance, opt.subdivisions);
 		
 	}
@@ -146,6 +148,7 @@ void InitRenderer(Arguments& opt)
 		tree_renderer->setVerbose(opt.verbose); // set first to get all the output info
 		tree_renderer->setModel(opt.model_path_and_file);
 		tree_renderer->setOutputPath(opt.output_path);
+		tree_renderer->setRandomColors(opt.with_random_colors);
 		tree_renderer->create(opt.camera_distance, opt.bpt_levels);
 	}
 	else if (opt.cam == POSE)
@@ -156,7 +159,9 @@ void InitRenderer(Arguments& opt)
 		pose_renderer->setOutputPath(opt.output_path);
 		pose_renderer->setPoseLimits(opt.lim_nx, opt.lim_px, opt.lim_ny, opt.lim_py, opt.lim_nz, opt.lim_pz);
 		pose_renderer->setHemisphere(opt.upright);
+		pose_renderer->setRandomColors(opt.with_random_colors);
 		pose_renderer->create(opt.num_images, opt.subdivisions);
+
 	}
 	else if (opt.cam == USER)
 	{

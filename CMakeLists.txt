@@ -141,6 +141,8 @@ set(MAIN_SRC
 	./src/TextureLoader.cpp
 	./src/CameraParameters.h
 	./src/CameraParameters.cpp
+	./src/MaterialRandomization.h
+	./src/MaterialRandomization.cpp
 )
 
 

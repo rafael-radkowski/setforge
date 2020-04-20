@@ -45,6 +45,8 @@ typedef struct _Arguments
 	bool		verbose;
 	bool		valid;
 
+	bool		with_random_colors;
+
 	// for random image generator
 	int		num_images;
 	float	lim_px;
@@ -91,6 +93,7 @@ typedef struct _Arguments
 
 		verbose = false;
 		valid = false;
+		with_random_colors = false;
 	}
 
 

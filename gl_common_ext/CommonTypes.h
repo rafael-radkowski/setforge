@@ -76,7 +76,7 @@ typedef struct Material
 {
 
     // textrue id
-	unsigned int texture_id;
+	int texture_id;
 
     // model matrix
 	glm::mat4 model_matrix;

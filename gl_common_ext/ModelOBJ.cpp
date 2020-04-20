@@ -181,7 +181,15 @@ void cs557::OBJModel::draw(glm::mat4 projectionMatrix, glm::mat4 viewMatrix, glm
 	glBindVertexArray(vaoID[0]);
 
 	for (int i = 0; i < start_index.size(); i++) {
-		materials[i].apply(program);
+		glUseProgram(program);
+
+		if(!with_override_material)
+			materials[i].apply(program);
+		else{
+			override_material.apply(program);
+		}
+	
+		
 		glUseProgram(program);
 
 		// apply texturs
@@ -352,4 +360,16 @@ void cs557::OBJModel::setTextureParam(TextureMode blend_mode)
 			glUniform1i(loc, 0);
 		glUseProgram(0);
 	}
+}
+
+
+
+/*
+Set a material for this object
+@param material - the material parameters. 
+*/
+void cs557::OBJModel::setMaterial(cs557::Material material)
+{
+	override_material = material;
+	with_override_material = true;
 }
