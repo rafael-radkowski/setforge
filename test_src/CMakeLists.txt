@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 2.6)
 
 # policy for relative subfolders
 cmake_policy(SET CMP0015 NEW)
-
+cmake_policy(SET CMP0074 NEW)
 
 set(AppName PolyhedronTest)
 

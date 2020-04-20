@@ -1,15 +1,17 @@
-# Main cmake file 
+# Main cmake file
 cmake_minimum_required(VERSION 2.6)
 
 # policy for relative subfolders
 cmake_policy(SET CMP0015 NEW)
-
+cmake_policy(SET CMP0074 NEW)
+ 
 
 # Main project name
 project(setforge)
 
 # define the name for the renderer
-set(RENDERER setforge_g)
+set(RENDERER setforge_r)
+set(IMAGEGEN setforge_g)
 
 
 set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
@@ -137,6 +139,8 @@ set(MAIN_SRC
 	./src/ImageMask.cpp
 	./src/TextureLoader.h
 	./src/TextureLoader.cpp
+	./src/CameraParameters.h
+	./src/CameraParameters.cpp
 )
 
 
@@ -159,6 +163,9 @@ set(UTILS_SRC
 	./src/MatrixFileUtils.cpp
 	./src/TimeUtils.h
 	./src/TimeUtils.cpp
+	./src/FileUtils.h
+	./src/FileUtils.cpp
+
 )
 
 
@@ -210,9 +217,11 @@ set(GENERATOR_SRC
 	./src/MatHelpers.h
 	./src/NoiseFilter.h
 	./src/NoiseFilter.cpp
-	./src/HistogramFilter.h
-	./src/HistogramFilter.cpp
-	
+	./src/ImageFilter.h
+	./src/ImageFilter.cpp
+	./src/FileUtils.h
+	./src/FileUtils.cpp
+
 )
 
 source_group(MAIN FILES ${MAIN_SRC})
@@ -231,14 +240,6 @@ set(CMAKE_C_STANDARD 11)
 set(CMAKE_C_STANDARD_REQUIRED ON)
 
 
-# Create an executable
-add_executable(${RENDERER} 
-${MAIN_SRC} ${OPENGL_SRC} ${UTILS_SRC} ${SHADER_SRC})
-
-
-add_executable(ImageGen 
-${GENERATOR_SRC} )
-
 
 # Add link directories
 # Note required for this project
@@ -253,12 +254,23 @@ ELSE(WIN32)
 	link_directories(/usr/local/Cellar/glfw/3.2.1/lib)
 ENDIF(WIN32)
 
+# Create an executable
+add_executable(${RENDERER}
+${MAIN_SRC} ${OPENGL_SRC} ${UTILS_SRC} ${SHADER_SRC})
+
+
+
+
+add_executable(${IMAGEGEN}
+${GENERATOR_SRC} )
+
+
 
 # Add libraries
-target_link_libraries(${RENDERER}   ${GLEW_LIBRARIES} ${GLEW_LIBRARY} ${GLFW3_LIBRARY} ${OPENGL_LIBRARIES} ${OPENCV_LIBRARIES}  )
+target_link_libraries(${RENDERER}   ${GLEW_LIBRARIES} ${GLEW_LIBRARY} ${GLFW3_LIBRARY} ${OPENGL_LIBRARIES} ${OPENCV_LIBRARIES} ${OpenCV_LIBS}  )
 
 # Add libraries
-target_link_libraries(ImageGen  ${OPENCV_LIBRARIES}  )
+target_link_libraries(${IMAGEGEN}  ${OPENCV_LIBRARIES} ${OpenCV_LIBS} )
 
 
 add_subdirectory(test_src)

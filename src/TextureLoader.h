@@ -19,6 +19,9 @@ Last edits:
 July 13, 2019, RR 
 - Flipped the texture to align the blender/opencv coordinate system with the GL coordinate system. 
 
+Dec 10, 2019, RR:
+- Added FileUtils.h to address the deprecation of experimental/filesystem.
+- Prevent macro invocation for std::max by using parentheses.
 
 */
 
@@ -28,13 +31,17 @@ July 13, 2019, RR
 #include <sstream>
 #include <string>
 #include <vector>
-#include <experimental/filesystem>
+#include <iostream>
+#include <algorithm>
 
 // GLEW include
 #include <GL/glew.h>
 
 // opencv
 #include <opencv2/opencv.hpp>
+
+// local
+#include "FileUtils.h"
 
 
 using namespace std;

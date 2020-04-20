@@ -30,8 +30,11 @@ All copyrights reserved
 ---------------------------------------------------------------------------------------------------
 Last edits:
 
-*/
+Dec 10, 2019, RR:
+- Added FileUtils.h to address the deprecation of experimental/filesystem
 
+*/
+// stl
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -39,11 +42,12 @@ Last edits:
 #include <algorithm>
 #include <random>
 #include <time.h>
-#include <experimental/filesystem>
 
 // opencv
 #include <opencv2/opencv.hpp>
 
+// local
+#include "FileUtils.h"
 
 using namespace std;
 

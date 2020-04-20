@@ -32,8 +32,8 @@ bool BPTReaderWriter::write(string path_and_file, BPTNode* root)
 	if (index != -1)
 	{
 		string path = path_and_file.substr(0, index);
-		if(!std::experimental::filesystem::exists(path)){
-			std::experimental::filesystem::create_directories(path);
+		if(!FileUtils::Exists(path)){
+			FileUtils::CreateDirectories(path);
 		}
 	}
 
@@ -125,7 +125,7 @@ Read and create the nodes for the Balanced Pose Tree
 */
 bool  BPTReaderWriter::read(string path_and_file, BPTNode** root, vector<BPTNode*>* node_repository)
 {
-	if (!std::experimental::filesystem::exists(path_and_file)) {
+	if (!FileUtils::Exists(path_and_file)) {
 		cout << "[ERROR] - BPTReaderWriter: could not find file " << path_and_file << endl;
 		return false;
 	}

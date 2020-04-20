@@ -1,17 +1,19 @@
-# DNNHelpers
-Helper tools for depth neural network research. The tools allow on to generate artificial training data
-to train a convolutional neural network.
+# Setforge
+Setforge is a set of helper tools for depth neural network research. The tools allow on to generate artificial training data
+from models and to augment this data. The intend is to train a convolutional neural networks.
+
+![Title figure](https://github.com/rafael-radkowski/DNNHelpers/blob/master/doc/images/setforge_social_logo_small.png)
 
 This repository provides two tools:  
-1. DatasetRenderer
-2. ImageGen(enerator)
+1. setforge_r(enderer)
+2. setforge_g(enerator)
 
 Additionally, the Python folder python_src includes a script *Image2Pickle.py*, which packs all image into a dictionary and saves it as a .pickle file.
 
 Standard usage:
 1. Find the 3D model you intend to train.
-2. Create artificial datasets with DatasetRenderer.
-3. Combine them with random background images.
+2. Create artificial datasets with setforge_r.
+3. Combine them with random background images and augment the data with setforge_g.
 4. Create a pickle file and  
 start training.
 
@@ -26,7 +28,7 @@ It requires the following 3rd party tools:
 
  The code was prepared with Visual Studio 2017.
 
-## DatasetRenderer
+## Setforge_r
 Allows one to render RGB images, normal maps, and depth images from 3D models.
 The 3D model is automatically rotated using a polyhedron to control the angle.
 A documentation can be found on Google Docs (ongoing work): [DatasetRenderer Introduction](https://docs.google.com/document/d/1aDyw3eXaGTcLeBlfpghiZg230qUybzcgZsdz7eNEcqg/edit?usp=sharing)
@@ -64,7 +66,7 @@ The ```USER``` mode allows a user to select the camera position iteractively. Pr
  * Image mask (CV_8UC1, 8bit)
  * Pose (quaternion, translation)
 
-## ImageGen
+## Setforge_g
 ImageGen generates training data by selecting random background images, e.g. from ImageNet,
 and by combining these images with a rendering that DatasetRenderer generated.
 Documentation can be found on Google Docs (currently incomplete)  [ImageGen Documentation](https://docs.google.com/document/d/11cj3LnpoDvg_DU1jRfriQeV9HwE6V29O1h4cRDKk1tA/edit?usp=sharing)

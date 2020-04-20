@@ -5,10 +5,10 @@
 * Add Gaussian Noise or Speckle Noise for RGB CV_8U or CV_16U 3-channel-images
 *
 */
-class AddNoise
+class NoiseFilter
 {
 public:
-	AddNoise();
+	
 
 	/**
 	* Add Gaussian Noise for RGB CV_8U or CV_16U 3-channel-images
@@ -19,7 +19,7 @@ public:
 	* @return noise  Image with Gaussian noise
 	*/
 
-	cv::Mat AddNoise::addGuasNoise(cv::Mat img, float mean, float sigma);
+	static cv::Mat AddGaussianNoise(cv::Mat img, float mean, float sigma);
 	/**
 	* Add Speckle Noise for RGB CV_8U or CV_16U 3-channel-images
 	*
@@ -27,8 +27,7 @@ public:
 	* @param dev Standard deviation of speckle noise. range from 0 to 1.
 	* @return noise  Image with speckle noise
 	*/
-	cv::Mat AddNoise::addSpeckleNoiseRGB(cv::Mat img, float dev);
+	static cv::Mat AddSpeckleNoiseRGB(cv::Mat img, float dev);
 	
-	
-	~AddNoise();
+
 };

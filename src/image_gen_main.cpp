@@ -33,9 +33,11 @@ int main(int argc, char** argv)
 {
 	cout << "---------------------------------------------" << endl;
 	cout << "Image Generator" << endl;
-	cout << "Version 1.1\n" << endl;
+	cout << "Version 1.1.2\n" << endl;
 	cout << "Generate images for cnn training" << endl;
 	cout << "Rafael Radkowski" << endl;
+	cout << "Iowa State University" << endl;
+	cout << "December 2019, MIT License" << endl;
 	cout << "---------------------------------------------\n" << endl;
 
 	Parser::Arguments arg = Parser::Parse(argc, argv);
@@ -51,6 +53,9 @@ int main(int argc, char** argv)
 	generator->setImagePath(path, arg.background_images_type);
 	generator->setRenderPath(arg.rendered_images_log_file);
 	generator->setOutputPath(arg.output_path);
+	generator->setFilter(RandomImageGenerator::NOISE, arg.with_noise, arg.noise_sigma, 0.0);
+	generator->setFilter(RandomImageGenerator::CHROMATIC, arg.with_chromatic, 0.0, 0.0);
+
 	int num = generator->process(arg.num_images);
 
 	clock_t end = clock();

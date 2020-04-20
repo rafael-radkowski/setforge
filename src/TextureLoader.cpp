@@ -15,7 +15,7 @@ bool  TextureLoader::Load(string path_and_name, unsigned char** texture, int* wi
 {
 
 
-	if (!std::experimental::filesystem::exists(path_and_name)) {
+	if (!FileUtils::Exists(path_and_name)) {
 		cout << "[ERROR] - Could not find file " << path_and_name << ". Check the file" << endl;
 		return false;
 	}
@@ -29,7 +29,7 @@ bool  TextureLoader::Load(string path_and_name, unsigned char** texture, int* wi
 	}
 
 	cv::Mat image_rs;
-	int new_size = std::max(FindNextPower2(image.rows), FindNextPower2(image.cols));
+	int new_size = (std::max)( FindNextPower2(image.rows), FindNextPower2(image.cols));
 	cv::resize(image, image_rs, cv::Size2f(new_size, new_size));
 
 	// flip the texture to match the opengl coordinate system

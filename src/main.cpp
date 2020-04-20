@@ -16,6 +16,9 @@ All copyrights reserved
 last edited:
 May 2nd, 2019, RR
 - Added an instance of UserViewRenderer, which allows a user to manually select camera viewpoints and to store them.
+
+August 8, 2019, RR
+- Added a api to limit the pose and poly orientations of the model to upright orientations. 
 */
 
 #include <iostream>
@@ -133,6 +136,7 @@ void InitRenderer(Arguments& opt)
 		poly_renderer->setVerbose(opt.verbose); // set first to get all the output info
 		poly_renderer->setModel(opt.model_path_and_file);
 		poly_renderer->setOutputPath(opt.output_path);
+		poly_renderer->setHemisphere(opt.upright);
 		poly_renderer->create(opt.camera_distance, opt.subdivisions);
 		
 	}
@@ -151,6 +155,7 @@ void InitRenderer(Arguments& opt)
 		pose_renderer->setModel(opt.model_path_and_file);
 		pose_renderer->setOutputPath(opt.output_path);
 		pose_renderer->setPoseLimits(opt.lim_nx, opt.lim_px, opt.lim_ny, opt.lim_py, opt.lim_nz, opt.lim_pz);
+		pose_renderer->setHemisphere(opt.upright);
 		pose_renderer->create(opt.num_images, opt.subdivisions);
 	}
 	else if (opt.cam == USER)
@@ -257,12 +262,13 @@ int main(int argc, char** argv)
 {	
 	cout << "\n--------------------------------------" << endl;
 	cout << "Dataset Renderer" << endl;
-	cout << "Version 1.1" << endl;
+	cout << "Version 1.1.2" << endl;
 	cout << "Create RGB color maps, depth images (float), and normal maps (float) from a 3D model \n" << endl;
 	cout << "Rafael Radkowski" << endl;
 	cout << "Iowa State University" << endl;
 	cout << "Rafael@iastate.edu" << endl;
-	cout << "Jan 2019, All copyrights reserved.\n" << endl;
+	cout << "December 2019, MIT License.\n" << endl;
+	cout << "\n--------------------------------------" << endl;
 
 	Arguments options = ArgParser::Parse(argc, argv);
 

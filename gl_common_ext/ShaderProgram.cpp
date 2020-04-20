@@ -176,7 +176,7 @@ GLuint cs557::LoadAndCreateShaderProgram(string vertex_file, string fragment_fil
 bool cs557::ShaderProgramUtils::Exists (const std::string& name)
 {
    #ifdef _WIN32
-    if (std::experimental::filesystem::exists(name)) {
+    if (FileUtils::Exists(name)) {
         return true;
     } else {
 		return false;

@@ -41,6 +41,10 @@ public:
 		bool		valid; // helper to indicate that the parameter set is valid
 		bool		verbose;
 
+		float	noise_sigma;
+		bool	with_noise;
+		bool	with_chromatic;
+
 		_Arguments()
 		{
 			background_images_path = "";
@@ -52,6 +56,10 @@ public:
 
 			image_width = 512;
 			image_height = 512;
+
+			noise_sigma = 0.1;
+			with_noise = false;
+			with_chromatic = false;
 
 			num_images = 10000;
 			verbose = false;

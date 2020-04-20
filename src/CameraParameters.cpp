@@ -25,7 +25,7 @@ bool CameraParameters::Read(string path_and_file, bool verbose)
 {
 	//CameraParameters::Write(path_and_file);
 
-	if (!std::experimental::filesystem::exists(path_and_file)) {
+	if (!FileUtils::Exists(path_and_file)) {
 		cout << "[ERROR] - Cannot find file " << path_and_file << "." << endl;
 		return false;
 	}

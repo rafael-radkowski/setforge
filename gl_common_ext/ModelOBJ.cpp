@@ -321,13 +321,13 @@ void cs557::OBJModel::processTextures(int& program, objl::Mesh& curMesh, string 
 
 	//----------------------------------------------------
 	// set the texture mode
-	if (tex.num_textures > 0) {
-		glUseProgram(program);
-		int loc = glGetUniformLocation(program, "tex[0].tex_mode");
+	glUseProgram(program);
+	int loc = glGetUniformLocation(program, "tex[0].tex_mode");
+	if (tex.num_textures > 0) 
 		glUniform1i(loc, tex.tex_mode);
-		glUseProgram(0);
-	}
-
+	else
+		glUniform1i(loc, 0);
+	glUseProgram(0);
 
 	textures.push_back(tex);
 
@@ -346,7 +346,10 @@ void cs557::OBJModel::setTextureParam(TextureMode blend_mode)
 		i.tex_mode = blend_mode;
 		glUseProgram(program);
 		int loc = glGetUniformLocation(program, "tex[0].tex_mode");
-		glUniform1i(loc, i.tex_mode);
+		if (i.num_textures > 0) // only activate the texture mode if a texture is available
+			glUniform1i(loc, i.tex_mode);
+		else
+			glUniform1i(loc, 0);
 		glUseProgram(0);
 	}
 }

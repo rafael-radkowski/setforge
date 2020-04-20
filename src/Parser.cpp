@@ -67,6 +67,14 @@ Parser::Arguments Parser::Parse(int& argc, char** argv)
 			if (argc >= pos+1) opt.num_images = atoi(string(argv[pos+1]).c_str());
 			else ParamError(c_arg);
 		}
+		else if (c_arg.compare("-noise") == 0) { // number of images
+			opt.with_noise = true;
+			if (argc >= pos+1) opt.noise_sigma = atof(string(argv[pos+1]).c_str());
+			else ParamError(c_arg);
+		}
+		else if(c_arg.compare("-chromatic") == 0){
+			opt.with_chromatic = true;
+		}
 		else if(c_arg.compare("-help") == 0 || c_arg.compare("-h") == 0){ // help
 			Help();
 		}
@@ -101,8 +109,12 @@ void Parser::Help(void)
 	cout << "\t-itype [param] \t- set the path of all input image types, e.g., jpeg, jpg, png." << endl;
 	cout << "\t-rlog [param] \t- set the path and filename to the logfile DatasetRenderer created." << endl;
 	cout << "\t-n [param] \t- set the number of images to be generated (integer)" << endl;
+	cout << "\tOptional:" << endl;
 	cout << "\t-h \t- shows this help dialog" << endl;
+	cout << "\t-noise [param] \t- enable noise and set the noise sigma value param (float)." << endl;
+	cout << "\t-chromatic \t- enable chromatic image adapation." << endl;
 
+	
 
 	cout << "\nExample: ImageGen -ipath ./images -rpath ./renderings -img_w 512 -img_h 512 -o batch \n" << endl;
 }

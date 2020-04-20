@@ -54,6 +54,10 @@ typedef struct _Arguments
 	float	lim_pz;
 	float	lim_nz;
 
+
+	// only get images from the upper hemisphere
+	bool	upright;
+
 	_Arguments()
 	{
 		cam = POLY;
@@ -70,7 +74,7 @@ typedef struct _Arguments
 
 		segments = 10;
 		rows = 10;
-		camera_distance = 1.3;
+		camera_distance = 1.3f;
 
 		subdivisions = 0;
 		bpt_levels = 0;
@@ -82,6 +86,8 @@ typedef struct _Arguments
 		lim_ny = -1.0;
 		lim_pz = -1.5;
 		lim_nz = -3.0;
+
+		upright = false;
 
 		verbose = false;
 		valid = false;
