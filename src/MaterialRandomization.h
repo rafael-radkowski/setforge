@@ -10,6 +10,8 @@ The brightness either remains constant or can also change.
 
 The values are converted to RGB values and returned as RGB.
 
+For further information, see: https://docs.google.com/document/d/1xMMXdtCLFCR4rh1uQc7IpIVlAw9hsM409nWJOY54mX0
+
 Rafael Radkowski
 Iowa State University
 rafael@iastate.edu
@@ -19,6 +21,8 @@ MIT License
 -----------------------------------------------------------------------------------------------------
 Last edited:
 
+April 21, 2020, RR
+- Fixed a bug that mixed up std::min and std::max with the min/max macros. 
 
 */
 
@@ -30,6 +34,8 @@ Last edited:
 #include <random>
 #include <time.h>
 #include <iomanip>
+
+
 
 class MaterialRandomization
 {

@@ -127,6 +127,7 @@ Arguments ArgParser::Parse(int& argc, char** argv)
 		}
 		else if(c_arg.compare("-rand_col") == 0 ){ // help
 			opt.with_random_colors = true;
+			if (argc >= pos) opt.rand_col_file =  string(argv[pos+1]);
 		}
 
 
@@ -171,6 +172,7 @@ void ArgParser::Help(void)
 	cout << "\t-lim_far [param] \t- for camera path control POSE, set the far z-axis limit (postive along the camera axis) for the random position (float)" << endl;
 	cout << "\t-level [param] \t-for the camera path TREE, the number of tree levels for the Balanced Pose Tree (int)" << endl;
 	cout << "\t-up \t- Renders objects only in the upright position if set, where up is the positive y-direction." << endl;
+	cout << "\t-rand_col [param] - enable color randomization. Param: path and filename of a json file with color parameters." << endl;
 	cout << "\t-verbose \t- displays additional information." << endl;
 	cout << "\t-help \t- displays this help menu" << endl;
 

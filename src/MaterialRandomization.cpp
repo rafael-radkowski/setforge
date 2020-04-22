@@ -12,7 +12,7 @@ MaterialRandomization::MaterialRandomization()
 	_bright_max = 0.8;
 
 	_randomize_brightness = false;
-	_verbose = true;
+	_verbose = false;
 
 	_hsv_values.push_back(0.0);
 	_hsv_values.push_back(0.0);
@@ -40,8 +40,8 @@ void MaterialRandomization::setHueRange(float min, float max)
 		max = temp;
 	}
 		
-	_hue_min = std::min(1.0f, std::max(0.0f, min));
-	_hue_max = std::min(1.0f, std::max(0.0f, max));
+	_hue_min = (std::min)(1.0f, (std::max)(0.0f, min));
+	_hue_max = (std::min)(1.0f, (std::max)(0.0f, max));
 
 }
 
@@ -60,8 +60,8 @@ void MaterialRandomization::setSaturationRange(float min, float max)
 		max = temp;
 	}
 		
-	_sat_min = std::min(1.0f, std::max(0.0f, min));
-	_sat_max = std::min(1.0f, std::max(0.0f, max));
+	_sat_min = (std::min)(1.0f, (std::max)(0.0f, min));
+	_sat_max = (std::min)(1.0f, (std::max)(0.0f, max));
 }
 
 
@@ -79,8 +79,8 @@ void MaterialRandomization::setBrightnessRange(float min, float max)
 		max = temp;
 	}
 		
-	_bright_min = std::min(1.0f, std::max(0.0f, min));
-	_bright_max = std::min(1.0f, std::max(0.0f, max));
+	_bright_min = (std::min)(1.0f, (std::max)(0.0f, min));
+	_bright_max = (std::min)(1.0f, (std::max)(0.0f, max));
 }
 
 
@@ -202,3 +202,5 @@ std::vector<float> MaterialRandomization::HSVtoRGB(int H, double S, double V) {
 
 	return output;
 }
+
+

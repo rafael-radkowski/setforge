@@ -143,6 +143,9 @@ set(MAIN_SRC
 	./src/CameraParameters.cpp
 	./src/MaterialRandomization.h
 	./src/MaterialRandomization.cpp
+	./src/MaterialTypes.h
+	./src/MaterialReaderWriter.h
+	./src/MaterialReaderWriter.cpp
 )
 
 

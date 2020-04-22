@@ -31,7 +31,8 @@ It requires the following 3rd party tools:
 ## Setforge_r
 Allows one to render RGB images, normal maps, and depth images from 3D models.
 The 3D model is automatically rotated using a polyhedron to control the angle.
-A documentation can be found on Google Docs (ongoing work): [DatasetRenderer Introduction](https://docs.google.com/document/d/1aDyw3eXaGTcLeBlfpghiZg230qUybzcgZsdz7eNEcqg/edit?usp=sharing)
+A documentation can be found on Google Docs (ongoing work): [Setforge_g Introduction](https://docs.google.com/document/d/1aDyw3eXaGTcLeBlfpghiZg230qUybzcgZsdz7eNEcqg/edit?usp=sharing)
+Further details about specific functions are also available on Google Docs: [Setforge_g Manual](https://docs.google.com/document/d/1xMMXdtCLFCR4rh1uQc7IpIVlAw9hsM409nWJOY54mX0/edit?usp=sharing)
 
 ![Figure 1: a) a RGB image (RGB 8bit), b) a normal map image (xyz short, 16 bit), c) and a depth map image (depth, short 16 bit).](https://github.com/rafael-radkowski/DNNHelpers/blob/master/doc/images/Dataset_renderer_result.png)
 Figure 1: a) a RGB image (RGB 8bit), b) a normal map image (xyz short, 16 bit), c) and a depth map image (depth, short 16 bit). The application also provides a image mask for semantic segmentation, etc. (not in this image).
@@ -101,4 +102,4 @@ Iowa State University
 rafael@iastate.edu  
 MIT license  
 
-Last edited: May 7, 2019
+Last edited: April 21, 2020

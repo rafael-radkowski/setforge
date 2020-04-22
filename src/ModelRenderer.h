@@ -48,6 +48,10 @@ May 2nd, 2019, RR
 April 20, 2020, RR
 - Added a class and function to render random colors. 
 
+April 21, 2020, RR
+- Added a class that reads material data from a file. 
+- Added the api void applyRandomColor(void) to clean code
+
 */
 
 // stl
@@ -79,6 +83,8 @@ April 20, 2020, RR
 #include "ImageMask.h"
 #include "GLSLShaderSrc.h"
 #include "MaterialRandomization.h"  // for random colors
+#include "MaterialReaderWriter.h"  // to read material data from a fle. 
+ 
 
 using namespace std;
 
@@ -154,8 +160,13 @@ public:
 	@param hue_max - a max. hue value in the range from 0 to 360 degree.
 	@param sat_min - a min. saturation value in the range from 0 to 1.
 	@param sat_max - a max. saturation value in the range from 0 to 1.
+	@param v_min - a min. birhgntess v value in the range from 0 to 1.
+	@param v_max - a max. birhgntess v value in the range from 0 to 1.
+	@param with_v enable or disable v independently. True enables a randomized v. 
 	*/
-	void setRandomColorsParams(bool hue_min, bool hue_max, bool sat_min, bool sat_max);
+	void setRandomColorsParams(float hue_min, float hue_max, float sat_min, float sat_max, float v_min = 0.8, float v_max = 0.8, float with_v = false);
+
+
 
 
 protected:
@@ -188,6 +199,13 @@ private:
 	Creates some helper displays
 	*/
 	void CreateHelperContent(void);
+
+
+	/*
+	Applies random color to the model if 
+	the setting is set to random color. 
+	*/
+	void applyRandomColor(void);
 
 
 	// members

@@ -278,12 +278,6 @@ bool ModelRenderer::draw(void)
 {
 	if (_obj_model == NULL) return false;
 
-
-	if (_with_rand_col) {
-		std::vector<float> col = _rand_col.getRGB();
-
-	}
-
 	
 
 	drawFBO();
@@ -310,30 +304,9 @@ bool  ModelRenderer::draw_and_save(void)
 	_save = true;
 
 
+	// apply random color to randomize the color data. 
 	if (_with_rand_col) {
-		cs557::Material mat;
-		std::vector<float> rgb = _rand_col.getRGB();
-		mat.diffuse_mat.r = rgb[0]/255.0;
-		mat.diffuse_mat.g = rgb[1]/255.0;
-		mat.diffuse_mat.b = rgb[2]/255.0;
-
-		mat.ambient_mat.r = rgb[0]/255.0;
-		mat.ambient_mat.g = rgb[1]/255.0;
-		mat.ambient_mat.b = rgb[2]/255.0;
-
-		mat.specular_mat.r = 1.0;
-		mat.specular_mat.g = 1.0;
-		mat.specular_mat.b = 1.0;
-
-		mat.specular_int = 0.1;
-		mat.ambient_int = 0.2;
-		mat.diffuse_int = 0.8;
-		mat.specular_s = 10.0;
-
-		std::cout << "[INFO] - Random color r " << rgb[0] << "\tg " << rgb[1] << "\tv " << rgb[2]  << std::endl;
-	
-
-		_obj_model->setMaterial(mat);
+		applyRandomColor();
 	}
 
 
@@ -466,9 +439,47 @@ Set the min / max values for hue and saturation
 @param sat_min - a min. saturation value in the range from 0 to 1.
 @param sat_max - a max. saturation value in the range from 0 to 1.
 */
-void ModelRenderer::setRandomColorsParams(bool hue_min, bool hue_max, bool sat_min, bool sat_max)
+void ModelRenderer::setRandomColorsParams(float hue_min, float hue_max, float sat_min, float sat_max, float v_min, float v_max, float with_v)
 {
 	_rand_col.setHueRange(hue_min/360.0, hue_max/360.0);
 	_rand_col.setSaturationRange(sat_min, sat_max);
+	_rand_col.setBrightnessRange(v_min, v_max);
+	_rand_col.setRandomizeBrightness(with_v);
+}
 
+
+
+/*
+Applies random color to the model if 
+the setting is set to random color. 
+*/
+void ModelRenderer::applyRandomColor(void)
+{
+	
+	// fetch a random color component.
+	cs557::Material mat;
+	std::vector<float> rgb = _rand_col.getRGB();
+
+
+	mat.diffuse_mat.r = rgb[0]/255.0;
+	mat.diffuse_mat.g = rgb[1]/255.0;
+	mat.diffuse_mat.b = rgb[2]/255.0;
+
+	mat.ambient_mat.r = rgb[0]/255.0;
+	mat.ambient_mat.g = rgb[1]/255.0;
+	mat.ambient_mat.b = rgb[2]/255.0;
+
+	mat.specular_mat.r = 1.0;
+	mat.specular_mat.g = 1.0;
+	mat.specular_mat.b = 1.0;
+
+	mat.specular_int = 0.1;
+	mat.ambient_int = 0.2;
+	mat.diffuse_int = 0.8;
+	mat.specular_s = 10.0;
+
+//	std::cout << "[INFO] - Random color r " << rgb[0] << "\tg " << rgb[1] << "\tv " << rgb[2]  << std::endl;
+	
+	if(_obj_model!= NULL)
+		_obj_model->setMaterial(mat);
 }

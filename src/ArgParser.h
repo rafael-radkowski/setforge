@@ -46,6 +46,7 @@ typedef struct _Arguments
 	bool		valid;
 
 	bool		with_random_colors;
+	std::string rand_col_file;
 
 	// for random image generator
 	int		num_images;
@@ -94,6 +95,9 @@ typedef struct _Arguments
 		verbose = false;
 		valid = false;
 		with_random_colors = false;
+
+		rand_col_file = "";
+
 	}
 
 
