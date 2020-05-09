@@ -11,6 +11,9 @@ June 2015
 rafael@iastate.edu
 ----------------------------------------------------
 Latest edits
+
+May 9, 2020, RR
+- Added function Search. 
 */
 #pragma once
 
@@ -58,6 +61,16 @@ public:
     @return true, if the file exits. 
     */
     static bool Exists(string path_and_file);
+
+
+	/*!
+	Search for a file in adjacent folders
+	@param path_and_file - relative or absolute location and name of the file.
+	@param new_path_and_file - relative or absolute location and name of the located file or "" if no file exists. 
+	@return true, if the file exists, false otherwise. 
+	*/
+	static bool Search(string path_and_file, string& new_path_and_file);
+
 
 	/*
 	Create a director if it does not exist.

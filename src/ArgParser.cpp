@@ -129,7 +129,10 @@ Arguments ArgParser::Parse(int& argc, char** argv)
 			opt.with_random_colors = true;
 			if (argc >= pos) opt.rand_col_file =  string(argv[pos+1]);
 		}
-
+		else if(c_arg.compare("-brdf_col") == 0 ){ // help
+			opt.with_brdf_colors = true;
+			if (argc >= pos) opt.brdf_col_file =  string(argv[pos+1]);
+		}
 
 	
 	
@@ -152,7 +155,7 @@ Display help
 void ArgParser::Help(void)
 {
 	cout << "[ERROR] - Missing parameters\nUsage:" << endl;
-	cout << "DatasetRenderer [3d model path and filename] " << endl;
+	cout << "setforge_r [3d model path and filename] " << endl;
 	cout << "Optional parameters:" << endl;
 	cout << "\t-intr [param] - path and filename for the intrinsic camera parameters." << endl;
 	cout << "\t-o [param] - set the output path" << endl;
@@ -160,7 +163,7 @@ void ArgParser::Help(void)
 	cout << "\t-img_h [param] \t- set the height of the output image in pixels (integer)." << endl;
 	cout << "\t-wnd_w [param] \t- set the widht of the application window in pixels (integer)." << endl;
 	cout << "\t-wnd_h [param] \t- set the height of the application window in pixels (integer)." << endl;
-	cout << "\t-m [param] \t- set the camera path models. Can be SPHERE, POLY, TREE." << endl;
+	cout << "\t-m [param] \t- set the camera path models. Can be USER, POSE, SPHERE, POLY, TREE." << endl;
 	cout << "\t-seg [param] \t- for the camera path SPHERE model, set the number of segments (integer)." << endl;
 	cout << "\t-rows [param] \t-for the camera path SPHERE model, set the number of rows (integer)" << endl;
 	cout << "\t-dist [param] \t-for the camera path SPHERE model, set the sphere radius (float)" << endl;

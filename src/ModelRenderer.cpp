@@ -28,7 +28,7 @@ ModelRenderer::ModelRenderer(int window_width, int window_height, int image_widt
 
 	_projectionMatrix = glm::perspective(1.2f, (float)800 / (float)600, 0.1f, 100.f);
 	_projectionMatrix = glm::perspective( glm::radians(40.0f), (float)480 / (float)480, 0.1f, 100.f);
-	_viewMatrix = glm::lookAt(glm::vec3(0.0f, 0.0, 1.3f), glm::vec3(0.0f, 0.0f, 00.f), glm::vec3(0.0f, 1.0f, 0.0f));
+	_viewMatrix = glm::lookAt(glm::vec3(0.0f, 0.0, 13.3f), glm::vec3(0.0f, 0.0f, 00.f), glm::vec3(0.0f, 1.0f, 0.0f));
 	_modelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f));  //glm::rotate(3.1415f, glm::vec3(0.0f, 1.0f, 0.0f)) *  glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
 
 	_light0.pos = glm::vec3(0.0f, -3.0f, 3.0f);
@@ -120,6 +120,46 @@ bool ModelRenderer::setModel(string path_and_file)
 	CreatePrerendererScene();
 	CreateHelperContent();
 
+}
+
+
+/*
+Load the model that needs to be rendered. This model uses brdf material. 
+@param path_and_file - string containg the relative or absolute
+						path to the model.
+@param brdf_material - brdf material object. 
+@return - true, if model was successfully loaded. 
+*/
+bool ModelRenderer::setModel(string path_and_file, cs557::BRDFMaterial& brdf_material)
+{
+	if (path_and_file.empty()) return false;
+
+	// create model
+	_obj_model = new cs557::ModelBRDF();
+	static_cast<cs557::ModelBRDF*>(_obj_model)->create(path_and_file, brdf_material);
+	_obj_model->setTextureParam(cs557::TextureMode::REPLACE);
+
+	_light0.apply(_obj_model->getProgram());
+	//_light1.apply(program);
+
+
+	//-----------------------
+	// create a secodn object to render only normal vectors
+	// load shader
+#ifdef _DEVELOP
+	int program_normals = cs557::LoadAndCreateShaderProgram("./shaders/normal_renderer.vs", "./shaders/normal_renderer.fs");
+#else
+	int program_normals = cs557::CreateShaderProgram(glslshader::normal_renderer_vs, glslshader::normal_renderer_fs);
+#endif
+	_obj_model_normals = new cs557::OBJModel();
+	_obj_model_normals->create(path_and_file, program_normals);
+
+	_light0.apply(program_normals);
+	//_light1.apply(program_normals);
+	
+
+	CreatePrerendererScene();
+	CreateHelperContent();
 }
 
 
