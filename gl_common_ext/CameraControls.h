@@ -1,3 +1,29 @@
+/*
+@file: CameraControls.h/.cpp
+
+This file provides a trackball mouse controller for camera/mouse navigation.
+
+This file is part of CS/CPRE/ME 557 Computer Graphics at Iowa State University
+
+Rafael Radkowski
+Iowa State University
+rafael@iastate.edu
++1 (515) 294-7044
+MIT License
+
+-------------------------------------------------------------------------------
+Last edited:
+
+Oct 19, 2019, RR
+- Added a angle-check to the cursorCallback. The viewmatrix becomes undefined if
+  the angle is < 0.001. All objects would disappear. To prevent that, I now check whether the
+  angle is < 0.001.
+
+Feb 21, 2020, RR
+- Fixed a camera bug that resulted in inccorect camera pans. 
+*/
+
+#pragma once
 #ifndef TRACKBALLCONTROLS
 #define TRACKBALLCONTROLS
 
@@ -20,8 +46,6 @@
 
 
 #include "ControlsBase.h"
-
-using namespace std;
 
 
 namespace cs557
@@ -90,16 +114,11 @@ namespace cs557
         // the view matrix. 
         glm::mat4       _vm;
 
-        // position matrix
-        glm::mat4       _pos;
-        float           _x, _y, _z;
-        glm::vec3       _dir;
-        glm::vec3       _loc;
 
         int             _windowWidth;
 		int             _windowHeight;
 
-        glm::vec3       _position;
+       
         float           _horizontalAngle;
         float           _verticalAngle;
         float           _locomotion_speed; 
@@ -108,20 +127,22 @@ namespace cs557
         bool            _xAxis;
         bool            _yAxis;
 
+		glm::vec3       _center;
+		glm::vec3       _eye;
+
+		glm::vec2		_prev_screen_xy;
+
         /*
         0 - no event
         1 - left mouse button pressed. 
         */
         int             _mouse_event;
-        int             _mouse_event2;  // middle
-        int             _mouse_event3; // right
+		int             _mouse_move_event;
+		int				_mouse_middle_event;
 
         // screen coordinates
         glm::vec3       _previous_sc; 
         glm::vec3       _current_sc; 
-
-        glm::vec2       _previous_2dsc; 
-        glm::vec2       _current_2dsc; 
 
         glm::vec3       _camAxis;
         float           _current_angle;

@@ -205,6 +205,13 @@ set(OPENGL_SRC
 	./gl_common_ext/CameraControls.cpp
 	./gl_common_ext/CommonTypes.h
 	./gl_common_ext/OBJLoader.h
+	./gl_common_ext/BRDFLoader.h
+	./gl_common_ext/BRDFLoader.cpp
+	./gl_common_ext/BRDFLoader.h
+	./gl_common_ext/BRDFLoader.cpp
+	./gl_common_ext/ModelBRDF.cpp
+	./gl_common_ext/ModelBRDF.h
+	./gl_common_ext/BRDFTypes.h
 )
 
 set(GENERATOR_SRC

@@ -4,6 +4,7 @@
 // ../data/stanford_bunny_02_rot.obj  -img_w 1280 -img_h 1024 -m POLY -sub 0  -rad 1.3 -verbose
 // ../data/stanford_bunny_02_rot.obj -o debug_out -img_w 1280 -img_h 1024 -m POLY -sub 2 -level 2  -rad 1.3  -verbose
 // ../data/stanford_bunny_02_rot.obj -o debug_out -img_w 1280 -img_h 1024 -m POSE -num 1000 -sub 4 -lim_near 1.0 -lim_far 3.0 -verbose
+// ../data/stanford_bunny_02_rot.obj -o dev_out -img_w 1280 -img_h 1024 -m USER -num 1000 -sub 4 -lim_near 3.0 -lim_far 9.0 -verbose -limx -1.0 -limy 1.0 -brdf_col ../data/example_files/brdf_material.json
 
 Rafael Radkowski
 Iowa State University
@@ -19,6 +20,9 @@ May 2nd, 2019, RR
 
 August 8, 2019, RR
 - Added a api to limit the pose and poly orientations of the model to upright orientations. 
+
+May 9, 2020
+- Added a brdf renderer to the command line arguments. 
 */
 
 #include <iostream>
@@ -114,6 +118,7 @@ void InitWindow(Arguments& opt)
 }
 
 
+
 void InitRenderer(Arguments& opt)
 {
 	/* Load the camera parameters from file. */
@@ -122,9 +127,15 @@ void InitRenderer(Arguments& opt)
 
 	/*Load material parameters if required. */
 	MateriaHSVParams mat;
-	MaterialReaderWriter::readHSV(opt.rand_col_file, mat);
+	if(opt.with_random_colors){ // read a material file if required. 
+		MaterialReaderWriter::readHSV(opt.rand_col_file, mat);
+	}
 
-
+	cs557::BRDFMaterial brdf0;
+	if(opt.with_brdf_colors){
+		MaterialReaderWriter::readBRFD( opt.brdf_col_file, brdf0);
+	}
+	
 
      //---------------------------------------------------------
     // Create models
@@ -165,7 +176,10 @@ void InitRenderer(Arguments& opt)
 	{
 		pose_renderer = new RandomPoseViewRenderer(opt.windows_width, opt.window_height, opt.image_width, opt.image_height);
 		pose_renderer->setVerbose(opt.verbose); // set first to get all the output info
-		pose_renderer->setModel(opt.model_path_and_file);
+		if(!opt.with_brdf_colors)
+			pose_renderer->setModel(opt.model_path_and_file);
+		else
+			pose_renderer->setModel(opt.model_path_and_file, brdf0);
 		pose_renderer->setOutputPath(opt.output_path);
 		pose_renderer->setPoseLimits(opt.lim_nx, opt.lim_px, opt.lim_ny, opt.lim_py, opt.lim_nz, opt.lim_pz);
 		pose_renderer->setHemisphere(opt.upright);
@@ -176,15 +190,20 @@ void InitRenderer(Arguments& opt)
 	}
 	else if (opt.cam == USER)
 	{
+		
 		model_renderer = new UserViewRenderer(opt.windows_width, opt.window_height, opt.image_width, opt.image_height);
 		model_renderer->setVerbose(opt.verbose); // set first to get all the output info
 		model_renderer->setOutputPath(opt.output_path);
-		model_renderer->create(opt.model_path_and_file);
-
+		if(opt.with_brdf_colors)
+			model_renderer->create(opt.model_path_and_file, brdf0);
+		else
+			model_renderer->create(opt.model_path_and_file);
 		cs557::AddKeyboardCallbackPtr(std::bind(&UserViewRenderer::keyboardCallback, model_renderer, _1, _2 ));
 
 	}
 }
+
+
 
 
 void DrawLoop(void)
@@ -203,7 +222,7 @@ void DrawLoop(void)
 		break;
 	default:
 		// Init the view matrix. 
-		viewMatrix = glm::lookAt(glm::vec3(0.0f, 0.0, 0.5f), glm::vec3(0.0f, 0.0f, 00.f), glm::vec3(0.0f, 1.0f, 0.0f));
+		viewMatrix = glm::lookAt(glm::vec3(0.0f, 0.0, 3.0f), glm::vec3(0.0f, 0.0f, 00.f), glm::vec3(0.0f, 1.0f, 0.0f));
 		cs557::InitControlsViewMatrix(viewMatrix);
 		break;
 	}

@@ -52,6 +52,9 @@ April 21, 2020, RR
 - Added a class that reads material data from a file. 
 - Added the api void applyRandomColor(void) to clean code
 
+May 9, 2020, RR
+- Integrated the the BRDF renderer to become a part of the ModelRenderer class.
+
 */
 
 // stl
@@ -73,6 +76,7 @@ April 21, 2020, RR
 
 // local
 #include "ModelOBJ.h"
+#include "ModelBRDF.h" // brdf model
 #include "ShaderProgram.h"
 #include "CommonTypes.h"  
 #include "RenderToTexture.h"
@@ -107,6 +111,16 @@ public:
 	@return - true, if model was successfully loaded. 
 	*/
 	bool setModel(string path_and_file);
+
+	
+	/*
+	Load the model that needs to be rendered. This model uses brdf material. 
+	@param path_and_file - string containg the relative or absolute
+							path to the model.
+	@param brdf_material - brdf material object. 
+	@return - true, if model was successfully loaded. 
+	*/
+	bool setModel(string path_and_file, cs557::BRDFMaterial& brdf_material);
 
 
 	/*

@@ -1,0 +1,11 @@
+{
+	"brdf_albedo": [ 1.0, 1.0, 0.0 ],
+	"brdf_lightColor": [23.47, 21.31, 20.79],
+	"brdf_F0": [0.02, 0.02, 0.02],
+	"brdf_intensity": 2.0,
+	"brdf_roughness": 0.2,
+	"brdf_metallic": 1.0,
+	"brdf_ao": 0.5,
+	"brdf_k1": 0.1,
+	"brdf_k2": 0.1
+}
