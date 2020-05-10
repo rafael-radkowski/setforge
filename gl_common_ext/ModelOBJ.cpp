@@ -68,6 +68,11 @@ void cs557::OBJModel::create(string path_and_filename, int shader_program)
 	float center_y = 0.0;
 	float center_z = 0.0;
 
+	modelMatrix ={  1, 0, 0, 0,
+					0, 1, 0 ,0,
+					0, 0, 1, 0,
+					0, 0, 0, 1};
+
 	std::vector<std::pair<glm::vec3, glm::vec2> > points; // points and texture coordinates
 	std::vector<glm::vec3> normals;
 	std::vector<int> indices;
@@ -211,6 +216,12 @@ void cs557::OBJModel::draw(glm::mat4 projectionMatrix, glm::mat4 viewMatrix, glm
 	glUseProgram(0);
 
 
+}
+
+
+void cs557::OBJModel::draw(glm::mat4 projectionMatrix, glm::mat4 viewMatrix)
+{
+	draw(projectionMatrix, projectionMatrix, viewMatrix );
 }
 
 

@@ -27,6 +27,10 @@ July 4th, 2019, RR
 	- Added an api to change the texture blend mode e.g, MODULATE, DECAL 
 April 20, 2020, RR
 	- Added an override material so that the user can overwrite the loaded material. 
+May 9, 2020, RR
+	- Changed access level for members to private to allow the ModelBRDGF to inherit the members.
+	- Added a member modelMatrix.
+	- Added a function setModelMatrix to set the model transformation.
 */
 #pragma once
 #include "OBJLoader.h"
@@ -79,7 +83,7 @@ namespace cs557
 		@param modelMatrix - a model matrix object.
 		*/
 		void draw(glm::mat4 projectionMatrix, glm::mat4 viewMatrix, glm::mat4 modelMatrix);
-
+		void draw(glm::mat4 projectionMatrix, glm::mat4 viewMatrix);
 
 		/*
 		Return the shader program
@@ -101,7 +105,13 @@ namespace cs557
 		*/
 		void setMaterial(cs557::Material material);
 
-	private:
+
+		/*
+		Set a model matrix. 
+		*/
+		void setModelMatrix(glm::mat4 matrix){modelMatrix = matrix;}
+
+	protected:
 
 		/*
 		Process the diffuse, ambient, and specular texture of the object. 
@@ -130,6 +140,8 @@ namespace cs557
 
 		std::vector<cs557::Material>		materials;//material per mesh
 		std::vector < cs557::TexMaterial>	textures;// textures per mesh
+
+		glm::mat4							modelMatrix;
 
 		cs557::Material						override_material;
 		bool								with_override_material;

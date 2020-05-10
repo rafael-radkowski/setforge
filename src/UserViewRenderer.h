@@ -53,6 +53,7 @@ last edited:
 
 #include "PolyhedronGeometry.h" // for the Polyhedron geometry
 #include "ModelRenderer.h"
+#include "BRDFTypes.h"
 
 class UserViewRenderer : public ModelRenderer
 {
@@ -72,6 +73,14 @@ public:
 	@return - true, if model was successfully loaded. 
 	*/
 	bool create( string model_path_and_file );
+
+
+	/*
+	@param path_and_file - string containg the relative or absolute
+							path to the model.
+	@return - true, if model was successfully loaded. 
+	*/
+	bool create( string model_path_and_file, cs557::BRDFMaterial& material );
 
 	/*
 	Draw the model 

@@ -45,6 +45,30 @@ bool UserViewRenderer::create( string model_path_and_file )
 
 
 /*
+@param path_and_file - string containg the relative or absolute
+						path to the model.
+@return - true, if model was successfully loaded. 
+*/
+bool UserViewRenderer::create( string model_path_and_file, cs557::BRDFMaterial& material )
+{
+	if(_verbose)
+		cout << "[INFO] - Set to user interactive view."  << endl;
+
+
+	cout << "[INFO] - Press 'w' to save a set of images to the selected folder."  << endl;
+
+	bool ret = this->setModel(model_path_and_file, material);
+	
+	if (!ret) {
+		cout << "[ERROR] - Could not load model " << model_path_and_file << "." << endl;
+		return false;
+	}
+
+	return true;
+}
+
+
+/*
 Draw the model 
 @param vm -  a glm 4x4 view matrix
 */

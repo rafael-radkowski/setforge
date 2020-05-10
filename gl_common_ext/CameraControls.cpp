@@ -1,3 +1,23 @@
+/*
+Trackback control for a gl scene
+
+Rafael Radkowski
+Iowa State University
+rafael@iastate.edu
+
+Jan 15, 2016
+MIT License
+--------------------------------------------------------------
+Last edited:
+
+Oct 26, 2019, RR
+- Updated the control features. One can now change the distance to the object using the left mouse button. 
+- Bug fix: fixed a bug that prevented the trackball from rotating correctly. 
+
+
+*/
+
+
 #include "CameraControls.h"
 
 
@@ -17,27 +37,21 @@ CameraControls::CameraControls(int window_width, int window_height):
     _xAxis = true;
     _yAxis = true;
 
-    _position = glm::vec3(0.0,0.0,-6.0);
+    _center = glm::vec3(0.0,0.0,0.0);
+	_eye = glm::vec3(0.0,0.0,-6.0);
     _horizontalAngle = 3.14f;
     _verticalAngle = 0.0f;
     _locomotion_speed = 0.2f; 
     _rolling_speed = 0.5f;
     _mouse_event = 0;
-    _mouse_event2 = 0;
-    _mouse_event3 = 0;
+	_mouse_move_event = 0.0;
     _current_angle = 0;
-    _z = 0;
-    _x = 0;
-    _y = 0;
-    _loc = glm::vec3(0,0,0);
+	_mouse_middle_event = 0;
 
-    _previous_2dsc = glm::vec2(0,0);
-    _current_2dsc = _previous_2dsc;
+	_prev_screen_xy = glm::vec2(0,0);
 
     // an initial matrix to start with. 
-    _vm = glm::lookAt(_position, glm::vec3(0.0,0.0,0.0), glm::vec3(0.0,1.0,0.0) );
-
-    _pos = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.00f)); 
+    _vm = glm::lookAt(_eye, _center, glm::vec3(0.0,1.0,0.0) );
 
 }
 
@@ -48,7 +62,9 @@ Set an initial view matrix to define the start point.
 void CameraControls::initView(glm::mat4 vm)
 {
     _vm = vm;
-    _position = _position = glm::vec3(-_vm[3][0],-_vm[3][1],-_vm[3][2]);
+    _eye = glm::vec3(-_vm[3][0],-_vm[3][1],-_vm[3][2]);
+
+	cout << "init view" << endl;
 }
 
 
@@ -57,12 +73,12 @@ Return a camera view matrix including the current user interaction
 */
 glm::mat4 CameraControls::getViewMatrix(void)
 {
-    return _vm * _pos;
+    return _vm;
 }
 
 glm::mat4 CameraControls::getRotationMatrix() 
 {
-    return _vm * _pos;  
+    return _vm;  
 }
 
 
@@ -74,22 +90,26 @@ glm::vec3 CameraControls::toScreenCoord( double x, double y )
 {
     glm::vec3 coord(0.0f);
     
+	float wx = 0.0;
+	float wy = 0.0;
     if( _xAxis )
-        coord.x =  -(2 * x - _windowWidth ) / _windowWidth;
-    
+		wx = (2 * x - _windowWidth ) / _windowWidth;
+  
     if( _yAxis )
-        coord.y = -(2 * y - _windowHeight) / _windowHeight;
+        wy = (2 * y - _windowHeight) / _windowHeight;
     
     /* Clamp it to border of the windows */
-    coord.x = glm::clamp( coord.x, -1.0f, 1.0f );
-    coord.z = glm::clamp( coord.y, -1.0f, 1.0f );
+	//coord.x = coord.z;
+    coord.x = glm::clamp( -wx, -1.0f, 1.0f );
+    coord.y = glm::clamp( wy, -1.0f, 1.0f );
+   
     
-    
-    float length_squared = coord.x * coord.x + coord.z * coord.z;
+    float length_squared = coord.y * coord.y + coord.x * coord.x;
     if( length_squared <= 1.0 )
-        coord.y = sqrt( 1.0 - length_squared );
-    else
+       coord.z = sqrt( 1.0 - length_squared );
+    else{
         coord = glm::normalize( coord );
+	}
     
     return coord;
 }
@@ -100,7 +120,7 @@ Mouse cursor callback.
 */
 void CameraControls::cursorCallback( GLFWwindow *window, double x, double y )
 {
-    // Rotation
+
     if(_mouse_event == 1)
     {
         _previous_sc = toScreenCoord( x, y ); 
@@ -110,71 +130,85 @@ void CameraControls::cursorCallback( GLFWwindow *window, double x, double y )
     {
         _current_sc= toScreenCoord( x, y ); 
         /* Calculate the angle in radians, and clamp it between 0 and 90 degrees */
-        _current_angle    = acos( std::min(1.0f, glm::dot(_previous_sc, _current_sc) ));
+        _current_angle    = acos( std::min(1.0f, glm::dot( _current_sc, _previous_sc) ));
 
          /* Cross product to get the rotation axis, but it's still in camera coordinate */
-        _camAxis  = glm::cross( _previous_sc, _current_sc );
-
-        _vm = glm::rotate(_vm, glm::degrees(_current_angle) * _rolling_speed, _camAxis );
+        _camAxis  = glm::cross(  _current_sc, _previous_sc );
+		
+		// Check if the angle is larger than 0.001. The matrix becomes undefined otherwise. 
+		if(std::abs(_current_angle) > 0.001){
+			_eye = glm::vec3(_vm[3]);
+			_vm[3] = glm::vec4(0.0,0.0,0.0, 1.0);
+			_vm = glm::translate(_eye) * (glm::rotate(glm::mat4(1.0), glm::degrees(_current_angle) * _rolling_speed, _camAxis ) * _vm) ;
+		}
 
         _previous_sc = _current_sc;
     }
 
-    // zoom
-    if(_mouse_event2 == 1)
-    {
-        _previous_2dsc = glm::vec2(x, _windowHeight - y);
-        _mouse_event2 = 2;
-    }
-    else if(_mouse_event2 == 2)
-    {
-        _current_2dsc = glm::vec2(x, _windowHeight - y);
+	if (_mouse_move_event == 1) {
+		
+		_prev_screen_xy.y = y;
+		_prev_screen_xy.x = x;
+		_mouse_move_event = 2;
 
-        float dist = glm::distance( _previous_2dsc, _current_2dsc );
-        float sign = glm::dot( _previous_2dsc - _current_2dsc, glm::vec2(1,1));
-       
-        float s = 1;
-        if(sign < 0) s = -1;
-        float speed = 0.01;
+	}else if (_mouse_move_event == 2) {
+		
+		//-------------------------------------------------------------------
+		// zoom in and out to the center point. 
+		 float distance = y - _prev_screen_xy.y;
+		 float sign = glm::sign( y - _prev_screen_xy.y );
 
-        _loc.z += s * dist * speed;
-        //_dir = _vm.block(2,0,3,1);
+		 glm::mat4 _vm_inv =glm::inverse(_vm);
+		 glm::vec3 dof = glm::vec3(_vm_inv[2]);
+		 glm::vec3 eye = glm::vec3(_vm_inv[3]);
 
-        _pos = glm::translate(glm::mat4(1.0f), _loc); 
-
-        _previous_2dsc = _current_2dsc;
-    }
+		 if(std::abs(distance) > 0.001){
+			 
+			_eye = eye +  glm::vec3( glm::normalize(dof)) * sign * 0.08f;
+			_vm_inv[3] = glm::vec4(_eye, 1.0);
+			_vm = glm::inverse(_vm_inv);
 
 
-    if(_mouse_event3 == 1)
-    {
-        _previous_2dsc = glm::vec2(x, _windowHeight - y);
-        _mouse_event3 = 2;
-    }
-    else if(_mouse_event3 == 2)
-    {
-        _current_2dsc = glm::vec2(x, _windowHeight - y);
+		}
+		 _prev_screen_xy.y = y;
+		 _prev_screen_xy.x = x;
+	}
 
-        float distx = glm::distance( _previous_2dsc.x, _current_2dsc.x );
-        float disty = glm::distance( _previous_2dsc.y, _current_2dsc.y );
 
-        float signx = glm::dot( _previous_2dsc - _current_2dsc, glm::vec2(1,0));
-        float signy = glm::dot( _previous_2dsc - _current_2dsc, glm::vec2(0,1));
-       
-        float sx = 1;
-        float sy = 1;
-        if(signx < 0) sx = -1;
-        if(signy < 0) sy = -1;
+	if (_mouse_middle_event == 1) {
+		
+		_previous_sc = toScreenCoord( y,x ); 
+		_prev_screen_xy.y = y;
+		_prev_screen_xy.x = x;
+		_mouse_middle_event = 2;
 
-        float speed = 0.005;
-        _x -= sx * distx * speed;
-        _y -= sy * distx * speed;
+	}
+	else if (_mouse_middle_event == 2) {
+		
+		//-------------------------------------------------------------------
+		// Change the center point
+		float signx = glm::sign( x - _prev_screen_xy.x );
+		float signy = glm::sign( y - _prev_screen_xy.y );
+		_current_sc= toScreenCoord( y,x ); 
+		
 
-        _pos = glm::translate(glm::mat4(1.0f), glm::vec3(_x, _y, _z )); 
+		glm::mat4 _vm_inv =glm::inverse(_vm);
+		glm::vec3 side = glm::vec3(_vm_inv[0]);
+		glm::vec3 up = glm::vec3(_vm_inv[1]);
+		glm::vec3 eye = glm::vec3(_vm_inv[3]);
 
-        _previous_2dsc = _current_2dsc;
-    }
+		_eye = eye - glm::normalize( glm::vec3(side)) * signx * 0.05f+  glm::normalize( glm::vec3(up)) * signy * 0.05f;
 
+		_vm_inv[3] = glm::vec4(_eye, 1.0);
+		_vm = glm::inverse(_vm_inv);
+
+	
+		_prev_screen_xy.y = y;
+		_prev_screen_xy.x = x;
+		_previous_sc = _current_sc;
+	}
+
+	
     
 }
 
@@ -183,10 +217,11 @@ Mouse button callback function
 */
 void CameraControls::mouseButtonCallback( GLFWwindow * window, int button, int action, int mods )
 {
+	
     //  mouse event
      _mouse_event = ( action == GLFW_PRESS && button == GLFW_MOUSE_BUTTON_LEFT );
-     _mouse_event2 = ( action == GLFW_PRESS && button == GLFW_MOUSE_BUTTON_MIDDLE);
-     _mouse_event3 = ( action == GLFW_PRESS && button == GLFW_MOUSE_BUTTON_RIGHT);
+	 _mouse_move_event = ( action == GLFW_PRESS && button == GLFW_MOUSE_BUTTON_RIGHT );
+	 _mouse_middle_event = ( action == GLFW_PRESS && button == GLFW_MOUSE_BUTTON_MIDDLE );
 }
 
 
