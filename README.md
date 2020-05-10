@@ -4,6 +4,17 @@ from models and to augment this data. The intend is to train a convolutional neu
 
 ![Title figure](https://github.com/rafael-radkowski/DNNHelpers/blob/master/doc/images/setforge_social_logo_small.png)
 
+### Features
+The tools provides the following features:
+ * Model rendering with random materials, BRDF, or predefined material.
+ * Outputs RGB image, depth map, normal map, binary mask, and pose. 
+ * Random pose estimation.
+ * Noise filter augmentation.
+ * Color correction to align rendering with background.
+ * Normal estimate from RGB
+ * Depth estimate from RGB and normal map. 
+ and more. 
+
 This repository provides two tools:  
 1. setforge_r(enderer)
 2. setforge_g(enerator)
@@ -97,6 +108,11 @@ Figure 3 shows some rendered results combinded with random background images. So
 ![Figure 3: An example dataset. ](https://github.com/rafael-radkowski/DNNHelpers/blob/master/doc/images/datasets_example.png)
 
 Figure 3: An example dataset.
+
+
+### Version history
+* Version 1.1.2: Color randomization
+* Version 1.2: BRDF material 
 
 Rafael Radkowski  
 Iowa State University  
