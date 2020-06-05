@@ -154,11 +154,14 @@ void cs557::OBJModel::create(string path_and_filename, int shader_program)
 	_I = indices.size();
 	_N = points.size();
 
+	// Set the object to the center of mass. 
+	GLGeometryUtils::SetToBBCenter(points);
+
+	// compute the bounding box of the object. 
+	GLGeometryUtils::CalcAll(points, boundingbox, centroid );
+
 	// create a vertex buffer object
 	cs557::CreateVertexObjectsIndexed53(vaoID, vboID, iboID, &points[0].first.x, &normals[0].x, _N, &indices[0], _I, pos_location, tex_location, norm_location );
-
-	
-
 
 }
 

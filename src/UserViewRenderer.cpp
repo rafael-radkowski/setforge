@@ -9,7 +9,7 @@ Constructor
 UserViewRenderer::UserViewRenderer(int window_width, int window_height, int image_width, int image_height) :
 	ModelRenderer(window_width, window_height, image_width, image_height)
 {
-
+	_render_bbox = false;
 }
 
 UserViewRenderer::~UserViewRenderer()
@@ -32,6 +32,7 @@ bool UserViewRenderer::create( string model_path_and_file )
 
 
 	cout << "[INFO] - Press 'w' to save a set of images to the selected folder."  << endl;
+	cout << "[INFO] - Press 'b' to enable/disable the bounding box renderer."  << endl;
 
 	bool ret = this->setModel(model_path_and_file);
 	
@@ -56,6 +57,7 @@ bool UserViewRenderer::create( string model_path_and_file, cs557::BRDFMaterial& 
 
 
 	cout << "[INFO] - Press 'w' to save a set of images to the selected folder."  << endl;
+	cout << "[INFO] - Press 'b' to enable/disable the bounding box renderer."  << endl;
 
 	bool ret = this->setModel(model_path_and_file, material);
 	
@@ -91,7 +93,19 @@ void UserViewRenderer::keyboardCallback(int key, int action)
 			draw_and_save();
 			enable_writer(false);
 		}
+		else if(key == 66) // b
+		{
+			if(_render_bbox) { 
+				_render_bbox = false;
+			}else
+			{ 
+				_render_bbox = true;
+			}
+			setDrawBBox(_render_bbox);
+		}
 	}
+
+
 }
 
 

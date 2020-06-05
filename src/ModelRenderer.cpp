@@ -23,7 +23,7 @@ ModelRenderer::ModelRenderer(int window_width, int window_height, int image_widt
 	_with_roi = true; 
 	_with_mask = true;
 	_with_rand_col = true;
-
+	_with_bbox = false;
 	_verbose = false;
 
 	_projectionMatrix = glm::perspective(1.2f, (float)800 / (float)600, 0.1f, 100.f);
@@ -326,6 +326,8 @@ bool ModelRenderer::draw(void)
 	_obj_model->draw(_projectionMatrix, _viewMatrix, _modelMatrix);
     _coordinateSystem.draw(_projectionMatrix, _viewMatrix, _modelMatrixCoordSystem);
 
+	if(_with_bbox)
+		_bbox->draw(_projectionMatrix, _viewMatrix, _modelMatrix);
 
 	glUseProgram(_display.getProgram());
 	glActiveTexture(GL_TEXTURE0);
@@ -407,6 +409,10 @@ void ModelRenderer::CreateHelperContent(void)
 	// create a coordinate system
 	_modelMatrixCoordSystem = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f)); 
     _coordinateSystem.create(25);
+
+	// create the bounding box
+	_bbox = new cs557::BBox();
+	_bbox->create(glm::vec3(0.0,0.0,0.0), _obj_model->getBoundingBox());
 }
 
 
@@ -469,6 +475,16 @@ Enable or disable random color rendering.
 void ModelRenderer::setRandomColors(bool enable )
 {
 	_with_rand_col = enable;
+}
+
+
+/*
+Enable or disable the bounding box renderer.
+@param draw - true enables bounding box rendering. 
+*/
+void ModelRenderer::setDrawBBox(bool draw)
+{
+	_with_bbox = draw;
 }
 
 

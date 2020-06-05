@@ -31,6 +31,11 @@ May 9, 2020, RR
 	- Changed access level for members to private to allow the ModelBRDGF to inherit the members.
 	- Added a member modelMatrix.
 	- Added a function setModelMatrix to set the model transformation.
+June 5, 2020, RR
+	- Added a function to calculate the bounding box of the object.
+	- Added a function to compute the centroid of the object.
+	- Move all vertices to the center of the bounding box. 
+	- Added apis to read the centroid and the bounding box. 
 */
 #pragma once
 #include "OBJLoader.h"
@@ -59,6 +64,7 @@ May 9, 2020, RR
 #include "TextureLoader.h"
 #include "Texture2D.h"
 #include "../src/TextureLoader.h"
+#include "GLGeometryUtils.h"
 
 using namespace std;
 
@@ -111,6 +117,20 @@ namespace cs557
 		*/
 		void setModelMatrix(glm::mat4 matrix){modelMatrix = matrix;}
 
+
+		/*!
+		Return the axis-aligned bounding box edge lengths.
+		@return glm::vec3 object with the bb edge length in local coordinates.
+		*/
+		glm::vec3 getBoundingBox(void){return boundingbox;}
+
+
+		/*!
+		Return the centroid of the objects
+		@return glm::vec3 object with the x, y, z coordinates of the centroid in local coordinates.
+		*/
+		glm::vec3 getCentroid(void){return centroid;}
+
 	protected:
 
 		/*
@@ -148,5 +168,9 @@ namespace cs557
 
 		int _N; // number of vertices
 		int _I; // number indices
+
+		// boudning box
+		glm::vec3							boundingbox;
+		glm::vec3							centroid;
 	};
 }

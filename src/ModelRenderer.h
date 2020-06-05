@@ -55,6 +55,9 @@ April 21, 2020, RR
 May 9, 2020, RR
 - Integrated the the BRDF renderer to become a part of the ModelRenderer class.
 
+June 5, 2020, RR
+- Added a bounding box model to the renderer
+- Added an api to enable/disable bounding box rendering.
 */
 
 // stl
@@ -88,7 +91,7 @@ May 9, 2020, RR
 #include "GLSLShaderSrc.h"
 #include "MaterialRandomization.h"  // for random colors
 #include "MaterialReaderWriter.h"  // to read material data from a fle. 
- 
+#include "ModelBBox.h"	// boudning box
 
 using namespace std;
 
@@ -181,7 +184,11 @@ public:
 	void setRandomColorsParams(float hue_min, float hue_max, float sat_min, float sat_max, float v_min = 0.8, float v_max = 0.8, float with_v = false);
 
 
-
+	/*
+	Enable or disable the bounding box renderer.
+	@param draw - true enables bounding box rendering. 
+	*/
+	void setDrawBBox(bool draw);
 
 protected:
 
@@ -227,6 +234,7 @@ private:
 	// the model to render
 	cs557::OBJModel*			_obj_model;
 	cs557::OBJModel*			_obj_model_normals;
+	cs557::BBox*				_bbox;
 
 	glm::mat4				_projectionMatrix;		
 	glm::mat4				_viewMatrix;			
@@ -287,7 +295,7 @@ private:
 
 	bool					_with_roi; // also extracts the roi from the color image
 	bool					_with_mask;//  extracts the mask from the depth image
-
+	bool					_with_bbox; // renders a bounding box;
 
 	// For random colors
 	MaterialRandomization	_rand_col;

@@ -32,6 +32,9 @@ All copyrights reserved
 ------------------------------------------------------------------
 last edited:
 
+June 5, 2020, RR:
+- Added a keybooard key to enable/disable the bounding box renderer. 
+
 */
 
 
@@ -98,7 +101,7 @@ public:
 private:
 
 
-
+	bool _render_bbox;
 
 };
 

@@ -146,6 +146,7 @@ set(MAIN_SRC
 	./src/MaterialTypes.h
 	./src/MaterialReaderWriter.h
 	./src/MaterialReaderWriter.cpp
+	
 )
 
 
@@ -170,7 +171,8 @@ set(UTILS_SRC
 	./src/TimeUtils.cpp
 	./src/FileUtils.h
 	./src/FileUtils.cpp
-
+	./src/GeometryUtils.h
+	./src/GeometryUtils.cpp
 )
 
 
@@ -212,6 +214,10 @@ set(OPENGL_SRC
 	./gl_common_ext/ModelBRDF.cpp
 	./gl_common_ext/ModelBRDF.h
 	./gl_common_ext/BRDFTypes.h
+	./gl_common_ext/GLGeometryUtils.h
+	./gl_common_ext/GLGeometryUtils.cpp
+	./gl_common_ext/ModelBBox.h
+	./gl_common_ext/ModelBBox.cpp
 )
 
 set(GENERATOR_SRC

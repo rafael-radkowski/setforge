@@ -111,7 +111,7 @@ void InitWindow(Arguments& opt)
 
 
 	// Init the GLFW Window
-	window = cs557::initWindow(opt.window_height, opt.windows_width, "Render to Image");
+	window = cs557::initWindow(opt.window_height, opt.windows_width, "setforge_r");
 
 	// Initialize the GLEW apis
 	cs557::initGlew();

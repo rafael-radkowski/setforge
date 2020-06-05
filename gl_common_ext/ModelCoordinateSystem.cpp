@@ -108,6 +108,7 @@ void cs557::CoordinateSystem::draw(glm::mat4 projectionMatrix, glm::mat4 viewMat
 	 // Bind the buffer and switch it to an active buffer
 	glBindVertexArray(vaoID[0]);
 
+	glEnable(GL_LINE_SMOOTH);
 	glLineWidth((GLfloat)6.0);
 
 	// Draw the triangles
