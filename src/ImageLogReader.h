@@ -24,6 +24,10 @@ Usage:
 
  Dec 10, 2019, RR:
  - Removed #incude <experimental/filesystem> since unused. 
+
+ June 6, 2020, RR:
+ - Added a string to the _ImageLog type to store a file pointing to control points.
+ - Added a second constructor incorporating the control points. 
 */
 #pragma once
 
@@ -63,6 +67,7 @@ public:
 		string depth_file;
 		string maske_file;
 		string matrix_file;
+		string control_point_file;
 
 		glm::vec3	p;
 		glm::quat	q;
@@ -79,6 +84,21 @@ public:
 			p = p_;
 			q = q_;
 			roi = roi_;
+			control_point_file = "";
+		}
+
+		_ImageLog(int idx, string rgb, string normal, string depth, string mask, string matrix, glm::vec3 p_, glm::quat q_, cv::Rect2f roi_, std::string control_point_file_)
+		{
+			id = idx;
+			rgb_file = rgb;
+			normal_file = normal;
+			depth_file = depth;
+			maske_file = mask;
+			matrix_file = matrix;
+			p = p_;
+			q = q_;
+			roi = roi_;
+			control_point_file = control_point_file_;
 		}
 
 	}ImageLog;

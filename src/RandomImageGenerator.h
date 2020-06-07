@@ -23,6 +23,9 @@ Aug 8, 2019, RR
 - Added a chromatic adaptation filter to the process. 
 Dec 10, 2019, RR:
 - Added #include "FileUtils.h" to manage experimental/filesyste, and filesystem ambiguity
+June 6, 2020, RR:
+- Included #include "ControlPointsHelper.h"
+- Added code to read control points from a file, to scale them if necessary, and to write them to a new location.
 */
 
 
@@ -45,6 +48,7 @@ Dec 10, 2019, RR:
 #include "ImageFilter.h" // for chromatic adaptation
 #include "NoiseFilter.h" // for noise
 #include "FileUtils.h"
+#include "ControlPointsHelper.h"
 
 using namespace std;
 

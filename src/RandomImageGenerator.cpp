@@ -265,6 +265,22 @@ int RandomImageGenerator::process_combine(int num_images)
 
 
 		//-----------------------------------------------------------------------------
+		// Scale the control points so that they meet the new image size. 
+
+		ControlPointsHelper::CPType cptype;
+		std::vector<glm::vec2> cpoints;
+		std::vector<glm::vec2> cpoint_new;
+		ControlPointsHelper::Read(rendered_files[dice_rendering].control_point_file, cptype, cpoints);
+
+		float scale_x = float(_rendering_height)/float(rendering.rows);
+		float scale_y = float(_rendering_widht)/float(rendering.cols);
+
+		for each(glm::vec2 p in cpoints){
+			cpoint_new.push_back(glm::vec2(scale_x* p.x, scale_y * p.y) );
+		}
+		ControlPointsHelper::Write("temp_cp.txt", cptype, cpoint_new);
+
+		//-----------------------------------------------------------------------------
 		// write data to file
 
 
@@ -553,7 +569,7 @@ bool RandomImageGenerator::writeHeader(void)
 	// write header
 	std::ofstream of(out, std::ifstream::out | std::ifstream::app);
 	if (of.is_open()){
-		of << "index,rgb_file,normals_file,depth_file,mask_file,mat_file,tx,ty,tz,qx,qy,qz,qw,roi_x,roi_y,roi_w,roi_h\n";
+		of << "index,rgb_file,normals_file,depth_file,mask_file,mat_file,tx,ty,tz,qx,qy,qz,qw,roi_x,roi_y,roi_w,roi_h,cp_file\n";
 	}
 	of.close();
 
@@ -733,6 +749,35 @@ bool RandomImageGenerator::writeDataEx(int id, cv::Mat& image_rgb, cv::Mat& imag
 	cv::imwrite(name_m, image_mask);//CV_16UC1
 	//cout << image_mask.type() << "\n";
 
+
+	//----------------------------------------------
+	// Control points
+	ControlPointsHelper::CPType cptype;
+	std::vector<glm::vec2> cpoints;
+	ControlPointsHelper::Read("temp_cp.txt", cptype, cpoints);
+
+	string name_cp = _output_path;
+	name_cp.append("/");
+	name_cp.append(to_string(id));
+	name_cp.append("-");
+	name_cp.append(data.control_point_file);
+		
+	// removes the path name if the original file name comes with a path
+	index = data.control_point_file.find_last_of("/");
+	if (index != -1) {
+		string sub = data.control_point_file.substr(index + 1, data.control_point_file.length() - index - 1);
+
+		name_cp = _output_path;
+		name_cp.append("/");
+		name_cp.append(to_string(id));
+		name_cp.append("-");
+		name_cp.append(sub);
+
+	}
+
+	ControlPointsHelper::Write(name_cp, cptype, cpoints);
+
+
 	//----------------------------------------------
 	// Log file
 
@@ -742,7 +787,7 @@ bool RandomImageGenerator::writeDataEx(int id, cv::Mat& image_rgb, cv::Mat& imag
 	std::ofstream of(out, std::ifstream::out | std::ifstream::app);
 
 	if (of.is_open()) {
-		of << id << "," << name << "," << name_d << "," << name_de << "," << name_m << "," << data.matrix_file  << "," << data.p.x << "," << data.p.y << "," << data.p.z << "," << data.q.x << "," << data.q.y << "," << data.q.z << "," << data.q.w << "," << roi.x << ',' << roi.y << "," << roi.width << "," << roi.height << "\n";
+		of << id << "," << name << "," << name_d << "," << name_de << "," << name_m << "," << data.matrix_file  << "," << data.p.x << "," << data.p.y << "," << data.p.z << "," << data.q.x << "," << data.q.y << "," << data.q.z << "," << data.q.w << "," << roi.x << ',' << roi.y << "," << roi.width << "," << roi.height << "," << name_cp << "\n";
 	}
 	of.close();
 

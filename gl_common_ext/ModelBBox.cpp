@@ -85,13 +85,13 @@ void cs557::BBox::create(glm::vec3 center, glm::vec3 edges, int shader_program)
 		center_x - dim_x, center_y + dim_y, center_z + dim_z,  0.0f, 0.0f, // p6
 		center_x - dim_x, center_y - dim_y, center_z + dim_z,  0.0f, 0.0f, // p7
 
-		// first side
+		// third side
 		center_x + dim_x, center_y + dim_y, center_z - dim_z,  0.0f, 0.0f,  // p1
 		center_x - dim_x, center_y + dim_y, center_z - dim_z,  0.0f, 0.0f,  // p5
 		center_x - dim_x, center_y + dim_y, center_z + dim_z,  0.0f, 0.0f,  // p6
 		center_x + dim_x, center_y + dim_y, center_z + dim_z,  0.0f, 0.0f,  // p2
 		
-		// first side
+		// fourts side
 		center_x + dim_x, center_y - dim_y, center_z - dim_z,  0.0f, 0.0f,  // p0
 		center_x - dim_x, center_y - dim_y, center_z - dim_z,  0.0f, 0.0f,  // p4
 		center_x - dim_x, center_y - dim_y, center_z + dim_z,  0.0f, 0.0f,  // p7
@@ -99,7 +99,16 @@ void cs557::BBox::create(glm::vec3 center, glm::vec3 edges, int shader_program)
 	};
 
 
+	// TODO: Bounding box calculation is repetative. This requires some rework!!
+	_bb_corners.push_back(glm::vec3(center_x + dim_x, center_y - dim_y, center_z - dim_z) );
+	_bb_corners.push_back(glm::vec3(center_x + dim_x, center_y + dim_y, center_z - dim_z) );
+	_bb_corners.push_back(glm::vec3(center_x + dim_x, center_y + dim_y, center_z + dim_z) );
+	_bb_corners.push_back(glm::vec3(center_x + dim_x, center_y - dim_y, center_z + dim_z) );
 
+	_bb_corners.push_back(glm::vec3(center_x - dim_x, center_y - dim_y, center_z - dim_z) );
+	_bb_corners.push_back(glm::vec3(center_x - dim_x, center_y + dim_y, center_z - dim_z) );
+	_bb_corners.push_back(glm::vec3(center_x - dim_x, center_y + dim_y, center_z + dim_z) );
+	_bb_corners.push_back(glm::vec3(center_x - dim_x, center_y - dim_y, center_z + dim_z) );
 
 
 	float normals[] = { 

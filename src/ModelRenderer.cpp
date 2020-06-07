@@ -24,6 +24,7 @@ ModelRenderer::ModelRenderer(int window_width, int window_height, int image_widt
 	_with_mask = true;
 	_with_rand_col = true;
 	_with_bbox = false;
+	_with_bbox_projection = true;
 	_verbose = false;
 
 	_projectionMatrix = glm::perspective(1.2f, (float)800 / (float)600, 0.1f, 100.f);
@@ -62,7 +63,11 @@ ModelRenderer::ModelRenderer(int window_width, int window_height, int image_widt
 	_data_depth = (unsigned char*)malloc(_image_width * _image_height * 1 * sizeof(float));
 	_data_normals = (unsigned char*)malloc(_image_width * _image_height * 3 * sizeof(float));
 
+
 	_writer = new ImageWriter();
+
+	// init the point projectoin. 
+	_projection = new PointProjection(_image_width, _image_height);
 }
 
 
@@ -73,6 +78,7 @@ ModelRenderer::~ModelRenderer()
 	free(_data_normals);
 
 	delete _writer;
+	delete _projection;
 }
 
 
@@ -260,6 +266,13 @@ bool ModelRenderer::drawFBO(void)
 	if (_with_mask) {
 		ImageMask::Extract(dst, mask);
 	}
+	
+
+	//-------------------------------------------------------------------------------------
+	// Project the bounding box corner points and the center of the bounding box. 
+	if (_with_bbox_projection) {
+		projectBBoxPoints();
+	}
 
 
 	// switch back to the regular output buffer
@@ -280,11 +293,16 @@ bool ModelRenderer::drawFBO(void)
 		cv::imshow("RGB image (3 x uchar)", output_rgb);
 		cv::imshow("Depth image (float)", output_depth);
 		cv::imshow("Normal image (float)", output_norm);
-		cv::waitKey(1);
+		
 
 		if (_verbose && _with_roi) 
 			RoIDetect::RenderRoI(dst, roi);
-	
+
+		if (_verbose && _with_bbox_projection) {
+			_projection->showProjection();
+		}
+
+		cv::waitKey(1);
 	}
 
 	
@@ -302,7 +320,15 @@ bool ModelRenderer::drawFBO(void)
 		// this view matrix describes the object's pose in camera coordinates since the object is at 0,0,0
 		odata.pose = _viewMatrix;
 		odata.roi = roi;
+		odata.control_points = _projected_points;
+
 		_writer->write(odata);
+
+		// this writes model information. Currently, the only info is the bounding box corner points. 
+		if(_output_file_id == 0){
+			std::vector<glm::vec3> corners =  _bbox->getCorners();
+			_writer->writeModelFile(corners);
+		}
 
 		//_writer->write(_output_file_id, dst, dst_norm, dst_depth, glm::inverse(_viewMatrix));
 		_output_file_id++;
@@ -489,6 +515,23 @@ void ModelRenderer::setDrawBBox(bool draw)
 
 
 /*
+Project the boundinx box corner points and the bounding box centroid. 
+*/
+bool ModelRenderer::projectBBoxPoints()
+{
+	assert(_bbox != NULL);
+	std::vector<glm::vec3> corners =  _bbox->getCorners();
+
+	// note that this function assumes that the model is centered at the bounding box center. 
+	corners.push_back(glm::vec3(0.0,0.0,0.0)); // the center point. 
+
+	_projection->setProjectionMatrix(_projectionMatrix);
+	_projection->setViewMatrix(_viewMatrix);
+	_projection->projectPoints(corners, _modelMatrix, _projected_points);
+}
+
+
+/*
 Set the min / max values for hue and saturation
 @param hue_min - a min. hue value in the range from 0 to 360 degree.
 @param hue_max - a max. hue value in the range from 0 to 360 degree.
@@ -538,4 +581,25 @@ void ModelRenderer::applyRandomColor(void)
 	
 	if(_obj_model!= NULL)
 		_obj_model->setMaterial(mat);
+}
+
+
+/*
+Enable or disable the bounding box projection function. 
+It is enabled by default. 
+*/
+void ModelRenderer::withBBoxProjection(bool enable)
+{
+	_with_bbox_projection = enable;
+}
+
+
+/*
+Project the bounding box manually. 
+This is a debug function to verify that the bounding box works. 
+*/
+bool ModelRenderer::projectBBox(void)
+{
+	projectBBoxPoints();
+	return true;
 }

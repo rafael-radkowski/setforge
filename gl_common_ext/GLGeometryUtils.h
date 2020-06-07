@@ -5,6 +5,19 @@
 		the objects centroid. It also allows one to move an 3D model's centroid to the center of 
 		the bounding box.
 
+		p7 /---------------------/p6
+		  /					    /|
+		 /					   / |
+	 p3	/---|-----------------/ p2
+		|	/				  |  /p5
+		|	p4				  | /
+		|					  |/
+		|---------------------/
+		p0					 p1
+
+	  z	|
+		/-> y
+	   x
 Features:
 - Compute the bounding box of a set of 3D points.
 - Compute the centroid of the points. 
@@ -18,7 +31,8 @@ MIT License
 -------------------------------------------------------------------------------------------------------
 Last edited:
 
-
+June 6, 2020, RR
+- Added functions to compute and return bounding box corners
 
 
 */
@@ -77,6 +91,14 @@ public:
 	static bool CalcAll(std::vector<std::pair<glm::vec3, glm::vec2> > & points, glm::vec3& boundingbox_size, glm::vec3& centroid);
 
 
+
+	/*
+	Return the bounding box corners of the last calculated bounding box. 
+	@return  the eight bounding box corners in local x, y, z, coordinates. 
+	*/
+	static std::vector<glm::vec3>& GetBBCorners(void);
+
+
 	/*
 	Set the 3D model's center to the center of the bounding box. 
 	@param points - location of a vector with points (x, y, z) in glm::vec3 format. 
@@ -90,5 +112,13 @@ public:
 	@param verbose - true enables additional console infos and warnings. 
 	*/
 	static bool SetVerbose(bool verbose);
+
+
+private:
+	
+	/*
+	Calcualte the bounding box corner points p0 to p7
+	*/
+	static void CalculateBBCorners(void);
 
 };

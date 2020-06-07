@@ -131,6 +131,7 @@ void InitRenderer(Arguments& opt)
 		MaterialReaderWriter::readHSV(opt.rand_col_file, mat);
 	}
 
+	/* Load BRDF material parameters if BRDF is active. */
 	cs557::BRDFMaterial brdf0;
 	if(opt.with_brdf_colors){
 		MaterialReaderWriter::readBRFD( opt.brdf_col_file, brdf0);

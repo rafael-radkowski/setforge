@@ -254,6 +254,9 @@ bool ImageWriter::write(IWData& data)
 	string name_mat = name;
 	name_mat.append("_pose.txt");
 
+	string name_cp = name;
+	name_cp.append("_cp.txt");
+
 	// Delete all clear buffer values from the depth map.
 
 	cv::Mat output_depth;
@@ -301,6 +304,12 @@ bool ImageWriter::write(IWData& data)
 	MatrixFileUtils::WriteMatrix4f(name_mat, mat, "pose:");
 	MatrixHelpers::MatrixToQuaternion(mat, q);
 
+	//--------------------------------------------------------------------------------------------------------------------------------------------------
+	// write the control points into a file
+	ControlPointsHelper::Write(name_cp, ControlPointsHelper::BBox, data.control_points);
+
+	//--------------------------------------------------------------------------------------------------------------------------------------------------
+	// write the log file entry. 
 
 	string list_str = "./";
 	list_str.append(_output_file_path);
@@ -314,13 +323,26 @@ bool ImageWriter::write(IWData& data)
 	{
 		of << to_string(data.index) << "," << name_rgb << "," << name_normals << "," << name_depth << "," << name_mask << "," <<
 			name_mat << "," <<  pose[3][0]<< "," <<  pose[3][1]  << "," <<  pose[3][2] <<
-			"," <<  q.x() << "," <<  q.y() <<"," <<  q.z() <<"," <<  q.w() << "," << data.roi.x << "," << data.roi.y << "," << data.roi.width << "," << data.roi.height << "\n";
+			"," <<  q.x() << "," <<  q.y() <<"," <<  q.z() <<"," <<  q.w() << "," << data.roi.x << "," << data.roi.y << "," << data.roi.width << "," << data.roi.height  << "," << name_cp << "\n";
+
 	}
 	of.close();
 
 	return true;
 }
 
+
+bool ImageWriter::writeModelFile( std::vector<glm::vec3> control_points)
+{
+	string name = _output_file_path;
+	name.append("/");
+	name.append("Model_info");
+	name.append("_");
+	name.append(_output_file_name);
+	name.append(".csv");
+
+	return ControlPointsHelper::Write3D(name, ControlPointsHelper::BBoxLocal, control_points);
+}
 
 /*
 Check whether the path exists.
@@ -370,7 +392,7 @@ bool ImageWriter::checkFolder(string path)
 		// create a header
 		std::ofstream of(list_str, std::ifstream::out | std::ifstream::app);
 		if (of.is_open()){
-			of << "index,rgb_file,normals_file,depth_file,mask_file,mat_file,tx,ty,tz,qx,qy,qz,qw,roi_x,roi_y,roi_w,roi_h\n";
+			of << "index,rgb_file,normals_file,depth_file,mask_file,mat_file,tx,ty,tz,qx,qy,qz,qw,roi_x,roi_y,roi_w,roi_h,cp_file\n";
 		}
 		of.close();
 	}

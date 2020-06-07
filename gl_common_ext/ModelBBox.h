@@ -1,4 +1,21 @@
 #pragma once
+/*
+@class BBox
+@brief The class renders a wire frame bounding box.
+
+Rafael Radkowski
+Iowa State University
+rafael@iastate.edu
+(515) 294 7044
+rafael@iastate.edu
+MIT License
+----------------------------------------------------------------------------------------------------------------------
+Last edits:
+
+June 6, 2020, RR
+- Added an api to return the bounding box corner points. 
+
+*/
 
 // stl include
 #include <iostream>
@@ -50,6 +67,12 @@ namespace cs557
 		*/
 		int getProgram(void){return program;}
 
+
+		/*
+		Return the bounding box corners. 
+		*/
+		std::vector<glm::vec3> getCorners(void){return _bb_corners;}
+
 	private:
 
 
@@ -67,5 +90,8 @@ namespace cs557
 
 		float _width;
 		float _height; 
+
+		// the bounding box corners.
+		std::vector<glm::vec3>	_bb_corners;
 	};
 }

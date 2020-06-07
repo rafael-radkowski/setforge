@@ -102,8 +102,13 @@ void UserViewRenderer::keyboardCallback(int key, int action)
 				_render_bbox = true;
 			}
 			setDrawBBox(_render_bbox);
+		}else if(key == 80) // p
+		{
+			projectBBox();
 		}
 	}
+
+	//cout << key << endl;
 
 
 }

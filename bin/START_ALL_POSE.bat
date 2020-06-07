@@ -24,7 +24,12 @@ echo off
 SET model=../data/stanford_bunny_02_rot.obj
 SET cam_distance=3.0
 
-:: 2. Set the temporary data folder and the output folder
+:: 2. Define a brdf material and set with_brdf to one if a material is available
+:: Set the value to 0 if you like to use the obj material as specified in the mat file. 
+SET with_brdf=0
+SET brdf_col=../data/example_files/brdf_material.json
+
+:: 3. Set the temporary data folder and the output folder
 ::  Also, set the final pickle filename and path
 SET temp_folder="./debug_pose"
 :: Note that two different folders are required. 
@@ -32,21 +37,21 @@ SET output_folder="./debug_pose_4_512_512"
 
 SET final_pickle_path="./debug_pose/final.pickle"
 
-:: 3. Set the path to all background RGB images.
+:: 4. Set the path to all background RGB images.
 :: WRITE 'NONE' IF YOU DO NOT LIKE TO COMBINE THE RENERING WITH RANDOM BACKGROUND IMAGES 
 SET bg_image_path="../data/imagenet"
 
-:: 4. Set the image width and image height in pixel
+:: 5. Set the image width and image height in pixel
 set img_w=512
 set img_h=512
 
-:: 5. Set the image width and height in pixels for the final pickle file
+:: 6. Set the image width and height in pixels for the final pickle file
 :: Note that this size can vary from the previous one, e.g., if you intend to reuse the images with a different resolution. 
 :: (saves time)
 set rows=128
 set cols=128
 
-:: 6. Set the camera path method. 
+:: 7. Set the camera path method. 
 :: POLY for polyhedron image
 :: POSE if a random pose should be selected. 
 set method=POSE
@@ -54,31 +59,31 @@ set method=POSE
 :: if set to 1, the object will only be rendered in its upright position. 
 set upright=1
 
-:: 6. Set the polyhedron sub-level. This will define the number of images to render
+:: 8. Set the polyhedron sub-level. This will define the number of images to render
 :: The higher the number, the more images. I tested to 6
 set sublevel=5
 
-:: 7. Set the number of rendered images you like to generate
+:: 9. Set the number of rendered images you like to generate
 set ren_num=2000
 
-:: 8. Set the boundaries for the object to be moved around in front of the camera.
+:: 10. Set the boundaries for the object to be moved around in front of the camera.
 :: The position of the model is selected by random within the given range. 
 set limx=0.6
 set limy=0.6
 set near=2.0
 set far=4.0
 
-:: 9. Set the number of final images you like to generate
+:: 11. Set the number of final images you like to generate
 set num=10000
 
-:: 10. Activate noise by setting the variable to 1. 
+:: 12. Activate noise by setting the variable to 1. 
 set with_noise=1
 set noise_dev=0.15
 
-:: 11. Enable chromatic adaptation
+:: 13. Enable chromatic adaptation
 set with_chromatic=1
 
-:: 12. Set the percentage of images that should go into the cross-validation test file
+:: 14. Set the percentage of images that should go into the cross-validation test file
 :: as a percentage of num, in a range from [0,1] with 0->0%, 0.1-> 10%, 1.0 -> 100%
 set x_test=0.1
 
@@ -87,6 +92,7 @@ set x_test=0.1
 
 set arg1=%model% -o %temp_folder% -img_w %img_w% -img_h %img_h% -m %method% -sub %sublevel%  -rad %cam_distance% -num %ren_num% -limx %limx% -limy %limy% -lim_near %near% -lim_far %far% 
 if %upright% == 1 set arg1=%arg1% -up
+if %with_brdf% == 1 set arg1=%arg1% -brdf_col %brdf_col%
 
 set arg2=-n %num% -ipath %bg_image_path% -itype jpeg -rlog %temp_folder%/render_log.csv -img_w %img_w% -img_h %img_h% -o %output_folder% 
 IF %with_noise% == 1 set arg2=%arg2% -noise %noise_dev%

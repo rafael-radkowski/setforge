@@ -146,6 +146,8 @@ set(MAIN_SRC
 	./src/MaterialTypes.h
 	./src/MaterialReaderWriter.h
 	./src/MaterialReaderWriter.cpp
+	./src/PointProjection.h
+	./src/PointProjection.cpp
 	
 )
 
@@ -173,6 +175,9 @@ set(UTILS_SRC
 	./src/FileUtils.cpp
 	./src/GeometryUtils.h
 	./src/GeometryUtils.cpp
+	./src/ControlPointsHelper.h
+	./src/ControlPointsHelper.cpp
+
 )
 
 
@@ -239,7 +244,8 @@ set(GENERATOR_SRC
 	./src/ImageFilter.cpp
 	./src/FileUtils.h
 	./src/FileUtils.cpp
-
+	./src/ControlPointsHelper.h
+	./src/ControlPointsHelper.cpp
 )
 
 source_group(MAIN FILES ${MAIN_SRC})

@@ -387,3 +387,4 @@ void cs557::OBJModel::setMaterial(cs557::Material material)
 	override_material = material;
 	with_override_material = true;
 }
+

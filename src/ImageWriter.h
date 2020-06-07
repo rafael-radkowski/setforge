@@ -34,6 +34,8 @@ May 3, 2019, RR
 
 Dec 10, 2019, RR:
 - Added FileUtils.h to address the deprecation of experimental/filesystem
+June 6, 2020, RR:
+- Added a function to store model information to a file. 
 */
 
 // stl
@@ -66,6 +68,7 @@ Dec 10, 2019, RR:
 #include "MatrixFileUtils.h"
 #include "MatrixHelpers.h"
 #include "types.h"
+#include "ControlPointsHelper.h"
 
 using namespace std;
 
@@ -82,6 +85,7 @@ public:
 		cv::Rect2f roi;
 		glm::mat4 pose;
 
+		std::vector<glm::vec2> control_points;
 
 		IWData(){
 			index = 0;
@@ -128,6 +132,15 @@ public:
 	@param data - a dataset of type IMData
 	*/
 	bool write(IWData& data);
+
+
+	/*
+	Write model data to a file.
+	Note that currently the model data only includes the bounding box corner points in local object space. 
+	TODO: Add a model data type.
+	@param control_points - the corner point points. 
+	*/
+	bool writeModelFile( std::vector<glm::vec3> control_points);
 
 
 

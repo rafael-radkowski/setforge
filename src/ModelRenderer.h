@@ -58,6 +58,9 @@ May 9, 2020, RR
 June 5, 2020, RR
 - Added a bounding box model to the renderer
 - Added an api to enable/disable bounding box rendering.
+June 6, 2020, RR
+- Added a function to project bounding box corner points and to store those to a file.
+
 */
 
 // stl
@@ -92,6 +95,7 @@ June 5, 2020, RR
 #include "MaterialRandomization.h"  // for random colors
 #include "MaterialReaderWriter.h"  // to read material data from a fle. 
 #include "ModelBBox.h"	// boudning box
+#include "PointProjection.h" // point projection;
 
 using namespace std;
 
@@ -190,6 +194,13 @@ public:
 	*/
 	void setDrawBBox(bool draw);
 
+
+	/*
+	Enable or disable the bounding box projection function. 
+	It is enabled by default. 
+	*/
+	void withBBoxProjection(bool enable);
+
 protected:
 
 	/*
@@ -203,6 +214,14 @@ protected:
 	*/
 	bool enable_writer(bool enable);
 
+
+	/*
+	Project the bounding box manually. 
+	This is a debug function to verify that the bounding box works. 
+	*/
+	bool projectBBox(void);
+	
+
 private:
 
 
@@ -210,7 +229,14 @@ private:
 	Draw the scene into an fbo to get textures
 	*/
 	bool drawFBO(void);
-	
+
+
+	/*
+	Project the boundinx box corner points and the bounding box centroid. 
+	*/
+	bool projectBBoxPoints();
+
+
 	/*
 	Create a scene for the prerenderer
 	*/
@@ -273,6 +299,11 @@ private:
 	unsigned char*			_data_depth;
 	unsigned char*			_data_normals;
 
+	// projected control points.
+	// if the bounding box is projected, the vector contains 8 corner points
+	// and the center. 
+	std::vector<glm::vec2>	_projected_points;
+
 	// for helpers
 	// a helper plane to render the pre-render content
 	cs557::Plane				_display;
@@ -296,10 +327,14 @@ private:
 	bool					_with_roi; // also extracts the roi from the color image
 	bool					_with_mask;//  extracts the mask from the depth image
 	bool					_with_bbox; // renders a bounding box;
+	bool					_with_bbox_projection; // enables the bounding box projection
 
 	// For random colors
 	MaterialRandomization	_rand_col;
 	bool					_with_rand_col;
+
+	// point projection
+	PointProjection*		_projection;
 
 protected:
 

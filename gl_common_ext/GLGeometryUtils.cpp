@@ -11,6 +11,12 @@ namespace nsGLGeometryUtils {
 	float minX = 0.0;
 	float minY = 0.0;
 	float minZ = 0.0;
+
+	glm::vec3	bounding_box(0.0,0.0,0.0);
+
+	// the bounding box corners and center
+	std::vector<glm::vec3> bb_corners;
+	glm::vec3 bb_center(0.0,0.0,0.0);
 	
 }
 
@@ -59,7 +65,6 @@ bool GLGeometryUtils::CalcBoundingBox(std::vector<glm::vec3>& points, glm::vec3&
 	boundingbox_size.y  = maxY - minY;
 	boundingbox_size.z  = maxZ - minZ;
 
-	glm::vec3 bounding_box;
 	bounding_box[0] = boundingbox_size.x;
 	bounding_box[1] = boundingbox_size.y;
 	bounding_box[2] = boundingbox_size.z; 
@@ -199,6 +204,48 @@ bool GLGeometryUtils::SetToBBCenter(std::vector<glm::vec3>& points)
 }
 
 
+/*
+Return the bounding box corners of the last calculated bounding box. 
+@param corners - the eight bounding box corners in local x, y, z, coordinates. 
+@return false, if no bounding box is available, otherwise true. 
+*/
+ std::vector<glm::vec3>& GLGeometryUtils::GetBBCorners(void)
+{
+	CalculateBBCorners();
+	return bb_corners;
+}
+
+
+/*
+Calcualte the bounding box corner points p0 to p7
+*/
+void GLGeometryUtils::CalculateBBCorners(void)
+{
+	if (bounding_box.x == 0 || bounding_box.y == 0 || bounding_box.z == 0) {
+		std::cout << "[ERROR] -  No bounding box available to calculate its corner points. Calculate bounding box first." << std::endl;
+		return;
+	}
+
+	bb_corners.clear();
+
+	float dim_x = bounding_box.x/2.0;
+	float dim_y = bounding_box.y/2.0;
+	float dim_z = bounding_box.z/2.0;
+
+
+	// first side
+	bb_corners.push_back(glm::vec3(bb_center.x + dim_x, bb_center.y - dim_y, bb_center.z - dim_z )); // p0
+	bb_corners.push_back(glm::vec3(bb_center.x + dim_x, bb_center.y + dim_y, bb_center.z - dim_z )); // p1
+	bb_corners.push_back(glm::vec3(bb_center.x + dim_x, bb_center.y + dim_y, bb_center.z + dim_z )); // p2
+	bb_corners.push_back(glm::vec3(bb_center.x + dim_x, bb_center.y - dim_y, bb_center.z + dim_z )); // p3
+
+	// second side
+	bb_corners.push_back(glm::vec3(bb_center.x - dim_x, bb_center.y - dim_y, bb_center.z - dim_z )); // p4
+	bb_corners.push_back(glm::vec3(bb_center.x - dim_x, bb_center.y + dim_y, bb_center.z - dim_z )); // p5
+	bb_corners.push_back(glm::vec3(bb_center.x - dim_x, bb_center.y + dim_y, bb_center.z + dim_z )); // p6
+	bb_corners.push_back(glm::vec3(bb_center.x - dim_x, bb_center.y - dim_y, bb_center.z + dim_z )); // p7
+
+}
 
 
 

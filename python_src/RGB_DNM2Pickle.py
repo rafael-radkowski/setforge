@@ -48,6 +48,9 @@ MIT license
 -------------------------------------
 Last edited:
 
+June 6, 2020, RR
+- Added the new log file entry to the data. The log file also contains the filename to a file that stores projected corner points. 
+
 """
 
 import cv2
@@ -129,7 +132,8 @@ class RGB_DNM2Pickle:
                         "rx": float(row['roi_x']),
                         "ry": float(row['roi_y']),
                         "dx": float(row['roi_w']),
-                        "dy": float(row['roi_h'])
+                        "dy": float(row['roi_h']),
+                        "cp_file" : row['cp_file']
                     }
 
                     self.csv_dataset.append(data)
