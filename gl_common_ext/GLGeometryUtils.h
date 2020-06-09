@@ -42,6 +42,7 @@ June 6, 2020, RR
 #include <string>
 #include <vector>
 #include <algorithm>
+#include <iterator>
 
 // glm
 #include <glm/glm.hpp>

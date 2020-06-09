@@ -528,6 +528,8 @@ bool ModelRenderer::projectBBoxPoints()
 	_projection->setProjectionMatrix(_projectionMatrix);
 	_projection->setViewMatrix(_viewMatrix);
 	_projection->projectPoints(corners, _modelMatrix, _projected_points);
+
+	return true;
 }
 
 

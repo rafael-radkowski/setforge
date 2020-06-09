@@ -60,7 +60,8 @@ June 5, 2020, RR
 - Added an api to enable/disable bounding box rendering.
 June 6, 2020, RR
 - Added a function to project bounding box corner points and to store those to a file.
-
+June 9, 2020, RR
+- Fixed a bug in the bounding box projection api. 
 */
 
 // stl
